@@ -1,0 +1,26 @@
+.mainBox {
+    padding: 80px 12px 12px 100px;
+    height: calc(100vh - 92px);
+    margin: -8px;
+    background: #f4f5f3;
+    position: relative;
+}
+.btn-transparent {
+    background:transparent ;
+}
+ .navBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background:#ffffff;
+    height: 80px;    
+}
+.sideBar {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    bottom: 0;
+    background: #ffffff;
+    width: 100px;
+}
