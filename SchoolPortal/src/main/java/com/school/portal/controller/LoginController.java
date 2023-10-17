@@ -2,6 +2,8 @@ package com.school.portal.controller;
 
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.school.portal.AbstractController;
 import com.school.portal.domain.User;
 import com.school.portal.dto.LoginUser;
 import com.school.portal.enums.ErrorCode;
@@ -25,7 +28,7 @@ import io.swagger.annotations.Api;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/login")
-public class LoginController {
+public class LoginController extends AbstractController {
 
 	@Autowired
 	AuthenticationService authenticationService;
@@ -34,7 +37,7 @@ public class LoginController {
 	UserService userService;
 
 	@PostMapping(value = "")
-	public ResponseEntity<Object> login(@RequestBody LoginUser loginUser) {
+	public ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser) {
 		User user = userService.checkCredaintials(loginUser);
 		String jwtToken = authenticationService.login(loginUser);
 		Map<String, Object> map = ResponseBuilder.buildLoginResponse(jwtToken, user);

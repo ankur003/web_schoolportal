@@ -3,6 +3,7 @@ package com.school.portal.controller;
 import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SessionFactory;
@@ -53,7 +54,7 @@ public class SuperAdminController extends AbstractController {
 	
 	@PostMapping("/user")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> createUser(@RequestBody CreateUserModel createUserModel) {
+	public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserModel createUserModel) {
 		String userUuid = userService.createUser(createUserModel);
 		if (StringUtils.isBlank(userUuid)) {
 			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
