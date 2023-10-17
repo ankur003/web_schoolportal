@@ -1,0 +1,15 @@
+package com.school.portal.requests;
+
+public class CreateMasterClassModel { 
+
+	private String className;
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+	
+}
