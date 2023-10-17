@@ -9,7 +9,7 @@ public class LoginUser {
 	@NotBlank(message = "username : User Name" + ERROR_MSG_SUFFIX)
     private String username;
 	
-	@NotBlank(message = "password : Password" + ERROR_MSG_SUFFIX)
+	@NotBlank(message = "password : Password" + ERROR_MSG_SUFFIX) 
     private String password;
 
     public String getUsername() {
