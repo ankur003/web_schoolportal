@@ -1,0 +1,86 @@
+
+@import "../theme/variables";
+@import "../utils/mixin";
+
+.button-group {
+    .btn {
+        &:not(:last-child) {
+        margin-right: 7px;
+         }
+         i {
+            margin: 0;
+        }
+    }
+}
+
+.btn {
+    padding: 5px 10px;
+    border-radius: 2px;
+    font: {
+        size: 11px !important;
+    }
+    i {
+        margin-right: 7px;
+    }
+    &:hover {
+        box-shadow: 0 0 5px rgba(0,0,0,0.15); 
+    }
+}
+
+.btn-link {
+    padding: 0;
+    box-shadow: none !important;
+}
+
+.btn-transparent {
+    height: 26px;
+    width: 26px;
+    border-radius: 4px;
+    position: relative;
+    i {
+        @include transform-center-align;
+        font-size: 10px;
+    }
+    &:hover {
+        box-shadow: 0 0 5px rgba(0,0,0,0.15);
+    }
+}
+.btn-transparent-primary {
+    color: #004085;
+    background-color: #cce5ff;
+    border-color: #b8daff;
+}
+.btn-transparent-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.btn-transparent-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+.btn-transparent-secondary {
+    color: #383d41;
+    background-color: #e2e3e5;
+    border-color: #d6d8db;
+}
+
+
+.btn-theme {
+    background-color: $dark-theme;
+    border: 1px solid $dark-theme;
+    color: $side-nav-text-color;
+    &:hover {
+        color:var(--white);
+    }
+}
+.upload-button {
+    position: relative;
+    .form-control {
+        padding: 0;
+        @include position-bottom-right;
+        @include position-top-left;
+        opacity: 0;
+    }
+}

@@ -1,0 +1,146 @@
+@import "../theme/variables";
+@import "../utils/mixin";
+
+.login-wrapper {
+    background-color: var(--white);
+    width: 100%;
+    height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    position: relative;
+
+    .login-icon {
+        height: 200px;
+        width: 200px;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+
+        img {
+            height: 100%;
+            width: 100%;
+        }
+    }
+
+    .login-content {
+        width: 400px;
+        margin: 0 auto;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        padding: 100px 0 20px;
+
+        h1 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        h5 {
+            font-size: 20px;
+            color: $content-color;
+            margin-bottom: 40px;
+        }
+
+        a {
+            display: block;
+            margin-bottom: 80px;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 40px;
+
+            .form-icon {
+                @include position-top-left;
+                bottom: 0;
+                width: 40px;
+                background-color: $blue;
+                margin: 0;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+
+            }
+
+            .form-control {
+                padding-left: 50px;
+                height: 50px;
+            }
+        }
+
+        .btn {
+            width:150px;
+            background-color: $blue;
+            font-size: 20px !important;
+            font-weight: 700;
+        }
+    }
+
+    .stripe {
+        height: 30px;
+        width: 250px;
+        background-color: $blue;
+        position: fixed;
+        display:none;
+
+        &.top-right {
+            top: 0;
+            right: -109px;
+            transform: rotate(145deg);
+
+            &:before {
+                transform: rotate(180deg);
+                content: "";
+                width: 0px;
+                height: 0px;
+                border-top: 15px solid transparent;
+                border-bottom: 15px solid transparent;
+                border-right: 10px solid #356ec5;
+                position: absolute;
+                top: 0px;
+                right: -10px;
+            }
+        }
+
+        &.bottom-left {
+            bottom: 0;
+            left: -109px;
+            transform: rotate(145deg);
+
+            &:before {
+                content: '';
+                width: 0px;
+                height: 0px;
+                border-top: 15px solid transparent;
+                border-bottom: 15px solid transparent;
+                border-right: 10px solid $blue;
+                position: absolute;
+                top: 0px;
+                left: -10px;
+            }
+        }
+
+        &.bottom-right {
+            bottom: 0;
+            right: -109px;
+            transform: rotate(45deg);
+
+            &:before {
+                content: "";
+                width: 0px;
+                height: 0px;
+                border-top: 15px solid transparent;
+                border-bottom: 15px solid transparent;
+                border-right: 10px solid $blue;
+                position: absolute;
+                top: 0px;
+                left: -10px;
+            }
+        }
+
+    }
+}

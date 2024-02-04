@@ -1,0 +1,73 @@
+@import "../theme/variables";
+@import "../utils/mixin";
+
+
+.main-wrapper {
+    height: 100vh;
+    background-color:$light-gray;
+    padding: 53px 0 0 200px;
+    .main-body {
+        padding: 57px 12px 12px 12px;
+        height: 100%;
+        position: relative;
+        .header {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            border-bottom: 1px solid $border-color;
+            background-color: $white;
+            padding: 12px 18px;
+            height: 49px;
+            display: flex;
+            align-items: center;
+            z-index: 999;
+            justify-content: space-between;
+            h1 {
+                margin: 0;
+                font-size: 16px;
+            }
+            .header-right {
+                .btn {
+                    font-size: 14px !important;
+                }
+            }
+        }
+        .content-body {
+            height: 100%;
+        }
+    }
+}
+
+.side-bar {
+    background-color:$white;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: 53px;
+    width: 200px;
+    z-index: 999;
+    border-right: 1px solid $border-color;
+    ul{
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        li{
+            padding: 12px 15px;
+            cursor: pointer;
+            &.active,
+            &:hover {
+                background-color: $blue;
+                transition: all .5s ease-in-out;
+                a{
+                    color: $white;
+                }
+            }
+        }
+
+        a{
+            font-size: 14px;
+            text-decoration: none;
+        }
+    }
+}
