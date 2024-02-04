@@ -30,7 +30,7 @@ public class DynamicDataSourceConfig {
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
         dataSourceBuilder.url("jdbc:mysql://localhost:3306/Oneschoolportal?createDatabaseIfNotExist=true&useSSL=false");
         dataSourceBuilder.username("root");
-        dataSourceBuilder.password("passwordTest@123");
+        dataSourceBuilder.password("test");
         return dataSourceBuilder.build();
     }
 
@@ -40,7 +40,7 @@ public class DynamicDataSourceConfig {
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
         dataSourceBuilder.url("jdbc:mysql://localhost:3306/TWOschoolportal?createDatabaseIfNotExist=true&useSSL=false");
         dataSourceBuilder.username("root");
-        dataSourceBuilder.password("passwordTest@123");
+        dataSourceBuilder.password("test");
         return dataSourceBuilder.build();
 
     }
