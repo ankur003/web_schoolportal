@@ -11,7 +11,7 @@ public class DataSourcePhysicalNamingStrategy implements PhysicalNamingStrategy 
     public Identifier toPhysicalCatalogName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
         return applySnakeCase(identifier);  
     }
-
+ 
     @Override
     public Identifier toPhysicalSchemaName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
         return applySnakeCase(identifier);
