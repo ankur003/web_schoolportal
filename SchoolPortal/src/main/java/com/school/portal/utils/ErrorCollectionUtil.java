@@ -27,7 +27,6 @@ public class ErrorCollectionUtil {
 		return errors;
 	}
 
-	// TODO correct it
 	public static <T> String getError(BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {

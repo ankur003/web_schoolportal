@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import com.school.portal.domain.Role;
 import com.school.portal.domain.User;
 import com.school.portal.dto.LoginUser;
-import com.school.portal.enums.UserType;
 import com.school.portal.repo.RoleRepo;
 import com.school.portal.repo.UserRepo;
 import com.school.portal.requests.CreateUserModel;

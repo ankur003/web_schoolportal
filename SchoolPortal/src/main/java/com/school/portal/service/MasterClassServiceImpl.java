@@ -51,21 +51,23 @@ public class MasterClassServiceImpl implements MasterClassService {
 			section.setSectionName(createMasterSectionsModel.getSectionName());
 			section.setMasterSectionUuid(SchoolPortalUtils.getUniqueUuid());
 			section = masterSectionRepo.save(section);
-			section.getMasterSectionUuid();
+			return section.getMasterSectionUuid();
 		}
 		return null;
 	}
 
 	@Override
-	public void linkClassSections(LinkClassSectionModel linkClassSectionModel) {
+	public Boolean linkClassSections(LinkClassSectionModel linkClassSectionModel) {
 		MasterClass classMaster = masterClassRepo.findByMasterClassUuid(linkClassSectionModel.getClassUuid());
 		if (classMaster != null) {
 			List<MasterSection> masterSections = masterSectionRepo.findByMasterSectionUuidIn(linkClassSectionModel.getSectionUuids());
 			if (masterSections != null && masterSections.size() == linkClassSectionModel.getSectionUuids().size()) {
 				classMaster.setMasterSection(new HashSet<>(masterSections));
 				masterClassRepo.save(classMaster);
+				return true;
 			}
 		}
+		return false;
 	}
 
 	@Override
@@ -84,7 +86,7 @@ public class MasterClassServiceImpl implements MasterClassService {
 	}
 
 	@Override
-	public void assignClassSectionToStudent(String userUuid, AssignClassSectionStudentModel assignClassSectionStudentModel) {
+	public Boolean assignClassSectionToStudent(String userUuid, AssignClassSectionStudentModel assignClassSectionStudentModel) {
 		MasterSection masterSection = masterSectionRepo.findByMasterSectionUuid(assignClassSectionStudentModel.getSectionUuid());
 		if (masterSection != null) {
 			MasterClass masterClass = masterClassRepo.findByMasterClassUuid(assignClassSectionStudentModel.getClassUuid());
@@ -94,9 +96,11 @@ public class MasterClassServiceImpl implements MasterClassService {
 					user.setMasterClass(masterClass);
 					user.setMasterSection(masterSection);
 					userRepo.save(user);
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 
 }

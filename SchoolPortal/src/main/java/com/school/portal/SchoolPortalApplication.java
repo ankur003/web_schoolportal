@@ -40,7 +40,6 @@ public class SchoolPortalApplication {
 	
 	@PostConstruct
 	public void addRoles() {
-		
 		if (roleRepo.findAll().isEmpty()) {
 			Stream.of(UserType.values()).forEach(usertype -> {
 				Role role = new Role();
@@ -50,7 +49,7 @@ public class SchoolPortalApplication {
 		}
 		
 		User user =  userRepo.findByUsernameAndIsActive("admin@schoolportal.com", true);
-		if (user != null) {
+		if (user != null) { 
 			return;
 		}
 		user = new User();

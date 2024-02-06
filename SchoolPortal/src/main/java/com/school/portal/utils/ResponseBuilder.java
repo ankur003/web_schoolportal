@@ -148,7 +148,7 @@ public class ResponseBuilder {
 		return ResponseEntity.status(HttpStatus.CREATED).body(map);
 	}
 
-	public static Object buildCreatedRespnse(String keyName, String uuid) {
+	public static ResponseEntity<Object> buildCreatedRespnse(String keyName, String uuid) {
 		Map<String, Object> map = new TreeMap<>();
 		map.put(keyName, uuid);
 		return ResponseEntity.status(HttpStatus.CREATED).body(map);

@@ -28,7 +28,7 @@ public class UserResponseModel {
 	
 	private Boolean isClassTeacher = false; 
 
-	private Boolean isActive = true;
+	private Boolean isActive = false;
 
 	public String getUserUuid() {
 		return userUuid;

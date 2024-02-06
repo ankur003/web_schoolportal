@@ -28,9 +28,9 @@ public class DynamicDataSourceConfig {
     public DataSource primaryDataSource() {
     	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306/Oneschoolportal?createDatabaseIfNotExist=true&useSSL=false");
-        dataSourceBuilder.username("root");
-        dataSourceBuilder.password("passwordTest@123");
+        dataSourceBuilder.url("jdbc:mysql://blgzvsgk8gc0lmrukbvp-mysql.services.clever-cloud.com:3306/blgzvsgk8gc0lmrukbvp?createDatabaseIfNotExist=true&useSSL=false");
+        dataSourceBuilder.username("umh4poimxymgqvs5");
+        dataSourceBuilder.password("uRrQS3mksTGnni7xKK5k");
         return dataSourceBuilder.build();
     }
 
@@ -38,9 +38,9 @@ public class DynamicDataSourceConfig {
     public DataSource secondaryDataSource() {
     	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306/TWOschoolportal?createDatabaseIfNotExist=true&useSSL=false");
-        dataSourceBuilder.username("root");
-        dataSourceBuilder.password("passwordTest@123");
+        dataSourceBuilder.url("jdbc:mysql://blgzvsgk8gc0lmrukbvp-mysql.services.clever-cloud.com:3306/2blgzvsgk8gc0lmrukbvp?createDatabaseIfNotExist=true&useSSL=false");
+        dataSourceBuilder.username("umh4poimxymgqvs5");
+        dataSourceBuilder.password("uRrQS3mksTGnni7xKK5k");
         return dataSourceBuilder.build();
 
     }
@@ -63,13 +63,20 @@ public class DynamicDataSourceConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder) {
         return builder
                 .dataSource(dynamicDataSource())
-                .packages("com.school.portal.domain") // Set your package containing entities
+                .packages("com.school.portal.domain")
                 .persistenceUnit("dynamicPU")
+                .properties(hibernateProperties())
                 .build();
     }
 
     @Bean
     public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
+    }
+    
+    private Map<String, ?> hibernateProperties() {
+        Map<String, Object> hibernateProperties = new HashMap<>();
+        hibernateProperties.put("hibernate.physical_naming_strategy", DataSourcePhysicalNamingStrategy.class.getName());
+        return hibernateProperties;
     }
 }

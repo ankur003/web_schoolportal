@@ -15,7 +15,7 @@ public interface MasterClassService {
 
 	String createMasterSection(CreateMasterSectionsModel createMasterSectionsModel);
 
-	void linkClassSections(LinkClassSectionModel linkClassSectionModel);
+	Boolean linkClassSections(LinkClassSectionModel linkClassSectionModel);
 
 	List<MasterClass> getMasterClasses();
 
@@ -23,6 +23,6 @@ public interface MasterClassService {
 
 	List<MasterClass> getLinkedClassSections();
 
-	void assignClassSectionToStudent(String userUuid, AssignClassSectionStudentModel assignClassSectionStudentModel);
+	Boolean assignClassSectionToStudent(String userUuid, AssignClassSectionStudentModel assignClassSectionStudentModel);
 
 }
