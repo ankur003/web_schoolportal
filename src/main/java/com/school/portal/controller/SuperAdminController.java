@@ -3,6 +3,7 @@ package com.school.portal.controller;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +62,7 @@ public class SuperAdminController extends AbstractController {
 	
 	@GetMapping("/user/{userUuid}")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> getUserDetail(@PathVariable("userUuid") String userUuid) {
+	public ResponseEntity<Object> getUserDetail(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid) {
 		User user = userService.getUserDetailByUuid(userUuid);
 		if (user == null) {
 			return ResponseEntity.noContent().build();
@@ -72,13 +73,13 @@ public class SuperAdminController extends AbstractController {
 	
 	@PutMapping("/user/{userUuid}")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> updateUserDetail(@RequestBody UpdateUserModel updateUserModel) {
+	public ResponseEntity<Object> updateUserDetail(@NotBlank(message = "userUuid can not be blank") @RequestBody UpdateUserModel updateUserModel) {
 		return ResponseEntity.ok().build();
 	}
 	
 	@PostMapping("/master-class")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> createMasterClasses(@RequestBody CreateMasterClassModel createMasterClassModel) {
+	public ResponseEntity<Object> createMasterClasses(@Valid @RequestBody CreateMasterClassModel createMasterClassModel) {
 		String classUuid = masterClassService.createMasterClass(createMasterClassModel);
 		if (StringUtils.isBlank(classUuid)) {
 			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
@@ -99,7 +100,7 @@ public class SuperAdminController extends AbstractController {
 	
 	@PostMapping("/master-section")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> createMasterSection(@RequestBody CreateMasterSectionsModel createMasterSectionsModel) {
+	public ResponseEntity<Object> createMasterSection(@Valid @RequestBody CreateMasterSectionsModel createMasterSectionsModel) {
 		String sectionUuid = masterClassService.createMasterSection(createMasterSectionsModel);
 		if (StringUtils.isBlank(sectionUuid)) {
 			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
@@ -120,7 +121,7 @@ public class SuperAdminController extends AbstractController {
 	
 	@PostMapping("/class-section-link")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> linkClassSections(@RequestBody LinkClassSectionModel linkClassSectionModel) {
+	public ResponseEntity<Object> linkClassSections(@Valid @RequestBody LinkClassSectionModel linkClassSectionModel) {
 		Boolean isLinked = masterClassService.linkClassSections(linkClassSectionModel);
 		if (Boolean.TRUE.equals(isLinked)) {
 			return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -142,7 +143,7 @@ public class SuperAdminController extends AbstractController {
 	
 	@PostMapping("/s/{userUuid}/class-section-assign")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> assignClassSectionToStudent(@PathVariable("userUuid") String userUuid, @RequestBody AssignClassSectionStudentModel assignClassSectionStudentModel) {
+	public ResponseEntity<Object> assignClassSectionToStudent(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid, @RequestBody AssignClassSectionStudentModel assignClassSectionStudentModel) {
 		Boolean isAssigned = masterClassService.assignClassSectionToStudent(userUuid, assignClassSectionStudentModel);
 		if (Boolean.TRUE.equals(isAssigned)) {
 			return ResponseEntity.status(HttpStatus.CREATED).build();

@@ -39,9 +39,13 @@ public class LoginController extends AbstractController {
 	@PostMapping(value = "")
 	public ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser) {
 		User user = userService.checkCredaintials(loginUser); 
+		if (user == null) {
+			return ResponseBuilder.response(HttpStatus.UNAUTHORIZED, true, "Login failed", ErrorCode.ERROR, ResponseCode.ACKNOWLEDGE, 
+					ResponseBuilder.buildLoginFailedResponse());
+		}
 		String jwtToken = authenticationService.login(loginUser);
 		Map<String, Object> map = ResponseBuilder.buildLoginResponse(jwtToken, user);
-		return ResponseBuilder.response(HttpStatus.OK, false, "Login Success", ErrorCode.OK, ResponseCode.ACKNOWLEDGE,map);
+		return ResponseBuilder.response(HttpStatus.OK, false, "Login Success", ErrorCode.OK, ResponseCode.ACKNOWLEDGE, map);
 	}
 	
 }

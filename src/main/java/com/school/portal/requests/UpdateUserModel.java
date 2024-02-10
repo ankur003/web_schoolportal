@@ -2,6 +2,8 @@ package com.school.portal.requests;
 
 import java.time.LocalDate;
 
+import javax.validation.constraints.NotBlank;
+
 public class UpdateUserModel {
 	
 	private String firstName;
@@ -18,6 +20,7 @@ public class UpdateUserModel {
 
 	private Boolean isAdmin = false;
 
+	@NotBlank(message = "Is Class teacher can not be blank")
 	private Boolean isClassTeacher = false;
 
 	public String getFirstName() {

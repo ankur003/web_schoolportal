@@ -1,13 +1,19 @@
 package com.school.portal.requests;
 
+import static com.school.portal.constants.ApplicationConstants.ERROR_MSG_SUFFIX;
+
 import java.time.LocalDate;
+
+import javax.validation.constraints.NotBlank;
 
 import com.school.portal.enums.UserType;
 
 public class CreateUserModel {
 
+	@NotBlank(message = "User Name" + ERROR_MSG_SUFFIX)
 	private String username;
 
+	@NotBlank(message = "First Name" + ERROR_MSG_SUFFIX)
 	private String firstName;
 
 	private String middleName;
@@ -16,6 +22,7 @@ public class CreateUserModel {
 
 	private Long phoneNo;
 
+	@NotBlank(message = "Password" + ERROR_MSG_SUFFIX)
 	private String password;
 
 	private LocalDate dob;
@@ -26,6 +33,7 @@ public class CreateUserModel {
 
 	private Boolean isClassTeacher = false;
 	
+	@NotBlank(message = "userType" + ERROR_MSG_SUFFIX)
 	private UserType userType;
 
 	public String getUsername() {

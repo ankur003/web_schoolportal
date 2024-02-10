@@ -31,6 +31,12 @@ public class ResponseBuilder {
 		map.put("userType", user.getUserType());
 		return map;
 	}
+	
+	public static Map<String, Object> buildLoginFailedResponse() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("message", "Incorrect username or password.");
+		return map;
+	}
 
 	/**
 	 * 
