@@ -1,5 +1,7 @@
 package com.school.portal.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,7 +19,13 @@ public class Role {
 	private String name;
 
 	private String description;
+	
+	private String createdBy;
 
+	private LocalDateTime createdAt;
+	
+	private LocalDateTime updatedAt;
+	
 	public String getName() {
 		return name;
 	}
@@ -40,6 +48,30 @@ public class Role {
 
 	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 	
 }

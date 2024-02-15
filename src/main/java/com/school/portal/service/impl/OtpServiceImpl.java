@@ -1,5 +1,7 @@
 package com.school.portal.service.impl;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -11,6 +13,7 @@ import com.school.portal.repo.OtpRepo;
 import com.school.portal.requests.ResetPasswordModel;
 import com.school.portal.service.EmailService;
 import com.school.portal.service.OtpService;
+import com.school.portal.utils.LoggedInUserUtil;
 import com.school.portal.utils.SchoolPortalUtils;
 
 @Service
@@ -33,10 +36,13 @@ public class OtpServiceImpl implements OtpService {
         	otp = new Otp();
         	otp.setOtpUuid(SchoolPortalUtils.getUniqueUuid());
         	otp.setUser(user);
+        	otp.setCreatedBy(LoggedInUserUtil.getLoggedInUserName());
+        	otp.setCreatedAt(LocalDateTime.now());
         }
         otp.setOtp(otpInteger);
 		otp.setOtpType(OtpType.FORGOT_PASSWORD.name());
 		otp.setIsUsed(false);
+		otp.setUpdatedAt(LocalDateTime.now());
 		otpRepo.save(otp);
         return true;
 	}

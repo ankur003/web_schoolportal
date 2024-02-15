@@ -1,6 +1,9 @@
 package com.school.portal.response;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class UserResponseModel {
 	
@@ -29,7 +32,15 @@ public class UserResponseModel {
 	private Boolean isClassTeacher = false; 
 
 	private Boolean isActive = false;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime createdAt;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime updatedAt;
 
+	private String createdBy;
+	
 	public String getUserUuid() {
 		return userUuid;
 	}
@@ -132,6 +143,30 @@ public class UserResponseModel {
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 	
 }

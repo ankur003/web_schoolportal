@@ -1,5 +1,7 @@
 package com.school.portal.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +22,12 @@ public class MasterSection {
 	private String sectionName;
 	
 	private Boolean isActive = true;
+	
+	private LocalDateTime createdAt;
+	
+	private LocalDateTime updatedAt;
+	
+	private String createdBy;
 	
 	public Long getMasterSectionId() {
 		return masterSectionId;
@@ -51,6 +59,30 @@ public class MasterSection {
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 	
 }

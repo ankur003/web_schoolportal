@@ -1,6 +1,7 @@
 package com.school.portal.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -69,6 +70,12 @@ public class User {
 	@OneToOne
 	@JoinColumn(name = "master_section_id")
 	private MasterSection masterSection;
+	
+	private String createdBy;
+	
+	private LocalDateTime createdAt;
+	
+	private LocalDateTime updatedAt;
 	
 	public String getUsername() {
 		return username;
@@ -214,4 +221,28 @@ public class User {
 		this.masterSection = masterSection;
 	}
 
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+	
 }

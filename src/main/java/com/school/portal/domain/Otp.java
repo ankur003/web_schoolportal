@@ -1,4 +1,6 @@
 package com.school.portal.domain;
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,8 +22,14 @@ public class Otp {
 	
 	private Boolean isUsed;
 	
+	private String createdBy;
+	
 	@OneToOne
 	private User user;
+	
+	private LocalDateTime createdAt;
+	
+	private LocalDateTime updatedAt;
 	
 	public Long getOtpId() {
 		return otpId;
@@ -69,6 +77,30 @@ public class Otp {
 
 	public void setIsUsed(Boolean isUsed) {
 		this.isUsed = isUsed;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 	
 }

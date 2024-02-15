@@ -1,5 +1,6 @@
 package com.school.portal.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -89,6 +90,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 				Set<Role> roles = new HashSet<>();
 				roles.add(role);
 				user.setRoles(roles);
+				user.setUpdatedAt(LocalDateTime.now());
 				user = userRepo.save(user);
 				return user.getUserUuid();
 			}
@@ -114,8 +116,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	@Override
 	public Boolean resetPassword(User user, Otp otp, String password) {
 		user.setPassword(encoder.encode(password));
+		user.setUpdatedAt(LocalDateTime.now());
 		userRepo.save(user);
 		otp.setIsUsed(true);
+		otp.setUpdatedAt(LocalDateTime.now());
 		otpRepo.save(otp);
 		return true;
 	}
@@ -125,6 +129,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		Boolean isValid = encoder.matches(user.getPassword(), changePasswordModel.getOldPassword());
 		if (BooleanUtils.isTrue(isValid)) {
 			user.setPassword(encoder.encode(changePasswordModel.getNewPassword()));
+			user.setUpdatedAt(LocalDateTime.now());
 			userRepo.save(user);
 		}
 		return isValid;

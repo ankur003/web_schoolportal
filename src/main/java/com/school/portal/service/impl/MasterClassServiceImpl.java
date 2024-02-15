@@ -1,5 +1,6 @@
 package com.school.portal.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import com.school.portal.requests.CreateMasterClassModel;
 import com.school.portal.requests.CreateMasterSectionsModel;
 import com.school.portal.requests.LinkClassSectionModel;
 import com.school.portal.service.MasterClassService;
+import com.school.portal.utils.LoggedInUserUtil;
 import com.school.portal.utils.SchoolPortalUtils;
 
 @Service
@@ -38,6 +40,9 @@ public class MasterClassServiceImpl implements MasterClassService {
 			masterClass = new MasterClass();
 			masterClass.setClassName(createMasterClassModel.getClassName());
 			masterClass.setMasterClassUuid(SchoolPortalUtils.getUniqueUuid());
+			masterClass.setUpdatedAt(LocalDateTime.now());
+			masterClass.setCreatedAt(LocalDateTime.now());
+			masterClass.setCreatedBy(LoggedInUserUtil.getLoggedInUserName());
 			masterClass = masterClassRepo.save(masterClass);
 			return masterClass.getMasterClassUuid();
 		}
@@ -51,6 +56,9 @@ public class MasterClassServiceImpl implements MasterClassService {
 			section = new MasterSection();
 			section.setSectionName(createMasterSectionsModel.getSectionName());
 			section.setMasterSectionUuid(SchoolPortalUtils.getUniqueUuid());
+			section.setCreatedAt(LocalDateTime.now());
+			section.setUpdatedAt(LocalDateTime.now());
+			section.setCreatedBy(LoggedInUserUtil.getLoggedInUserName());
 			section = masterSectionRepo.save(section);
 			return section.getMasterSectionUuid();
 		}
@@ -64,6 +72,7 @@ public class MasterClassServiceImpl implements MasterClassService {
 			List<MasterSection> masterSections = masterSectionRepo.findByMasterSectionUuidIn(linkClassSectionModel.getSectionUuids());
 			if (masterSections != null && masterSections.size() == linkClassSectionModel.getSectionUuids().size()) {
 				classMaster.setMasterSection(new HashSet<>(masterSections));
+				classMaster.setUpdatedAt(LocalDateTime.now());
 				masterClassRepo.save(classMaster);
 				return true;
 			}
@@ -96,6 +105,7 @@ public class MasterClassServiceImpl implements MasterClassService {
 				if (user != null) {
 					user.setMasterClass(masterClass);
 					user.setMasterSection(masterSection);
+					user.setUpdatedAt(LocalDateTime.now());
 					userRepo.save(user);
 					return true;
 				}

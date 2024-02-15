@@ -1,5 +1,6 @@
 package com.school.portal.domain;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +34,12 @@ public class MasterClass {
 	private Set<MasterSection> masterSection = new HashSet<>();
 	
 	private Boolean isActive = true;
+	
+	private String createdBy;
+	
+	private LocalDateTime createdAt;
+	
+	private LocalDateTime updatedAt;
 
 	public Long getMasterClassId() {
 		return masterClassId;
@@ -72,6 +79,30 @@ public class MasterClass {
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 	
 }
