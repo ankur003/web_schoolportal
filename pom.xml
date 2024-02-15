@@ -26,40 +26,50 @@
 	</properties>
 
 	<dependencies>
+
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
+			<groupId>
+				org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		
 		<dependency>
-			<groupId>mysql</groupId>
+			<groupId>
+				mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
+			<groupId>
+				org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.springfox</groupId>
+			<groupId>
+				io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
 			<version>2.8.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui -->
 		<dependency>
-			<groupId>io.springfox</groupId>
+			<groupId>
+				io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.8.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
+			<groupId>
+				org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
+			<groupId>
+				io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.0</version>
 		</dependency>
 		<dependency>
-       		<groupId>org.modelmapper</groupId>
+       		<groupId>
+				org.modelmapper</groupId>
         	<artifactId>modelmapper</artifactId>
         	<version>3.1.1</version>
 		</dependency>
@@ -69,68 +79,102 @@
 
 
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
+			<groupId>
+				org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<scope>
+				test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
+			<artifactId>
+				spring-boot-devtools</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>net.sf.dozer</groupId>
+			<groupId>
+				net.sf.dozer</groupId>
 			<artifactId>dozer</artifactId>
 			<version>${dozer.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>io.craftsman</groupId>
+			<groupId>
+				io.craftsman</groupId>
 			<artifactId>dozer-jdk8-support</artifactId>
-			<version>${dozer.jdk8.support.version}</version>
+			<version>
+				${dozer.jdk8.support.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.bouncycastle</groupId>
+			<groupId>
+				org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>${bcprov-jdk15on.version}</version>
+			<version>
+				${bcprov-jdk15on.version}</version>
 		</dependency>
+		
+		
 
 		<dependency>
-			<groupId>commons-io</groupId>
+			<groupId>
+				commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commons-io.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.commons</groupId>
+			<groupId>
+				org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
-			<version>${commons-collections4.version}</version>
+			<version>
+				${commons-collections4.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.commons</groupId>
+			<groupId>
+				org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>commons-validator</groupId>
+			<groupId>
+				commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
 			<version>1.4.0</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
+			<groupId>
+				org.springframework.boot</groupId>
+			<artifactId>
+				spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+			<groupId>
+				org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+
+		<!-- Thymeleaf Dependency -->
+		<dependency>
+			<groupId>
+				org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
+				<groupId>
+					org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>

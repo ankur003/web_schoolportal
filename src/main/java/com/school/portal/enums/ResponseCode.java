@@ -4,19 +4,6 @@
 package com.school.portal.enums;
 
 import org.springframework.lang.Nullable;
-/**
- * 
- * @Author :- Himanshu kumar
- *
- * @Date :- 29-Apr-2019
- *
- * @Package Name :- com.ezbitex.auth.util
- *
- * @Project Name:- EZbitex-authentication
- *
- * @Change Log :- 
- *
- */
 public enum ResponseCode {
 
 	ACKNOWLEDGE(250, "returned response object"), ACKNOWLEDGE_OPTIONAL_RESPONSE_OBJECT(251,

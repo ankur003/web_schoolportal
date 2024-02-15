@@ -1,4 +1,4 @@
-package com.school.portal.service;
+package com.school.portal.service.impl;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +16,7 @@ import com.school.portal.requests.AssignClassSectionStudentModel;
 import com.school.portal.requests.CreateMasterClassModel;
 import com.school.portal.requests.CreateMasterSectionsModel;
 import com.school.portal.requests.LinkClassSectionModel;
+import com.school.portal.service.MasterClassService;
 import com.school.portal.utils.SchoolPortalUtils;
 
 @Service

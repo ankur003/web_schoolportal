@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body style="height: 100%;
+align-items: center;
+align-content: center;
+display: flex;
+justify-content: center;
+flex-direction: column;
+background-color: #f8f5f5;
+padding: 20px 60px;">
+    <img style="height: 100px;width: 100px;" alt="logo"
+        src="https://seeklogo.com/images/E/education-college-school-logo-289049824A-seeklogo.com.png" />
+    <div style="background-color: #ffffff;
+    margin-top: 20px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 5px;
+    margin-bottom: 20px;">
+        <h2 style="color: #356ec5;">Password Rest</h2>
+        <p style="text-transform: capitalize;">Seems like you forget your password. please eneter this otp to reset your
+            password</p>
+        <div style="border-radius: 5px;background-color: #356ec5;
+        color: #fff;
+        padding: 10px 15px;
+        margin: 20px 0;">OTP <span th:text="${otp}"></span></div>
+        <p style="text-transform: capitalize;">If you did not forgot your password you can ingone this email</p>
+    </div>
+    <small style="color: rgba(0,0,0,0.5);">Company xyz and address</small>
+</body>
+
+</html>

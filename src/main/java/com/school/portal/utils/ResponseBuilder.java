@@ -159,5 +159,11 @@ public class ResponseBuilder {
 		map.put(keyName, uuid);
 		return ResponseEntity.status(HttpStatus.CREATED).body(map);
 	}
+	
+	public static ResponseEntity<Object> buildServerErrorRespnse() {
+		Map<String, Object> map = new TreeMap<>();
+		map.put("error", "Something Went Wrong on the sever.");
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+	}
 
 }

@@ -213,5 +213,5 @@ public class User {
 	public void setMasterSection(MasterSection masterSection) {
 		this.masterSection = masterSection;
 	}
-	
+
 }

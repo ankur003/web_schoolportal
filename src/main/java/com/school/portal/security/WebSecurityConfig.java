@@ -3,6 +3,7 @@ package com.school.portal.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -47,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().authorizeRequests()
-				.antMatchers("/api/v1/login", "/api/v1/sa/generate").permitAll()
+				.antMatchers("/api/v1/login", "/api/v1/password/forgot", "/api/v1/password/reset").permitAll()
 				.anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
@@ -60,7 +61,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers("/swagger-ui.html");
 		web.ignoring().antMatchers("/webjars/**");
 		web.ignoring().antMatchers("/swagger-resources/**");
-		web.ignoring().antMatchers("/api/v1/sa/generate/**");
+		web.ignoring().antMatchers(HttpMethod.POST, "/api/v1/password/forgot");
+		web.ignoring().antMatchers(HttpMethod.POST, "/api/v1/password/reset");
 
 	}
 

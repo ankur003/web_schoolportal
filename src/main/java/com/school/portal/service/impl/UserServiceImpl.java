@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,11 +13,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.school.portal.domain.Otp;
 import com.school.portal.domain.Role;
 import com.school.portal.domain.User;
 import com.school.portal.dto.LoginUser;
+import com.school.portal.repo.OtpRepo;
 import com.school.portal.repo.RoleRepo;
 import com.school.portal.repo.UserRepo;
+import com.school.portal.requests.ChangePasswordModel;
 import com.school.portal.requests.CreateUserModel;
 import com.school.portal.service.UserService;
 import com.school.portal.utils.SchoolPortalUtils;
@@ -29,6 +33,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	
 	@Autowired
 	private RoleRepo roleRepo;
+	
+	@Autowired
+	private OtpRepo otpRepo;
 
 	@Autowired
 	private BCryptPasswordEncoder encoder;
@@ -97,6 +104,30 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	@Override
 	public User getUserDetailByUuid(String userUuid) {
 		return userRepo.findByUserUuidAndIsActive(userUuid, true);
+	}
+
+	@Override
+	public User checkUser(String username) {
+		return userRepo.findByUsername(username);
+	}
+
+	@Override
+	public Boolean resetPassword(User user, Otp otp, String password) {
+		user.setPassword(encoder.encode(password));
+		userRepo.save(user);
+		otp.setIsUsed(true);
+		otpRepo.save(otp);
+		return true;
+	}
+
+	@Override
+	public Boolean changePassword(User user, ChangePasswordModel changePasswordModel) {
+		Boolean isValid = encoder.matches(user.getPassword(), changePasswordModel.getOldPassword());
+		if (BooleanUtils.isTrue(isValid)) {
+			user.setPassword(encoder.encode(changePasswordModel.getNewPassword()));
+			userRepo.save(user);
+		}
+		return isValid;
 	}
 
 }
