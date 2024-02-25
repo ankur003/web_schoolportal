@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -8,11 +9,13 @@ import javax.validation.constraints.NotBlank;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,6 +33,7 @@ import com.school.portal.requests.CreateMasterSectionsModel;
 import com.school.portal.requests.CreateUserModel;
 import com.school.portal.requests.LinkClassSectionModel;
 import com.school.portal.requests.UpdateUserModel;
+import com.school.portal.requests.UserRequestModel;
 import com.school.portal.response.LinkedMasterClassModel;
 import com.school.portal.response.MasterClassModel;
 import com.school.portal.response.MasterSectionModel;
@@ -69,6 +73,17 @@ public class SuperAdminController extends AbstractController {
 		}
 		return ResponseEntity.ok(
 				ModelMapperUtil.map(modelMapper, user, UserResponseModel.class));
+	}
+	
+	@GetMapping("/user")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> getAllUsers(@ModelAttribute UserRequestModel userRequestModel) {
+		Page<User> users = userService.getAllUsers(userRequestModel);
+		if (users == null || users.isEmpty() || CollectionUtils.isEmpty(users.getContent())) {
+			return ResponseEntity.noContent().build();
+		}
+		Map<String, Object> userResponseModels =  ModelMapperUtil.getpaginationResponse(modelMapper, users, UserResponseModel.class);
+		return ResponseEntity.ok(userResponseModels);
 	}
 	
 	@PutMapping("/user/{userUuid}")

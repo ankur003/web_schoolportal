@@ -30,7 +30,7 @@ public class DynamicDataSourceConfig {
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
         dataSourceBuilder.url("jdbc:mysql://blgzvsgk8gc0lmrukbvp-mysql.services.clever-cloud.com:3306/blgzvsgk8gc0lmrukbvp?createDatabaseIfNotExist=true&useSSL=false");
         dataSourceBuilder.username("umh4poimxymgqvs5");
-        dataSourceBuilder.password("uRrQS3mksTGnni7xKK5k");
+        dataSourceBuilder.password("Tkvhn9xlPPGPwgACwLQF");
         return dataSourceBuilder.build();
     }
 

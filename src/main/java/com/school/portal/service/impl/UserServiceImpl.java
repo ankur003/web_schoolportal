@@ -5,24 +5,35 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
 import com.school.portal.domain.Otp;
 import com.school.portal.domain.Role;
 import com.school.portal.domain.User;
 import com.school.portal.dto.LoginUser;
+import com.school.portal.enums.SearchOperation;
+import com.school.portal.queryfilter.GenericSpesification;
+import com.school.portal.queryfilter.SearchCriteria;
 import com.school.portal.repo.OtpRepo;
 import com.school.portal.repo.RoleRepo;
 import com.school.portal.repo.UserRepo;
 import com.school.portal.requests.ChangePasswordModel;
 import com.school.portal.requests.CreateUserModel;
+import com.school.portal.requests.UserRequestModel;
+import com.school.portal.service.EmailService;
 import com.school.portal.service.UserService;
 import com.school.portal.utils.SchoolPortalUtils;
 
@@ -37,10 +48,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	
 	@Autowired
 	private OtpRepo otpRepo;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@Autowired
 	private BCryptPasswordEncoder encoder;
-
+	
 	public UserDetails loadUserByUsername(String username) {
 		User user = userRepo.findByUsernameAndIsActive(username, true);
 		if (user == null) {
@@ -82,8 +96,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		if (user == null) {
 			user = new User();
 			user.setUsername(createUserModel.getUsername());
-			user.setPassword(encoder.encode(createUserModel.getPassword()));
+			user.setFullName(createUserModel.getFullName());
+			String tempPassword = String.valueOf(SchoolPortalUtils.getUnique5DigitInteger());
+			user.setPassword(encoder.encode(tempPassword));
+			user.setPhoneNo(createUserModel.getPhoneNo());
 			user.setUserType(createUserModel.getUserType().name());
+			user.setDob(createUserModel.getDob());
+			user.setDoj(createUserModel.getDoj());
 			user.setUserUuid(SchoolPortalUtils.getUniqueUuid());
 			Role role = roleRepo.findByName(createUserModel.getUserType().name());
 			if (role != null) {
@@ -92,10 +111,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 				user.setRoles(roles);
 				user.setUpdatedAt(LocalDateTime.now());
 				user = userRepo.save(user);
+				sendPasswordOnMail(user, tempPassword);
 				return user.getUserUuid();
 			}
 		}
 		return null;
+	}
+
+	private void sendPasswordOnMail(User user, String tempPassword) {
+		Context context = new Context();
+        context.setVariable("tempPass", tempPassword);
+        emailService.sendOneTimePasswordOnUserCreation(user, "Temp Password | School Portal", "tempPassword", context);
 	}
 
 	@Override
@@ -126,13 +152,36 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
 	@Override
 	public Boolean changePassword(User user, ChangePasswordModel changePasswordModel) {
-		Boolean isValid = encoder.matches(user.getPassword(), changePasswordModel.getOldPassword());
+		Boolean isValid = encoder.matches(changePasswordModel.getOldPassword(), user.getPassword());
 		if (BooleanUtils.isTrue(isValid)) {
 			user.setPassword(encoder.encode(changePasswordModel.getNewPassword()));
 			user.setUpdatedAt(LocalDateTime.now());
 			userRepo.save(user);
 		}
 		return isValid;
+	}
+
+	@Override
+	public Page<User> getAllUsers(UserRequestModel userRequestModel) {
+		GenericSpesification<User> genericSpesification = new GenericSpesification<>();
+		if (StringUtils.isNotBlank(userRequestModel.getFullName())) {
+			genericSpesification
+					.add(new SearchCriteria("fullName", userRequestModel.getFullName(), SearchOperation.MATCH));
+		}
+		if (StringUtils.isNotBlank(userRequestModel.getUsername())) {
+			genericSpesification
+					.add(new SearchCriteria("username", userRequestModel.getUsername(), SearchOperation.MATCH));
+		}
+		if (StringUtils.isNotBlank(userRequestModel.getUserType())) {
+			genericSpesification
+					.add(new SearchCriteria("userType", userRequestModel.getUserType(), SearchOperation.EQUAL));
+		}
+		if (CollectionUtils.isNotEmpty(genericSpesification.getSearchCriteriaList())) {
+			return userRepo.findAll(genericSpesification,
+					PageRequest.of(userRequestModel.getPage() - 1, userRequestModel.getLimit(), Direction.DESC, "userId"));
+		}
+		return userRepo
+				.findAll(PageRequest.of(userRequestModel.getPage() - 1, userRequestModel.getLimit(), Direction.DESC, "userId"));
 	}
 
 }

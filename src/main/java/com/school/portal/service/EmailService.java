@@ -30,11 +30,16 @@ public class EmailService {
             helper.setText(htmlContent, true);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
-        	
+        	e.printStackTrace();
+        	System.out.println(e);
         }
     }
 
 	public void sendForgotPassEmail(User user, String subject, String templateName, Context context) {
+		sendEmail(user, subject, templateName, context);
+	}
+	
+	public void sendOneTimePasswordOnUserCreation(User user, String subject, String templateName, Context context) {
 		sendEmail(user, subject, templateName, context);
 	}
 }
