@@ -9,7 +9,7 @@ export default function loginReducer(state = initialState, action) {
         case Constants.LOGIN_SUCCESS:
             return {
                 ...state,
-                message: "login Successfully",
+                message: action.payload.data,
             }
         // case Constants.GET_LOGIN_FAILURES:
         //     console.log("reducer", action)

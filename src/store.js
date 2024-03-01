@@ -3,9 +3,11 @@ import thunk from 'redux-thunk';
 // import { composeWithDevTools } from 'redux-devtools-extension';
 import logger from 'redux-logger';
 import loginReducer from './Redux/Reducers/loginReducer';
+import manageClassesReducer from './Redux/Reducers/manageClassesReducer';
 
 const rootReducer = combineReducers({
-    loginReducer
+    loginReducer,
+    manageClassesReducer
 });
 
 const middleware = [thunk];

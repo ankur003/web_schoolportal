@@ -31,7 +31,7 @@
         padding: 100px 0 20px;
 
         h1 {
-            font-size: 40px;
+            font-size: 25px;
             font-weight: 700;
             margin-bottom: 30px;
         }
@@ -45,6 +45,9 @@
         a {
             display: block;
             margin-bottom: 80px;
+            color: $blue;
+            cursor: pointer;
+            text-decoration: underline;
         }
 
         .form-group {
@@ -73,10 +76,11 @@
         }
 
         .btn {
-            width:150px;
+            width:60%;
+            padding: 5px 20px;
             background-color: $blue;
-            font-size: 20px !important;
-            font-weight: 700;
+            font-size: 18px !important;
+            font-weight: 600;
         }
     }
 

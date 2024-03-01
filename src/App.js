@@ -1,28 +1,27 @@
-import logo from './logo.svg';
 import '././assets/scss/main.scss';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import CreateClass from './container/CreateClass';
-import CreateSectionName from './container/CreateSectionName';
-import LinkClass from './container/LinkClass';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './container/ProtectedRoute';
 import Login from './components/Login';
+import ManageClasses from './container/ManageClasses';
+import EntityPage from './container/EntityPage';
+import ForgetPassword from './components/ForgetPassword';
+import ChangePassword from './components/ChangePassword';
 
-function App() {
-    const isAuthenticated = sessionStorage.getItem("token")
+const App = () => {
   return (
-    <>
-        <Router>
-          <Routes>
-            <Route element={<ProtectedRoute />}>
-                <Route element={<CreateClass />} path="/CreateClass" />
-                <Route element={<CreateSectionName />} path="/CreateSectionName" />
-                <Route element={<LinkClass />} path="/LinkClass" />
-            </Route>
-            <Route element={isAuthenticated ?  <Navigate to="/CreateClass"/> : <Login/>  } path="/"/>
-          </Routes>
-      </Router>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/ForgetPassword" element={<ForgetPassword />} />
+        <Route element={<ProtectedRoute />} >
+          <Route element={<ManageClasses />} path="/ManageClasses" />
+          <Route element={<EntityPage />} path="/EntityPage" />
+          <Route element={<ChangePassword />} path="/ChangePassword" />
+        </Route>
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

@@ -1,17 +1,19 @@
-export const routesList = [
+
+
+let superAdmin = [
     {
-        name : "Create Class",
-        component: "CreateClass",
-        to : "/CreateClass"
+        name: "Manage classroom",
+        component: "ManageClasses",
+        to: "/ManageClasses",
+        icon: "fa-solid fa-school"
     },
     {
-        name : "Create Section",
-        component: "CreateSectionName",
-        to : "/CreateSectionName"
-    },
-    {
-        name : "Link",
-        component: "LinkClass",
-        to : "/LinkClass"
+        name: "Manage Entity",
+        component: "EntityPage",
+        to: "/EntityPage",
+        icon: "fa-solid fa-user"
     }
-];
+
+]
+
+export const routesList = [...superAdmin];

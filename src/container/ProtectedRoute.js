@@ -34,41 +34,43 @@ const H1 = styled.h1`
     }
 `;
 
-const BUTTON = styled.button`
-    color:white;
-    border:1px solid white;
-    background-color: transparent;
-    border-radius: 5px;
-    &:focus {
-     background-color: white;
-     color:black;
-    }
-`;
-
 const ProtectedRoute = () => {
     let navigate = useNavigate();
     const isAuthenticated = sessionStorage.getItem("token");
-
+    const user = sessionStorage.getItem("userName");
     const logoutHandler = () => {
         sessionStorage.removeItem("token");
+        sessionStorage.removeItem("role");
         navigate('/');
     };
 
     return (
         isAuthenticated ?
-                <div className="main-wrapper">
-                    <Header>
-                        <H1><img src={require('../../src/assets/images/logo.jpg')} />The School Portal</H1>
-                        <BUTTON onClick={logoutHandler}>LOGOUT</BUTTON>
-                    </Header>
-                    <SideBar routes={routesList} />
-                    <div className="main-body">
-                        <Outlet />
+            <div className="main-wrapper">
+                <Header className="main-header">
+                    <H1><img alt="logo" src={require('../../src/assets/images/logo.jpg')} />The School Portal</H1>
+                    <div className="dropdown">
+                        <button className="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            {user} <i className="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a className="dropdown-item" onClick={logoutHandler}>Logout</a></li>
+                            <li><a className="dropdown-item" onClick={() => navigate('/ChangePassword')}>Change Password</a></li>
+                        </ul>
                     </div>
+                </Header>
+                <SideBar routes={routesList} />
+                <div className="main-body">
+                    <Outlet />
                 </div>
-                : 
-                <Navigate to="/"/>
+            </div>
+            :
+            <Navigate to="/" />
     )
 }
 
-export default ProtectedRoute; 
+export default ProtectedRoute;
+
+
+
+
