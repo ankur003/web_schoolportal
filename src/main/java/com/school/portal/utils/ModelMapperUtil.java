@@ -25,6 +25,14 @@ public class ModelMapperUtil {
 		return responseMap;
 	}
 	
+	public static Map<String, Object> mapPaginationData(Page<?> data, List<?> userResponseModel) {
+		final Map<String, Object> responseMap = new HashMap<>();
+		responseMap.put("data", userResponseModel);
+		responseMap.put("count", data.getTotalElements());
+		responseMap.put("page", data.getTotalPages());
+		return responseMap;
+	}
+	
 	public static <S, T> List<T> mapList(ModelMapper modelMapper, List<S> source, Class<T> targetClass) {
 	    return source
 	      .stream()

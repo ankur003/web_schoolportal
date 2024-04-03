@@ -20,6 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
+import com.school.portal.domain.MasterClass;
+import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.Otp;
 import com.school.portal.domain.Role;
 import com.school.portal.domain.User;
@@ -27,6 +29,8 @@ import com.school.portal.dto.LoginUser;
 import com.school.portal.enums.SearchOperation;
 import com.school.portal.queryfilter.GenericSpesification;
 import com.school.portal.queryfilter.SearchCriteria;
+import com.school.portal.repo.MasterClassRepo;
+import com.school.portal.repo.MasterSectionRepo;
 import com.school.portal.repo.OtpRepo;
 import com.school.portal.repo.RoleRepo;
 import com.school.portal.repo.UserRepo;
@@ -54,6 +58,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
 	@Autowired
 	private BCryptPasswordEncoder encoder;
+	
+	@Autowired
+	private MasterClassRepo masterClassRepo;
+	
+	@Autowired
+	private MasterSectionRepo masterSectionRepo;
 	
 	public UserDetails loadUserByUsername(String username) {
 		User user = userRepo.findByUsernameAndIsActive(username, true);
@@ -110,12 +120,39 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 				roles.add(role);
 				user.setRoles(roles);
 				user.setUpdatedAt(LocalDateTime.now());
+				boolean isLinked = linkStudentToClassSection(user, createUserModel);
+				if (!isLinked) {
+					return null;
+				}
 				user = userRepo.save(user);
 				sendPasswordOnMail(user, tempPassword);
 				return user.getUserUuid();
 			}
 		}
 		return null;
+	}
+
+	private boolean linkStudentToClassSection(User user, CreateUserModel createUserModel) {
+		if (StringUtils.isBlank(createUserModel.getClassUuid())) { 
+			return true;
+		}
+		MasterClass mastserClass = masterClassRepo.findByMasterClassUuid(createUserModel.getClassUuid());
+		if (mastserClass == null) {
+			return false;
+		}
+		user.setMasterClass(mastserClass);
+		if (StringUtils.isBlank(createUserModel.getSectionUuid())) {
+			return true;
+		}
+		if (mastserClass.getMasterSection() != null) {
+			mastserClass.getMasterSection().forEach(ms -> {
+				if (createUserModel.getSectionUuid().equals(ms.getMasterSectionUuid())) {
+					user.setMasterSection(ms);
+				}
+			});
+			return user.getMasterSection() != null;
+		} 
+		return false;
 	}
 
 	private void sendPasswordOnMail(User user, String tempPassword) {
@@ -175,6 +212,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		if (StringUtils.isNotBlank(userRequestModel.getUserType())) {
 			genericSpesification
 					.add(new SearchCriteria("userType", userRequestModel.getUserType(), SearchOperation.EQUAL));
+		}
+		if (StringUtils.isNotBlank(userRequestModel.getClassName())) {
+			MasterClass masterClass = masterClassRepo.findByClassName(userRequestModel.getClassName());
+			genericSpesification
+				.add(new SearchCriteria("masterClass", masterClass, SearchOperation.EQUAL));
+			
+		}
+		if (StringUtils.isNotBlank(userRequestModel.getSectionName())) {
+			MasterSection section = masterSectionRepo.findBySectionName(userRequestModel.getSectionName());
+				genericSpesification
+					.add(new SearchCriteria("masterSection", section, SearchOperation.EQUAL));
 		}
 		if (CollectionUtils.isNotEmpty(genericSpesification.getSearchCriteriaList())) {
 			return userRepo.findAll(genericSpesification,

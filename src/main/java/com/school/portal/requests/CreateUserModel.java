@@ -22,6 +22,10 @@ public class CreateUserModel {
 	private LocalDate dob;
 
 	private LocalDate doj;
+	
+	private String classUuid;
+	
+	private String sectionUuid;
 
 	@NotNull(message = "userType" + ERROR_MSG_SUFFIX)
 	private UserType userType;
@@ -72,6 +76,22 @@ public class CreateUserModel {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+
+	public String getClassUuid() {
+		return classUuid;
+	}
+
+	public void setClassUuid(String classUuid) {
+		this.classUuid = classUuid;
+	}
+
+	public String getSectionUuid() {
+		return sectionUuid;
+	}
+
+	public void setSectionUuid(String sectionUuid) {
+		this.sectionUuid = sectionUuid;
 	}
 	
 }

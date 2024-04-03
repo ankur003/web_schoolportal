@@ -1,5 +1,7 @@
 package com.school.portal.controller;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,7 @@ import com.school.portal.AbstractController;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.User;
+import com.school.portal.enums.UserType;
 import com.school.portal.requests.AssignClassSectionStudentModel;
 import com.school.portal.requests.CreateMasterClassModel;
 import com.school.portal.requests.CreateMasterSectionsModel;
@@ -57,6 +60,16 @@ public class SuperAdminController extends AbstractController {
 	@PostMapping("/user")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserModel createUserModel) {
+		if (createUserModel.getUserType().equals(UserType.TEACHER) &&  (StringUtils.isNotBlank(createUserModel.getClassUuid()) 
+				|| StringUtils.isNotBlank(createUserModel.getSectionUuid()))) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
+		if (StringUtils.isNotBlank(createUserModel.getSectionUuid()) && 
+				StringUtils.isBlank(createUserModel.getClassUuid()) ) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
 		String userUuid = userService.createUser(createUserModel);
 		if (StringUtils.isBlank(userUuid)) {
 			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
@@ -82,9 +95,23 @@ public class SuperAdminController extends AbstractController {
 		if (users == null || users.isEmpty() || CollectionUtils.isEmpty(users.getContent())) {
 			return ResponseEntity.noContent().build();
 		}
-		Map<String, Object> userResponseModels =  ModelMapperUtil.getpaginationResponse(modelMapper, users, UserResponseModel.class);
-		return ResponseEntity.ok(userResponseModels);
+		List<User> usersData = users.getContent();
+		List<UserResponseModel> userResponseModel = ModelMapperUtil.mapList(modelMapper, usersData , UserResponseModel.class);
+		userResponseModel.forEach(model -> 
+		    usersData.stream()
+		            .filter(usr -> usr.getUserUuid().equals(model.getUserUuid())
+		            		&& usr.getMasterClass() != null
+		            		&& usr.getMasterSection() != null
+		            		).findFirst()
+		            .ifPresent(usr -> {
+		                model.setClassName(usr.getMasterClass().getClassName());
+		                model.setSectionName(usr.getMasterSection().getSectionName());
+		            })
+		);
+		final Map<String, Object> responseMap = ModelMapperUtil.mapPaginationData(users, userResponseModel);
+		return ResponseEntity.ok(responseMap);
 	}
+
 	
 	@PutMapping("/user/{userUuid}")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
@@ -158,7 +185,7 @@ public class SuperAdminController extends AbstractController {
 	
 	@PostMapping("/s/{userUuid}/class-section-assign")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> assignClassSectionToStudent(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid, @RequestBody AssignClassSectionStudentModel assignClassSectionStudentModel) {
+	public ResponseEntity<Object> assignClassSectionToStudent(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid, @Valid @RequestBody AssignClassSectionStudentModel assignClassSectionStudentModel) {
 		Boolean isAssigned = masterClassService.assignClassSectionToStudent(userUuid, assignClassSectionStudentModel);
 		if (Boolean.TRUE.equals(isAssigned)) {
 			return ResponseEntity.status(HttpStatus.CREATED).build();

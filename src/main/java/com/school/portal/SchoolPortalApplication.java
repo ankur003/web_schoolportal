@@ -50,6 +50,8 @@ public class SchoolPortalApplication {
 		
 		User user =  userRepo.findByUsernameAndIsActive("admin@schoolportal.com", true);
 		if (user != null) { 
+			user.setPassword(encoder.encode("superadmin"));
+			userRepo.save(user);
 			return;
 		}
 		user = new User();

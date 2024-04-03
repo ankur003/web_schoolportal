@@ -11,6 +11,10 @@ public class UserResponseModel {
 
 	private String username;
 	
+	private String className;
+	
+	private String sectionName;
+	
 	private String fullName;
 	
 	private Long phoneNo;
@@ -147,6 +151,22 @@ public class UserResponseModel {
 
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public String getSectionName() {
+		return sectionName;
+	}
+
+	public void setSectionName(String sectionName) {
+		this.sectionName = sectionName;
 	}
 	
 }

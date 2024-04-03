@@ -8,6 +8,10 @@ public class UserRequestModel {
 	
 	private String userType;
 	
+	private String className;
+	
+	private String sectionName;
+	
 	private Integer page = 1;
 	
 	private Integer limit = 100;
@@ -50,6 +54,22 @@ public class UserRequestModel {
 
 	public void setLimit(Integer limit) {
 		this.limit = limit;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public String getSectionName() {
+		return sectionName;
+	}
+
+	public void setSectionName(String sectionName) {
+		this.sectionName = sectionName;
 	}
 	
 }

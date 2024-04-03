@@ -1,9 +1,13 @@
 package com.school.portal.requests;
 
+import javax.validation.constraints.NotBlank;
+
 public class AssignClassSectionStudentModel {
 	
+	@NotBlank(message = "classUuid can not be blank")
 	private String classUuid;
 	
+	@NotBlank(message = "sectionUuid can not be blank")
 	private String sectionUuid;
 
 	public String getClassUuid() {
