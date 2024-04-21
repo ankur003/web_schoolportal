@@ -114,6 +114,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 			user.setDob(createUserModel.getDob());
 			user.setDoj(createUserModel.getDoj());
 			user.setUserUuid(SchoolPortalUtils.getUniqueUuid());
+			user.setCreatedAt(LocalDateTime.now());
+			user.setUpdatedAt(LocalDateTime.now());
 			Role role = roleRepo.findByName(createUserModel.getUserType().name());
 			if (role != null) {
 				Set<Role> roles = new HashSet<>();
