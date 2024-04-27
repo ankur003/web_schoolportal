@@ -1,5 +1,6 @@
 package com.school.portal.service.impl;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -39,6 +40,7 @@ import com.school.portal.requests.CreateUserModel;
 import com.school.portal.requests.UserRequestModel;
 import com.school.portal.service.EmailService;
 import com.school.portal.service.UserService;
+import com.school.portal.utils.FileService;
 import com.school.portal.utils.SchoolPortalUtils;
 
 @Service(value = "userService")
@@ -232,6 +234,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		}
 		return userRepo
 				.findAll(PageRequest.of(userRequestModel.getPage() - 1, userRequestModel.getLimit(), Direction.DESC, "userId"));
+	}
+
+	@Override
+	public Boolean saveFile(File file, User user) {
+		return FileService.saveFile(file, user);
+	}
+
+	@Override
+	public File downloadUserProfilePic(User user) {
+		return FileService.getFile(user.getUserUuid());
 	}
 
 }

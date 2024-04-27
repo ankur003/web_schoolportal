@@ -1,9 +1,12 @@
 package com.school.portal.utils;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.lang3.RandomUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 public final class SchoolPortalUtils {
 	
@@ -35,4 +38,14 @@ public final class SchoolPortalUtils {
 
         return uniqueId;
 	}
+	
+	public static File convertMultipartFileToFile(final MultipartFile file) {
+        final File convFile = new File(System.getProperty("java.io.tmpdir") + File.separator + file.getOriginalFilename());
+        try (final FileOutputStream fos = new FileOutputStream(convFile)) {
+            fos.write(file.getBytes());
+            return convFile;
+        } catch (final Exception exception) {
+            return null;
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package com.school.portal.controller;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.school.portal.AbstractController;
 import com.school.portal.domain.MasterClass;
@@ -45,6 +47,7 @@ import com.school.portal.service.MasterClassService;
 import com.school.portal.service.UserService;
 import com.school.portal.utils.ModelMapperUtil;
 import com.school.portal.utils.ResponseBuilder;
+import com.school.portal.utils.SchoolPortalUtils;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -192,5 +195,35 @@ public class SuperAdminController extends AbstractController {
 		}
 		return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
 	}
+	
+	@PutMapping("/{userUuid}/profile-pic")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> saveOrUpdateUserProfilePic(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid,
+			@RequestParam("file") final MultipartFile multipartFile) {
+		User user = userService.getUserDetailByUuid(userUuid);
+		if (user == null || multipartFile == null || multipartFile.isEmpty() || multipartFile.getSize() <=0) {
+			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+		}
+		File file = SchoolPortalUtils.convertMultipartFileToFile(multipartFile);
+		Boolean isSaved = userService.saveFile(file, user);
+		return ResponseBuilder.buildBooleanRespnse(isSaved);
+	}
+	
+	@GetMapping(value = "/{userUuid}/profile-pic", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_OCTET_STREAM_VALUE })
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> downloadUserProfilePic(
+			@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid) {
+		User user = userService.getUserDetailByUuid(userUuid);
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		}
+		File file = userService.downloadUserProfilePic(user);
+		if (file == null || file.length() <= 0) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		}
+		return ResponseBuilder.getDocumentResponse(file);
+	}
+	
 	
 }

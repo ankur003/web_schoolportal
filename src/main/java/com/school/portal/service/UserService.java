@@ -1,5 +1,7 @@
 package com.school.portal.service;
 
+import java.io.File;
+
 import org.springframework.data.domain.Page;
 
 import com.school.portal.domain.Otp;
@@ -28,5 +30,9 @@ public interface UserService {
 	public Boolean changePassword(User user, ChangePasswordModel changePasswordModel);
 
 	Page<User> getAllUsers(UserRequestModel userRequestModel);
+
+	public Boolean saveFile(File file, User user);
+
+	public File downloadUserProfilePic(User user);
 
 }

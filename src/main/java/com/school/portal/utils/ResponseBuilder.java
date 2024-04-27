@@ -1,5 +1,9 @@
 package com.school.portal.utils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +13,10 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import com.school.portal.domain.User;
@@ -160,10 +166,46 @@ public class ResponseBuilder {
 		return ResponseEntity.status(HttpStatus.CREATED).body(map);
 	}
 	
+	public static ResponseEntity<Object> buildBooleanRespnse(Boolean isTrue) {
+		if (BooleanUtils.isTrue(isTrue)) {
+			return ResponseEntity.status(HttpStatus.OK).build();
+		}
+		return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+	}
+	
 	public static ResponseEntity<Object> buildServerErrorRespnse() {
 		Map<String, Object> map = new TreeMap<>();
 		map.put("error", "Something Went Wrong on the sever.");
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+	}
+	
+	public static String probeContentType(final String filePath) {
+		String mediaType = null;
+		try {
+			mediaType = Files.probeContentType(Paths.get(filePath));
+		} catch (final IOException ioe) {
+		}
+		if (StringUtils.isBlank(mediaType)) {
+			mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+		}
+		return mediaType;
+	}
+
+	public static ResponseEntity<Object> getDocumentResponse(final File document) {
+		if (document == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		}
+		CleanupInputStreamResource resource = null;
+		try {
+			resource = new CleanupInputStreamResource(document);
+		} catch (final IOException e) {
+			Map<String, Object> map = new TreeMap<>();
+			map.put("error", "Something Went Wrong on the sever.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+		}
+		final String mediaType = probeContentType(document.getAbsolutePath());
+		return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=\"" + document.getName() + "\"")
+				.contentLength(document.length()).contentType(MediaType.parseMediaType(mediaType)).body(resource);
 	}
 
 }
