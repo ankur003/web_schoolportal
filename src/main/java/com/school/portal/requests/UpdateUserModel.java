@@ -2,15 +2,11 @@ package com.school.portal.requests;
 
 import java.time.LocalDate;
 
-import javax.validation.constraints.NotBlank;
+import com.school.portal.domain.Address;
 
 public class UpdateUserModel {
-	
-	private String firstName;
 
-	private String middleName;
-
-	private String lastName;
+	private String fullName;
 
 	private Long phoneNo;
 
@@ -18,33 +14,16 @@ public class UpdateUserModel {
 
 	private LocalDate doj;
 
-	private Boolean isAdmin = false;
+	private Boolean isActive;
 
-	@NotBlank(message = "Is Class teacher can not be blank")
-	private Boolean isClassTeacher = false;
+	private Address address;
 
-	public String getFirstName() {
-		return firstName;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getMiddleName() {
-		return middleName;
-	}
-
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 	public Long getPhoneNo() {
@@ -71,20 +50,20 @@ public class UpdateUserModel {
 		this.doj = doj;
 	}
 
-	public Boolean getIsAdmin() {
-		return isAdmin;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setIsAdmin(Boolean isAdmin) {
-		this.isAdmin = isAdmin;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
-	public Boolean getIsClassTeacher() {
-		return isClassTeacher;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setIsClassTeacher(Boolean isClassTeacher) {
-		this.isClassTeacher = isClassTeacher;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
-	
+
 }

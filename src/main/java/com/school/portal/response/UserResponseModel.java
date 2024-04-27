@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.school.portal.domain.Address;
 
 public class UserResponseModel {
 	
@@ -40,6 +41,8 @@ public class UserResponseModel {
 	private LocalDateTime updatedAt;
 
 	private String createdBy;
+	
+	private Address Address;
 	
 	public String getUserUuid() {
 		return userUuid;
@@ -167,6 +170,14 @@ public class UserResponseModel {
 
 	public void setSectionName(String sectionName) {
 		this.sectionName = sectionName;
+	}
+
+	public Address getAddress() {
+		return Address;
+	}
+
+	public void setAddress(Address address) {
+		Address = address;
 	}
 	
 }

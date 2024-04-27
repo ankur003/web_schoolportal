@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
+import com.school.portal.domain.Address;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.Otp;
@@ -30,6 +31,7 @@ import com.school.portal.dto.LoginUser;
 import com.school.portal.enums.SearchOperation;
 import com.school.portal.queryfilter.GenericSpesification;
 import com.school.portal.queryfilter.SearchCriteria;
+import com.school.portal.repo.AddressRepo;
 import com.school.portal.repo.MasterClassRepo;
 import com.school.portal.repo.MasterSectionRepo;
 import com.school.portal.repo.OtpRepo;
@@ -37,6 +39,7 @@ import com.school.portal.repo.RoleRepo;
 import com.school.portal.repo.UserRepo;
 import com.school.portal.requests.ChangePasswordModel;
 import com.school.portal.requests.CreateUserModel;
+import com.school.portal.requests.UpdateUserModel;
 import com.school.portal.requests.UserRequestModel;
 import com.school.portal.service.EmailService;
 import com.school.portal.service.UserService;
@@ -66,6 +69,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	
 	@Autowired
 	private MasterSectionRepo masterSectionRepo;
+	
+	@Autowired
+	private AddressRepo addressRepo;
 	
 	public UserDetails loadUserByUsername(String username) {
 		User user = userRepo.findByUsernameAndIsActive(username, true);
@@ -244,6 +250,114 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	@Override
 	public File downloadUserProfilePic(User user) {
 		return FileService.getFile(user.getUserUuid());
+	}
+
+	@Override
+	public Address getAddress(User user) {
+		return addressRepo.findByUser(user);
+	}
+
+	@Override
+	public Boolean updateUserDetails(User user, UpdateUserModel updateUserModel) {
+		if (StringUtils.isNotBlank(updateUserModel.getFullName())) {
+			user.setFullName(updateUserModel.getFullName());
+		}
+		if (updateUserModel.getDob() != null) {
+			user.setDob(updateUserModel.getDob());
+		}
+		if (updateUserModel.getDoj() != null) {
+			user.setDoj(updateUserModel.getDoj());
+		}
+		if (updateUserModel.getIsActive() != null) {
+			user.setIsActive(updateUserModel.getIsActive());
+		}
+		if (updateUserModel.getPhoneNo() != null) {
+			user.setPhoneNo(updateUserModel.getPhoneNo());
+		}
+		User savedUser = userRepo.save(user);
+		Address updatableAddress = updateUserModel.getAddress();
+		if (updatableAddress != null) {
+			Address address = getAddress(savedUser);
+			if (address == null) {
+				address = new Address();
+				address.setAddressUuid(SchoolPortalUtils.getUniqueUuid());
+				address.setUser(user);
+				address.setCreatedAt(LocalDateTime.now());
+			} 
+			updateAddress(address, updatableAddress);
+		}
+		return true;
+	}
+
+	private void updateAddress(Address address, Address updatableAddress) {
+		if (StringUtils.isNotBlank(updatableAddress.getcBuildingName())) {
+			address.setcBuildingName(updatableAddress.getcBuildingName());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getcCoutry())) {
+			address.setcCoutry(updatableAddress.getcCoutry());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getcDistrict())) {
+			address.setcDistrict(updatableAddress.getcDistrict());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getcFlatNo())) {
+			address.setcFlatNo(updatableAddress.getcFlatNo());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getcFloorNo())) {
+			address.setcFloorNo(updatableAddress.getcFloorNo());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getcHouseNo())) {
+			address.setcHouseNo(updatableAddress.getcHouseNo());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getcPinCode())) {
+			address.setcPinCode(updatableAddress.getcPinCode());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getcState())) {
+			address.setcState(updatableAddress.getcState());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getcTehsil())) {
+			address.setcTehsil(updatableAddress.getcTehsil());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getcVillage())) {
+			address.setcVillage(updatableAddress.getcVillage());	
+		}
+		
+		
+		if (StringUtils.isNotBlank(updatableAddress.getpBuildingName())) {
+			address.setpBuildingName(updatableAddress.getpBuildingName());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getpCoutry())) {
+			address.setpCoutry(updatableAddress.getpCoutry());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getpDistrict())) {
+			address.setpDistrict(updatableAddress.getpDistrict());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getpFlatNo())) {
+			address.setpFlatNo(updatableAddress.getpFlatNo());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getpFloorNo())) {
+			address.setpFloorNo(updatableAddress.getpFloorNo());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getpHouseNo())) {
+			address.setpHouseNo(updatableAddress.getpHouseNo());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getpPinCode())) {
+			address.setpPinCode(updatableAddress.getpPinCode());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getpState())) {
+			address.setpState(updatableAddress.getpState());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getpTehsil())) {
+			address.setpTehsil(updatableAddress.getpTehsil());	
+		}
+		if (StringUtils.isNotBlank(updatableAddress.getpVillage())) {
+			address.setpVillage(updatableAddress.getpVillage());	
+		}
+		
+		
+		address.setUpdatedAt(LocalDateTime.now());
+		
+		addressRepo.save(address);
+		
 	}
 
 }

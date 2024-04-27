@@ -4,11 +4,13 @@ import java.io.File;
 
 import org.springframework.data.domain.Page;
 
+import com.school.portal.domain.Address;
 import com.school.portal.domain.Otp;
 import com.school.portal.domain.User;
 import com.school.portal.dto.LoginUser;
 import com.school.portal.requests.ChangePasswordModel;
 import com.school.portal.requests.CreateUserModel;
+import com.school.portal.requests.UpdateUserModel;
 import com.school.portal.requests.UserRequestModel;
 
 public interface UserService {
@@ -34,5 +36,9 @@ public interface UserService {
 	public Boolean saveFile(File file, User user);
 
 	public File downloadUserProfilePic(User user);
+
+	public Address getAddress(User user);
+
+	public Boolean updateUserDetails(User user, UpdateUserModel updateUserModel);
 
 }

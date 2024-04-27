@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.school.portal.AbstractController;
+import com.school.portal.domain.Address;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.User;
@@ -87,8 +88,12 @@ public class SuperAdminController extends AbstractController {
 		if (user == null) {
 			return ResponseEntity.noContent().build();
 		}
-		return ResponseEntity.ok(
-				ModelMapperUtil.map(modelMapper, user, UserResponseModel.class));
+		Address address = userService.getAddress(user);
+		UserResponseModel responseModel = modelMapper.map(user, UserResponseModel.class);
+		if (address != null) {
+			responseModel.setAddress(address);
+		}
+		return ResponseEntity.ok(responseModel);
 	}
 	
 	@GetMapping("/user")
@@ -118,8 +123,14 @@ public class SuperAdminController extends AbstractController {
 	
 	@PutMapping("/user/{userUuid}")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> updateUserDetail(@NotBlank(message = "userUuid can not be blank") @RequestBody UpdateUserModel updateUserModel) {
-		return ResponseEntity.ok().build();
+	public ResponseEntity<Object> updateUserDetail(@NotBlank(message = "userUuid can not be blank") @PathVariable ("userUuid") String userUuid,
+		@RequestBody UpdateUserModel updateUserModel) {
+		User user = userService.getUserDetailByUuid(userUuid);
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+		}
+		Boolean isUpdated = userService.updateUserDetails(user, updateUserModel);
+		return ResponseBuilder.buildBooleanRespnse(isUpdated);
 	}
 	
 	@PostMapping("/master-class")
