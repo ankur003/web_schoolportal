@@ -2,9 +2,11 @@ package com.school.portal.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.school.portal.domain.Address;
+import com.school.portal.domain.UserEducation;
 
 public class UserResponseModel {
 	
@@ -43,6 +45,8 @@ public class UserResponseModel {
 	private String createdBy;
 	
 	private Address Address;
+	
+	private List<UserEducation> userEducations;
 	
 	public String getUserUuid() {
 		return userUuid;
@@ -178,6 +182,14 @@ public class UserResponseModel {
 
 	public void setAddress(Address address) {
 		Address = address;
+	}
+
+	public List<UserEducation> getUserEducations() {
+		return userEducations;
+	}
+
+	public void setUserEducations(List<UserEducation> userEducations) {
+		this.userEducations = userEducations;
 	}
 	
 }

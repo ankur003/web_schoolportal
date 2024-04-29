@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ import com.school.portal.domain.Address;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.User;
+import com.school.portal.domain.UserEducation;
 import com.school.portal.enums.UserType;
 import com.school.portal.requests.AssignClassSectionStudentModel;
 import com.school.portal.requests.CreateMasterClassModel;
@@ -45,6 +47,7 @@ import com.school.portal.response.MasterClassModel;
 import com.school.portal.response.MasterSectionModel;
 import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.MasterClassService;
+import com.school.portal.service.UserEducationService;
 import com.school.portal.service.UserService;
 import com.school.portal.utils.ModelMapperUtil;
 import com.school.portal.utils.ResponseBuilder;
@@ -60,6 +63,9 @@ public class SuperAdminController extends AbstractController {
 	
 	@Autowired
 	private MasterClassService masterClassService;
+	
+	@Autowired
+	private UserEducationService userEducationService;
 	
 	@PostMapping("/user")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
@@ -89,9 +95,13 @@ public class SuperAdminController extends AbstractController {
 			return ResponseEntity.noContent().build();
 		}
 		Address address = userService.getAddress(user);
+		List<UserEducation> userEducations = userEducationService.getUserEducationByUserId(user.getUserId());
 		UserResponseModel responseModel = modelMapper.map(user, UserResponseModel.class);
 		if (address != null) {
 			responseModel.setAddress(address);
+		}
+		if (CollectionUtils.isNotEmpty(userEducations)) {
+			responseModel.setUserEducations(userEducations);
 		}
 		return ResponseEntity.ok(responseModel);
 	}
@@ -199,7 +209,8 @@ public class SuperAdminController extends AbstractController {
 	
 	@PostMapping("/s/{userUuid}/class-section-assign")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> assignClassSectionToStudent(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid, @Valid @RequestBody AssignClassSectionStudentModel assignClassSectionStudentModel) {
+	public ResponseEntity<Object> assignClassSectionToStudent(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid, 
+			@Valid @RequestBody AssignClassSectionStudentModel assignClassSectionStudentModel) {
 		Boolean isAssigned = masterClassService.assignClassSectionToStudent(userUuid, assignClassSectionStudentModel);
 		if (Boolean.TRUE.equals(isAssigned)) {
 			return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -236,5 +247,11 @@ public class SuperAdminController extends AbstractController {
 		return ResponseBuilder.getDocumentResponse(file);
 	}
 	
+	@DeleteMapping("/{userEducationUuid}/education")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> deleteUserEducation(@NotBlank(message = "userEducationUuid can not be blank") @PathVariable("userEducationUuid") String userEducationUuid) {
+		Boolean isDeleted = userEducationService.deleteUserEducation(userEducationUuid);
+		return ResponseBuilder.buildBooleanRespnse(isDeleted);
+	}
 	
 }

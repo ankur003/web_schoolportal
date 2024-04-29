@@ -1,8 +1,10 @@
 package com.school.portal.requests;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.school.portal.domain.Address;
+import com.school.portal.domain.UserEducation;
 
 public class UpdateUserModel {
 
@@ -18,6 +20,8 @@ public class UpdateUserModel {
 
 	private Address address;
 
+	private List<UserEducation> userEducations;
+	
 	public String getFullName() {
 		return fullName;
 	}
@@ -64,6 +68,14 @@ public class UpdateUserModel {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public List<UserEducation> getUserEducations() {
+		return userEducations;
+	}
+
+	public void setUserEducations(List<UserEducation> userEducations) {
+		this.userEducations = userEducations;
 	}
 
 }
