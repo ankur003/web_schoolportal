@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.school.portal.domain.Address;
 import com.school.portal.domain.UserEducation;
+import com.school.portal.domain.UserExperience;
 
 public class UserResponseModel {
 	
@@ -47,6 +48,9 @@ public class UserResponseModel {
 	private Address Address;
 	
 	private List<UserEducation> userEducations;
+	
+	private List<UserExperience> UserExperiences;
+
 	
 	public String getUserUuid() {
 		return userUuid;
@@ -190,6 +194,14 @@ public class UserResponseModel {
 
 	public void setUserEducations(List<UserEducation> userEducations) {
 		this.userEducations = userEducations;
+	}
+
+	public List<UserExperience> getUserExperiences() {
+		return UserExperiences;
+	}
+
+	public void setUserExperiences(List<UserExperience> userExperiences) {
+		UserExperiences = userExperiences;
 	}
 	
 }

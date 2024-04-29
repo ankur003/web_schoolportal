@@ -43,6 +43,7 @@ import com.school.portal.requests.UpdateUserModel;
 import com.school.portal.requests.UserRequestModel;
 import com.school.portal.service.EmailService;
 import com.school.portal.service.UserEducationService;
+import com.school.portal.service.UserExperienceService;
 import com.school.portal.service.UserService;
 import com.school.portal.utils.FileService;
 import com.school.portal.utils.SchoolPortalUtils;
@@ -76,6 +77,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	
 	@Autowired
 	private UserEducationService userEducationService;
+	
+	@Autowired
+	private UserExperienceService userExperienceService;
 	
 	public UserDetails loadUserByUsername(String username) {
 		User user = userRepo.findByUsernameAndIsActive(username, true);
@@ -292,6 +296,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		}
 		if (updateUserModel.getUserEducations() != null) {
 			userEducationService.saveOrUpdateUserEducations(savedUser, updateUserModel.getUserEducations());
+		}
+		if (updateUserModel.getUserExperiences() != null) {
+			userExperienceService.saveOrUpdateUserExperiences(savedUser, updateUserModel.getUserExperiences());
 		}
 		return true;
 	}

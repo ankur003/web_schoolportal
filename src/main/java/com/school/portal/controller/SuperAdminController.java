@@ -34,6 +34,7 @@ import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.User;
 import com.school.portal.domain.UserEducation;
+import com.school.portal.domain.UserExperience;
 import com.school.portal.enums.UserType;
 import com.school.portal.requests.AssignClassSectionStudentModel;
 import com.school.portal.requests.CreateMasterClassModel;
@@ -48,6 +49,7 @@ import com.school.portal.response.MasterSectionModel;
 import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.MasterClassService;
 import com.school.portal.service.UserEducationService;
+import com.school.portal.service.UserExperienceService;
 import com.school.portal.service.UserService;
 import com.school.portal.utils.ModelMapperUtil;
 import com.school.portal.utils.ResponseBuilder;
@@ -66,6 +68,9 @@ public class SuperAdminController extends AbstractController {
 	
 	@Autowired
 	private UserEducationService userEducationService;
+	
+	@Autowired
+	private UserExperienceService userExperience;
 	
 	@PostMapping("/user")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
@@ -96,12 +101,16 @@ public class SuperAdminController extends AbstractController {
 		}
 		Address address = userService.getAddress(user);
 		List<UserEducation> userEducations = userEducationService.getUserEducationByUserId(user.getUserId());
+		List<UserExperience> userExps = userExperience.getUserExperienceByUser(user);
 		UserResponseModel responseModel = modelMapper.map(user, UserResponseModel.class);
 		if (address != null) {
 			responseModel.setAddress(address);
 		}
 		if (CollectionUtils.isNotEmpty(userEducations)) {
 			responseModel.setUserEducations(userEducations);
+		}
+		if (CollectionUtils.isNotEmpty(userExps)) {
+			responseModel.setUserExperiences(userExps);
 		}
 		return ResponseEntity.ok(responseModel);
 	}
@@ -251,6 +260,13 @@ public class SuperAdminController extends AbstractController {
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> deleteUserEducation(@NotBlank(message = "userEducationUuid can not be blank") @PathVariable("userEducationUuid") String userEducationUuid) {
 		Boolean isDeleted = userEducationService.deleteUserEducation(userEducationUuid);
+		return ResponseBuilder.buildBooleanRespnse(isDeleted);
+	}
+	
+	@DeleteMapping("/{userExperienceUuid}/experience")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> deleteUserExperience(@NotBlank(message = "userExperienceUuid can not be blank") @PathVariable("userExperienceUuid") String userExperienceUuid) {
+		Boolean isDeleted = userExperience.deleteUserExperience(userExperienceUuid);
 		return ResponseBuilder.buildBooleanRespnse(isDeleted);
 	}
 	
