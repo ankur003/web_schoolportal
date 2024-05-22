@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.school.portal.AbstractController;
 import com.school.portal.domain.Address;
+import com.school.portal.domain.Holidays;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.User;
@@ -40,17 +41,21 @@ import com.school.portal.requests.AssignClassSectionStudentModel;
 import com.school.portal.requests.CreateMasterClassModel;
 import com.school.portal.requests.CreateMasterSectionsModel;
 import com.school.portal.requests.CreateUserModel;
+import com.school.portal.requests.HolidaysRequestModel;
 import com.school.portal.requests.LinkClassSectionModel;
 import com.school.portal.requests.UpdateUserModel;
 import com.school.portal.requests.UserRequestModel;
+import com.school.portal.requests.WhatsAppMessageRequest;
 import com.school.portal.response.LinkedMasterClassModel;
 import com.school.portal.response.MasterClassModel;
 import com.school.portal.response.MasterSectionModel;
 import com.school.portal.response.UserResponseModel;
+import com.school.portal.service.HolidayService;
 import com.school.portal.service.MasterClassService;
 import com.school.portal.service.UserEducationService;
 import com.school.portal.service.UserExperienceService;
 import com.school.portal.service.UserService;
+import com.school.portal.service.impl.TwilioService;
 import com.school.portal.utils.ModelMapperUtil;
 import com.school.portal.utils.ResponseBuilder;
 import com.school.portal.utils.SchoolPortalUtils;
@@ -71,6 +76,12 @@ public class SuperAdminController extends AbstractController {
 	
 	@Autowired
 	private UserExperienceService userExperience;
+	
+	@Autowired
+	private HolidayService holidayService;
+	
+	@Autowired
+    private TwilioService twilioService;
 	
 	@PostMapping("/user")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
@@ -268,6 +279,61 @@ public class SuperAdminController extends AbstractController {
 	public ResponseEntity<Object> deleteUserExperience(@NotBlank(message = "userExperienceUuid can not be blank") @PathVariable("userExperienceUuid") String userExperienceUuid) {
 		Boolean isDeleted = userExperience.deleteUserExperience(userExperienceUuid);
 		return ResponseBuilder.buildBooleanRespnse(isDeleted);
+	}
+	
+	@PutMapping("/holidays")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> saveHolidays(@Valid @RequestBody HolidaysRequestModel holiday) {
+		holidayService.saveHolidays(holiday);
+		return ResponseBuilder.buildBooleanRespnse(true);
+	}
+	
+	@GetMapping("/holidays")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> getAllHolidays() {
+		List<Holidays> holidays = holidayService.getHolidays();
+		if (CollectionUtils.isEmpty(holidays)) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(holidays);
+	}
+	
+	@GetMapping("{holidayUuid}/holidays")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> getHolidayDetails(@NotBlank(message = "holidayUuid can not be blank") @PathVariable("holidayUuid") String holidayUuid) {
+		Holidays holiday = holidayService.getHolidayDetails(holidayUuid);
+		if (holiday == null) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(holiday);
+	}
+	
+	@PutMapping("{holidayUuid}/holidays")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> updateHolidayDetails(@NotBlank(message = "holidayUuid can not be blank") @PathVariable("holidayUuid") String holidayUuid,
+			@Valid @RequestBody Holidays holidays) {
+		Holidays holiday = holidayService.getHolidayDetails(holidayUuid);
+		if (holiday == null) {
+			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+		}
+		holidayService.updateHolidayDetails(holiday, holidays);
+		return ResponseEntity.ok(holiday);
+	}
+	
+	@DeleteMapping("{holidayUuid}/holidays")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> deleteHolidy(@NotBlank(message = "holidayUuid can not be blank") @PathVariable("holidayUuid") String holidayUuid) {
+		Holidays holiday = holidayService.getHolidayDetails(holidayUuid);
+		if (holiday != null) {
+			holidayService.deleteHolidayDetails(holiday);
+		}
+		return ResponseEntity.ok().build();
+	}
+	
+	 
+	@PostMapping("/send-whatsapp")
+	public void sendWhatsApp(@Valid @RequestBody WhatsAppMessageRequest request) {
+		twilioService.sendWhatsAppMessage(request.getToPhoneNumber(), request.getMessage());
 	}
 	
 }

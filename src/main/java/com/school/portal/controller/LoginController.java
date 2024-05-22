@@ -4,6 +4,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +37,14 @@ public class LoginController extends AbstractController {
 
 	@Autowired
 	UserService userService;
+	
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
 	@PostMapping(value = "")
 	public ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser) {
 		User user = userService.checkCredaintials(loginUser); 
 		if (user == null) {
+			LOGGER.warn("[LOGIN] user not found or user is inActive or passoword does not match");
 			return ResponseBuilder.response(HttpStatus.UNAUTHORIZED, true, "Login failed", ErrorCode.ERROR, ResponseCode.ACKNOWLEDGE, 
 					ResponseBuilder.buildLoginFailedResponse());
 		}

@@ -38,8 +38,12 @@ public class SchoolPortalApplication {
 		SpringApplication.run(SchoolPortalApplication.class, args);
 	}
 	
+	@Autowired
+    private DatabaseService databaseService;
+	
 	@PostConstruct
 	public void addRoles() {
+		//databaseService.deleteTable("holidays");
 		if (roleRepo.findAll().isEmpty()) {
 			Stream.of(UserType.values()).forEach(usertype -> {
 				Role role = new Role();
