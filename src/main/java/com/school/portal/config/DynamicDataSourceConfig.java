@@ -28,9 +28,12 @@ public class DynamicDataSourceConfig {
     public DataSource primaryDataSource() {
     	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://blgzvsgk8gc0lmrukbvp-mysql.services.clever-cloud.com:3306/blgzvsgk8gc0lmrukbvp?createDatabaseIfNotExist=true&useSSL=false");
-        dataSourceBuilder.username("umh4poimxymgqvs5");
-        dataSourceBuilder.password("Tkvhn9xlPPGPwgACwLQF");
+//        dataSourceBuilder.url("jdbc:mysql://blgzvsgk8gc0lmrukbvp-mysql.services.clever-cloud.com:3306/blgzvsgk8gc0lmrukbvp?createDatabaseIfNotExist=true&useSSL=false");
+//        dataSourceBuilder.username("umh4poimxymgqvs5");
+//        dataSourceBuilder.password("Tkvhn9xlPPGPwgACwLQF");
+        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&useSSL=false");
+        dataSourceBuilder.username("root");
+        dataSourceBuilder.password("test");
         return dataSourceBuilder.build();
     }
 
@@ -38,9 +41,9 @@ public class DynamicDataSourceConfig {
     public DataSource secondaryDataSource() {
     	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://blgzvsgk8gc0lmrukbvp-mysql.services.clever-cloud.com:3306/2blgzvsgk8gc0lmrukbvp?createDatabaseIfNotExist=true&useSSL=false");
-        dataSourceBuilder.username("umh4poimxymgqvs5");
-        dataSourceBuilder.password("uRrQS3mksTGnni7xKK5k");
+        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&useSSL=false");
+        dataSourceBuilder.username("root");
+        dataSourceBuilder.password("test");
         return dataSourceBuilder.build();
 
     }

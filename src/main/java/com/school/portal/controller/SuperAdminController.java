@@ -55,7 +55,6 @@ import com.school.portal.service.MasterClassService;
 import com.school.portal.service.UserEducationService;
 import com.school.portal.service.UserExperienceService;
 import com.school.portal.service.UserService;
-import com.school.portal.service.impl.TwilioService;
 import com.school.portal.utils.ModelMapperUtil;
 import com.school.portal.utils.ResponseBuilder;
 import com.school.portal.utils.SchoolPortalUtils;
@@ -79,9 +78,6 @@ public class SuperAdminController extends AbstractController {
 	
 	@Autowired
 	private HolidayService holidayService;
-	
-	@Autowired
-    private TwilioService twilioService;
 	
 	@PostMapping("/user")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
@@ -328,12 +324,6 @@ public class SuperAdminController extends AbstractController {
 			holidayService.deleteHolidayDetails(holiday);
 		}
 		return ResponseEntity.ok().build();
-	}
-	
-	 
-	@PostMapping("/send-whatsapp")
-	public void sendWhatsApp(@Valid @RequestBody WhatsAppMessageRequest request) {
-		twilioService.sendWhatsAppMessage(request.getToPhoneNumber(), request.getMessage());
 	}
 	
 }
