@@ -19,10 +19,10 @@ function ManageClasses(props) {
 
 
 
-    const options = secList.map(section => ({
-        label: section.sectionName,
-        value: section.masterSectionUuid
-    }));
+    const options = secList ? secList?.map(section => ({
+        label: section?.sectionName,
+        value: section?.masterSectionUuid
+    })) : "";
 
 
 
@@ -35,7 +35,7 @@ function ManageClasses(props) {
     };
 
     const formSubmit = (type) => {
-        let sectionID = selected.map(item => (item.value));
+        let sectionID = selected?.map(item => (item?.value));
         let data = { formState, sectionID };
         dispatch(createClassAndSection(data, type))
         SetIsModal(false);

@@ -45,7 +45,7 @@ const ProtectedRoute = () => {
     };
 
     useEffect(() => {
-        navigate('/ProfileDetailsPage')
+        navigate('/ManageClasses')
     }, []);
 
     return (
