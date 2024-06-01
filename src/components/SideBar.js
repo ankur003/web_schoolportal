@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 function SideBar(props) {
+    const [isActive, setIsActive] = useState("Manage classroom");
+    const [isSubActive, setSubIsActive] = useState(0);
+    const navigate = useNavigate();
+    let { pathname } = useLocation();
+
+
     let role = sessionStorage.getItem("role");
-    console.log(role);
     let superAdmin = [
         {
             name: "Manage classroom",
@@ -41,17 +46,43 @@ function SideBar(props) {
 
     let routes = role === "SUPER_ADMIN" ? [...superAdmin] : "";
 
+    const findSubNavIndex = (superAdminArray, route) => {
+        for (const [mainIndex, item] of superAdminArray.entries()) {
+            if (item.subNav) {
+                const subNavIndex = item.subNav.findIndex(subNavItem => subNavItem.to === route);
+                if (subNavIndex !== -1) {
+                    return { mainIndex, subNavIndex };
+                }
+            }
+        }
+        return null; // Return null if not found
+    };
+
+    const result = findSubNavIndex(routes, pathname);
+
     useEffect(() => {
 
-    });
+        let indexNumber = sessionStorage.getItem("index");
 
-    const [isActive, setIsActive] = useState("Manage classroom");
-    const [isSubActive, setSubIsActive] = useState(0);
-    const navigate = useNavigate();
+        if (indexNumber != null) {
+            setSubIsActive(indexNumber);
+            let activeRoute = routes.find(r => r.to === pathname);
+            if (activeRoute === undefined) {
+                setIsActive(routes?.[result?.mainIndex]?.name);
+                setSubIsActive(result?.subNavIndex)
+            }
+            else if (result === null) {
+                setIsActive(activeRoute?.name);
+                setSubIsActive(0);
+            }
+        }
+    }, [result]);
+
+
 
     const sideBarHandler = (value) => {
-        setIsActive(value.name);
-        if (value.subNav) {
+        setIsActive(value?.name);
+        if (value?.subNav) {
             if (isSubActive === 0) {
                 navigate(`${value?.subNav[0]?.to}`)
             }
@@ -62,6 +93,7 @@ function SideBar(props) {
     }
     const sideSubBarHandler = (value, index) => {
         setSubIsActive(index);
+        // sessionStorage.setItem("index", index);
         navigate(`${value.to}`);
     }
     return (
@@ -69,13 +101,13 @@ function SideBar(props) {
             <ul>
                 {routes.map((data, index) =>
                     <li key={index} className={isActive === data?.name ? "active" : " "}>
-                        <a className={data?.subNav ? "collapsed" : ""} data-bs-toggle="collapse" data-bs-target={data?.subNav?.length > 0 ? "#collapseWidthExample" : ""} onClick={() => sideBarHandler(data)}><span className='icon'><i className={data?.icon}></i></span>{data?.name}
+                        <a className={data?.subNav ? "collapsed" : ""} data-bs-toggle="collapse" data-bs-target={data?.subNav?.length > 0 ? "#collapseWidthExample" : "#collapseWidthExample"} onClick={() => sideBarHandler(data)}><span className='icon'><i className={data?.icon}></i></span>{data?.name}
                             {data?.subNav && <i className="fas fa-chevron-up"></i>}
                         </a>
                         {data?.subNav?.length > 0 ?
                             <ul className="subList collapse" id="collapseWidthExample">
                                 {data?.subNav?.map((subData, index) =>
-                                    <li key={index} className={isSubActive === index ? "active" : " "}>
+                                    <li key={index} className={Number(isSubActive) === index ? "active" : " "}>
                                         <a onClick={() => sideSubBarHandler(subData, index)}><span className='icon'><i className="fas fa-circle"></i></span>{subData?.name}</a>
                                     </li>
                                 )}

@@ -44,9 +44,9 @@ const ProtectedRoute = () => {
         navigate('/');
     };
 
-    useEffect(() => {
-        navigate('/ManageClasses')
-    }, []);
+    // useEffect(() => {
+    //     navigate('/ManageClasses')
+    // }, []);
 
     return (
         isAuthenticated ?

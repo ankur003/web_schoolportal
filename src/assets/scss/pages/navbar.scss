@@ -123,6 +123,11 @@
                         .icon {
                             font-size: 4px;
                         }
+                        &:hover {
+                            background-color: #0e3f8a !important;
+                            transition: all .5s ease-in-out;
+                            color: $white !important;
+                        }
                     }
                 }
             }
