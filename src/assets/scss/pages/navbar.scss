@@ -77,26 +77,79 @@
         margin: 0;
 
         li {
-            padding: 12px 15px;
-            cursor: pointer;
+            a {
+                padding: 12px 15px;
+                cursor: pointer;
+                display: flex;
+                font-size: 14px;
+                text-decoration: none;
+                align-items: center;
+                position: relative;
+                color: $content-color;
 
-            &.active,
-            &:hover {
-                background-color: $blue;
-                transition: all .5s ease-in-out;
+                .icon {
+                    margin-right: 8px;
+                }
 
-                a {
-                    color: $white;
+                .fa-chevron-up {
+                    @include position-top-right;
+                    top: 17px;
+                    right: 14px;
+                }
+
+                &.collapsed .fa-chevron-up {
+                    transform: rotate(180deg);
                 }
             }
-        }
 
-        a {
-            font-size: 14px;
-            text-decoration: none;
+            &.active a,
+            &:hover a {
+                background-color: $blue;
+                transition: all .5s ease-in-out;
+                color: $white !important;
+            }
 
-            .icon {
-                margin-right: 8px;
+            .subList {
+                background-color: #638bc8;
+
+                li {
+                    a {
+                        padding-left: 30px !important;
+                        background-color: transparent !important;
+                        color: $white ;
+                        display: flex;
+                        align-items: center;
+
+                        .icon {
+                            font-size: 4px;
+                        }
+                    }
+                }
+            }
+
+            &.active {
+                .subList {
+                    li {
+                        a {
+                            padding: 12px 15px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            text-decoration: none;
+
+                            .icon {
+                                margin-right: 8px;
+                            }
+                        }
+
+                        &.active a,
+                        &:hover a {
+                            background-color: #0e3f8a !important;
+                            transition: all .5s ease-in-out;
+                            color: $white !important;
+                        }
+                    }
+
+                }
             }
         }
     }

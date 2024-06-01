@@ -4,10 +4,12 @@ import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import loginReducer from './Redux/Reducers/loginReducer';
 import manageClassesReducer from './Redux/Reducers/manageClassesReducer';
+import entityReducer from './Redux/Reducers/entityReducer';
 
 const rootReducer = combineReducers({
     loginReducer,
-    manageClassesReducer
+    manageClassesReducer,
+    entityReducer,
 });
 
 const middleware = [thunk];

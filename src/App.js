@@ -5,6 +5,9 @@ import ProtectedRoute from './container/ProtectedRoute';
 import Login from './components/Login';
 import ManageClasses from './container/ManageClasses';
 import EntityPage from './container/EntityPage';
+import StudentPage from './container/StudentPage';
+import TeacherPage from './container/TeacherPage';
+import ProfileDetailsPage from './container/ProfileDetailsPage';
 import ForgetPassword from './components/ForgetPassword';
 import ChangePassword from './components/ChangePassword';
 
@@ -18,6 +21,9 @@ const App = () => {
           <Route element={<ManageClasses />} path="/ManageClasses" />
           <Route element={<EntityPage />} path="/EntityPage" />
           <Route element={<ChangePassword />} path="/ChangePassword" />
+          <Route element={<StudentPage />} path="/StudentPage" />
+          <Route element={<TeacherPage />} path="/TeacherPage" />
+          <Route element={<ProfileDetailsPage />} path="/ProfileDetailsPage" />
         </Route>
       </Routes>
     </Router>

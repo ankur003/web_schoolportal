@@ -1,31 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getEntities, getAllUserDetails } from '../Redux/Action/entityAction';
-import { useNavigate } from "react-router-dom";
+import { getTeacherEntities, createUser } from '../Redux/Action/entityAction';
 
-
-const EntityPage = () => {
-    const navigate = useNavigate();
+export default function TeacherPage() {
     const dispatch = useDispatch()
 
-    const { entityList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
-
+    const { teacherList, pageLimit, pageCount, loader, noDataFound } = useSelector(state => state.entityReducer);
+    console.log({ loader, noDataFound });
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState("1");
     const [limit, setLimit] = useState("100");
-
-    // console.log({ dataList, pageLimit, pageCount })
+    const [isModal, SetIsModal] = useState(false);
+    const [formData, setFormData] = useState({
+        username: '',
+        fullName: '',
+    });
 
     useEffect(() => {
-        let data = { page, limit }
-        dispatch(getEntities(data))
+        let data = { page, limit, userType: "teacher" }
+        dispatch(getTeacherEntities(data))
     }, [dispatch]);
 
     useEffect(() => {
-        setDataList(entityList);
+        setDataList(teacherList);
         setPage(pageCount);
         setLimit(pageLimit);
-    }, [entityList, pageCount, pageLimit]);
+    }, [pageCount, pageLimit]);
+
+
+    const handlerChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+    };
+
+    const formSubmit = () => {
+        let data = { "userType": "TEACHER", ...formData }
+        console.log({ data });
+        dispatch(createUser(data, SetIsModal)); // If no property has a non-empty value, return true
+
+    }
 
     // let inputFields = document.querySelectorAll('.form-control');
 
@@ -38,15 +54,12 @@ const EntityPage = () => {
     //     let data = { page, limit, values, filter: true }
     //     dispatch(getEntities(data))
     // };
-
     return (
         <>
             <div className="header">
-                <h1>Manage Entity</h1>
+                <h1>Teachers</h1>
                 <div className="header-right">
-                    {/* {active === "home-tab" ?
-                        <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Class Name</button> :
-                        active === "profile-tab" ? <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Section</button> : <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Link Class & Section</button>} */}
+                    <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Teacher</button>
                 </div>
             </div>
             <div className="content-body">
@@ -80,14 +93,13 @@ const EntityPage = () => {
                                     {dataList?.map((data, index) =>
                                         <tr key={index}>
                                             <th scope="row">{index + 1}</th>
-                                            <td >{data?.fullName ? data?.fullName : "N/A"}</td>
+                                            <td>{data?.fullName ? data?.fullName : "N/A"}</td>
                                             <td>{data?.username}</td>
                                             <td>{data?.phoneNo ? data?.phoneNo : "N/A"}</td>
                                             <td>{data?.userType}</td>
                                             <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                             <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                             <td>
-                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => dispatch(getAllUserDetails(data?.userUuid, navigate))}>View</button>
                                                 <button className="btn btn-success mr-r-4">Edit</button>
                                                 <button className="btn btn-danger">Delete</button>
                                             </td>
@@ -96,7 +108,8 @@ const EntityPage = () => {
                                 </tbody>
                             </table>
                         </div>
-                        : <div className="no-data-found">
+                        :
+                        <div className="no-data-found">
                             <div className="no-data-image">
                                 <img alt='logo' src={require('../assets/images/no-data-found.gif')} />
                             </div>
@@ -108,10 +121,39 @@ const EntityPage = () => {
                             <img alt='logo' src={require('../assets/images/loader.gif')} />
                         </div>
                     </div>
-                }
-            </div>
-        </>
-    );
-};
 
-export default EntityPage;
+                }
+            </div >
+
+            {isModal &&
+                <div className="modal d-block">
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel"> Create Student</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => SetIsModal(false)}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-content">
+                                    <div className="form-group">
+                                        <label className="form-group-label">User Name</label>
+                                        <input type="text" className="form-control" name="username" placeholder="Enter Email Id" onChange={(e) => handlerChange(e)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-group-label">Full Name</label>
+                                        <input type="text" className="form-control" name="fullName" placeholder="Enter Full Name" onChange={(e) => handlerChange(e)} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => SetIsModal(false)}>Close</button>
+                                <button type="button" className="btn btn-primary" onClick={() => formSubmit()}>Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>}
+        </>
+    )
+}

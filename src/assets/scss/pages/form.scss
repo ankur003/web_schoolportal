@@ -17,9 +17,6 @@
     background-color: $white;
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
-    .form-group {
-        margin-bottom: 20px;
-    }
 
     .form-content-footer {
         display: flex;
@@ -29,5 +26,25 @@
             padding: 5px 20px;
             font-size: 15px !important;
         }
+    }
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.password-form {
+    position: relative;
+
+    .form-control {
+        padding-right: 45px;
+    }
+
+    .show-password-icon {
+        color: $content-color;
+        @include transform-top-center-align;
+        right: 15px;
+        cursor: pointer;
     }
 }

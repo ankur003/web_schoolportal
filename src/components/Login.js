@@ -16,6 +16,7 @@ function Login(props) {
 	const [loader, setLoader] = useState(false);
 	const [isError, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
+	const [isShowPassword, setIsShowPassword] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -29,11 +30,11 @@ function Login(props) {
 			console.log({ response });
 			let { message, responseObject, status } = response.data;
 			if (status === 200) {
-				sessionStorage.setItem("role", responseObject.userType)
-				sessionStorage.setItem("token", responseObject.token)
-				sessionStorage.setItem("userName", responseObject.userName)
+				sessionStorage.setItem("role", responseObject.userType);
+				sessionStorage.setItem("token", responseObject.token);
+				sessionStorage.setItem("userName", responseObject.userName);
 				setLoader(false);
-				setError(false)
+				setError(false);
 				navigate('/ManageClasses');
 				dispatch(loginAction(message));
 			}
@@ -80,11 +81,12 @@ function Login(props) {
 							<label className="form-icon"><i className="fa fa-user"></i></label>
 							<input type="text" className="form-control" value={userName || ""} placeholder="User name" onChange={(e) => setUserName(e.target.value)} />
 						</div>
-						<div className="form-group">
+						<div className="form-group password-form">
 							<label className="form-icon"><i className="fa fa-lock"></i></label>
-							<input type="password" className="form-control" value={password || ""} placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+							<input type={!isShowPassword ? "password" : "text"} className="form-control" value={password || ""} placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+							<span className="show-password-icon" onClick={() => setIsShowPassword(!isShowPassword)}>{isShowPassword ? <i className="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}</span>
 						</div>
-						<a onClick={() => navigate('/ForgetPassword')}>Forget Password ?</a>
+						<a href="#" onClick={() => navigate('/ForgetPassword')}>Forget Password ?</a>
 						{loader ? <button className="btn btn-primary" type="button" disabled>
 							<span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 							<span className="sr-only">Loading...</span>

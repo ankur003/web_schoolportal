@@ -26,7 +26,7 @@ function ManageClasses(props) {
 
 
 
-    useEffect(() => {
+    useEffect(() => {   
         dispatch(getClasses());
     }, [dispatch, loader]);
 
@@ -81,7 +81,7 @@ function ManageClasses(props) {
                                     <tbody>
                                         {classList?.map((data, index) =>
                                             <tr key={index}>
-                                                <th scope="row">{index}</th>
+                                                <th scope="row">{index + 1}</th>
                                                 <td>{data?.className}</td>
                                                 <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                                 <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
@@ -113,7 +113,7 @@ function ManageClasses(props) {
                                 <tbody>
                                     {secList?.map((data, index) =>
                                         <tr key={index}>
-                                            <th scope="row">{index}</th>
+                                            <th scope="row">{index + 1}</th>
                                             <td>{data?.sectionName}</td>
                                             <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                             <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
@@ -145,7 +145,7 @@ function ManageClasses(props) {
                                 <tbody>
                                     {linkList?.map((data, index) =>
                                         <tr key={index}>
-                                            <th scope="row">{index}</th>
+                                            <th scope="row">{index + 1}</th>
                                             <td>{data?.className}</td>
                                             <td>{data?.masterSection?.length > 0 ? data?.masterSection?.sort().map((data, index) => <span key={index}>{data?.sectionName + ","}</span>) : "no section linked"}</td>
                                             <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>

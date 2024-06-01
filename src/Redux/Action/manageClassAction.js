@@ -48,7 +48,6 @@ export const createClassAndSection = (data, type) => (dispatch) => {
     else {
         value = { classUuid: data.formState.className, sectionUuids: data.sectionID };
     }
-    console.log({ value })
     axios.post(type === "CreateClass" ? `${basePathUrl}/sa/master-class` : type === "CreateSection" ? `${basePathUrl}/sa/master-section` : `${basePathUrl}/sa/class-section-link`, value)
         .then(response => {
             console.log({response});

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Outlet, Navigate, useNavigate } from 'react-router-dom';
 import SideBar from '../components/SideBar';
-import { routesList } from '../../src/routes.js';
+// import { routesList } from '../../src/routes.js';
 
 const Header = styled.header`
   display: flex;
@@ -44,6 +44,10 @@ const ProtectedRoute = () => {
         navigate('/');
     };
 
+    useEffect(() => {
+        navigate('/ProfileDetailsPage')
+    }, []);
+
     return (
         isAuthenticated ?
             <div className="main-wrapper">
@@ -59,7 +63,7 @@ const ProtectedRoute = () => {
                         </ul>
                     </div>
                 </Header>
-                <SideBar routes={routesList} />
+                <SideBar />
                 <div className="main-body">
                     <Outlet />
                 </div>

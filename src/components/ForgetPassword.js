@@ -12,7 +12,7 @@ export default function ForgetPassword() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isShow, setIsShow] = useState(false);
-    console.log(isShow);
+    const [isShowPassword, setIsShowPassword] = useState(false);
 
     const loginHandler = () => {
         const config = { 'content-type': 'application/json' };
@@ -78,9 +78,10 @@ export default function ForgetPassword() {
                                 <label className="form-icon"><i className="fa fa-lock"></i></label>
                                 <input type="text" className="form-control" value={newPassword || ""} placeholder="New Password" onChange={(e) => setNewPassword(e.target.value)} />
                             </div>
-                            <div className="form-group">
+                            <div className="form-group password-form">
                                 <label className="form-icon"><i className="fa fa-lock"></i></label>
-                                <input type="password" className="form-control" value={confirmPassword || ""} placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} />
+                                <input type={!isShowPassword ? "password" : "text"}  className="form-control" value={confirmPassword || ""} placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} />
+                                <span className="show-password-icon" onClick={()=>setIsShowPassword(!isShowPassword)}>{isShowPassword ? <i className="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}</span>
                             </div>
                             <a onClick={() => navigate('/')}>Back To Login</a>
                             <button className="btn btn-block btn-primary" onClick={forgetPasswordHandler}>Confirm Password</button>

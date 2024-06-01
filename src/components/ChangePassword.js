@@ -17,6 +17,7 @@ export default function ChangePassword() {
     });
     const [message, setMessage] = useState("");
     const [loader, setLoader] = useState(false);
+    const [isShowPassword, setIsShowPassword] = useState(false);
 
 
     const handlerChange = (e) => {
@@ -28,11 +29,10 @@ export default function ChangePassword() {
     };
 
     const submit = (e) => {
-        console.log({ formData })
+        setLoader(true);
         axios.put(`${basePathUrl}/password/change`, formData).then(response => {
             console.log({ response });
-            setLoader(true);
-            if (response.status === 201) {
+            if (response.status === 200) {
                 setLoader(false);
                 sessionStorage.removeItem("token");
                 sessionStorage.removeItem("role");
@@ -43,6 +43,7 @@ export default function ChangePassword() {
         })
             .catch(error => {
                 console.log(error);
+                setLoader(false);
             });
     }
 
@@ -55,15 +56,24 @@ export default function ChangePassword() {
                 <div className="form-body-content" style={inlineStyle}>
                     <div className="form-group">
                         <label className="form-group-label">Old Password</label>
-                        <input type="password" className="form-control" name="oldPassword" placeholder="Enter Old Password" onChange={(e) => handlerChange(e)} />
+                        <div className="password-form">
+                            <input type={!isShowPassword ? "password" : "text"} className="form-control" name="oldPassword" placeholder="Enter Old Password" onChange={(e) => handlerChange(e)} />
+                            <span className="show-password-icon" onClick={() => setIsShowPassword(!isShowPassword)}>{isShowPassword ? <i class="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}</span>
+                        </div>
                     </div>
                     <div className="form-group">
                         <label className="form-group-label">New Password</label>
-                        <input type="text" className="form-control" name="newPassword" placeholder="Enter New Password" onChange={(e) => handlerChange(e)} />
+                        <div className="password-form">
+                            <input type={!isShowPassword ? "password" : "text"} className="form-control" name="newPassword" placeholder="Enter New Password" onChange={(e) => handlerChange(e)} />
+                            <span className="show-password-icon" onClick={() => setIsShowPassword(!isShowPassword)}>{isShowPassword ? <i class="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}</span>
+                        </div>
                     </div>
                     <div className="form-group">
                         <label className="form-group-label">Confirm New Password</label>
-                        <input type="text" className="form-control" name="confirmNewPassword" placeholder="Enter Confirm New Password" onChange={(e) => handlerChange(e)} />
+                        <div className="password-form">
+                            <input type={!isShowPassword ? "password" : "text"} className="form-control" name="confirmNewPassword" placeholder="Enter Confirm New Password" onChange={(e) => handlerChange(e)} />
+                            <span className="show-password-icon" onClick={() => setIsShowPassword(!isShowPassword)}>{isShowPassword ? <i class="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}</span>
+                        </div>
                     </div>
                     <div className="form-content-footer">
                         <button type="submit" className="btn btn-success" disabled={loader} onClick={submit}>
