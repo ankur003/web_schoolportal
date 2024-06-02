@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Outlet, Navigate, useNavigate } from 'react-router-dom';
 import SideBar from '../components/SideBar';
+import { useTranslation } from 'react-i18next';
 // import { routesList } from '../../src/routes.js';
 
 const Header = styled.header`
@@ -36,6 +37,7 @@ const H1 = styled.h1`
 
 const ProtectedRoute = () => {
     let navigate = useNavigate();
+    const [isActive, setIsActive] = useState(true)
     const isAuthenticated = sessionStorage.getItem("token");
     const user = sessionStorage.getItem("userName");
     const logoutHandler = () => {
@@ -48,11 +50,28 @@ const ProtectedRoute = () => {
     //     navigate('/ManageClasses')
     // }, []);
 
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng) => {
+        i18n.changeLanguage(lng);
+        if (lng === "en") {
+            setIsActive(true)
+        }
+        else {
+            setIsActive(false)
+        }
+
+    };
+
     return (
         isAuthenticated ?
             <div className="main-wrapper">
                 <Header className="main-header">
                     <H1><img alt="logo" src={require('../../src/assets/images/logo.jpg')} />The School Portal</H1>
+                    <ul className="language-button">
+                        <li className={isActive ? "active" : ""} onClick={() => changeLanguage('en')}>En</li>
+                        <li className={!isActive ? "active" : ""} onClick={() => changeLanguage('hi')}>Hi</li>
+                    </ul>
                     <div className="dropdown">
                         <button className="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             {user} <i className="fas fa-ellipsis-v"></i>

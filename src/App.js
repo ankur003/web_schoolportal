@@ -1,5 +1,6 @@
 import '././assets/scss/main.scss';
 import React from 'react';
+import './i18n'; 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './container/ProtectedRoute';
 import Login from './components/Login';

@@ -123,6 +123,7 @@
                         .icon {
                             font-size: 4px;
                         }
+
                         &:hover {
                             background-color: #0e3f8a !important;
                             transition: all .5s ease-in-out;
@@ -157,5 +158,38 @@
                 }
             }
         }
+    }
+}
+
+.language-button {
+    list-style: none !important;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    li:not(:last-child) {
+        margin-right: 8px;
+    }
+
+    li {
+        color: $white;
+        border: 1px solid $white;
+        font-size: 12px;
+        height: 100%;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 2px;
+        cursor: pointer;
+        &:hover,
+        &.active {
+            background-color: $white !important;
+            color: $content-color;
+        }
+        
     }
 }

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { MultiSelect } from "react-multi-select-component";
 import { useDispatch, useSelector } from 'react-redux';
 import { getClasses, createClassAndSection } from '../Redux/Action/manageClassAction';
+import { useTranslation } from 'react-i18next';
 
 function ManageClasses(props) {
-
+    const { t, i18n } = useTranslation();
     const { classList, secList, linkList, loader } = useSelector(state => state.manageClassesReducer);
     const dispatch = useDispatch();
 
@@ -45,7 +46,7 @@ function ManageClasses(props) {
     return (
         <>
             <div className="header">
-                <h1>Manage Classes</h1>
+                <h1>{t('manageClasses')}</h1>
                 <div className="header-right">
                     {active === "home-tab" ?
                         <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Class Name</button> :
