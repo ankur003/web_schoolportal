@@ -1,9 +1,11 @@
 package com.school.portal.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -195,17 +197,27 @@ public class ResponseBuilder {
 		if (document == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		}
-		CleanupInputStreamResource resource = null;
+		String base64String = getBase64String(document);
+		Map<String, Object> map = new TreeMap<>();
+		map.put("base64String", base64String);
+		return ResponseEntity.ok().body(map);
+	}
+	
+	private static String getBase64String(File imageFile) {
 		try {
-			resource = new CleanupInputStreamResource(document);
-		} catch (final IOException e) {
-			Map<String, Object> map = new TreeMap<>();
-			map.put("error", "Something Went Wrong on the sever.");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
-		}
-		final String mediaType = probeContentType(document.getAbsolutePath());
-		return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=\"" + document.getName() + "\"")
-				.contentLength(document.length()).contentType(MediaType.parseMediaType(mediaType)).body(resource);
+            // Read the file contents
+            byte[] fileBytes = new byte[(int) imageFile.length()];
+            FileInputStream fileInputStream = new FileInputStream(imageFile);
+            fileInputStream.read(fileBytes);
+            fileInputStream.close();
+
+            // Encode the file contents to Base64
+            return Base64.getEncoder().encodeToString(fileBytes);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return null;
 	}
 
 }
