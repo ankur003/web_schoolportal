@@ -6,7 +6,7 @@ export const getAllUserDetails = (data, navigate) => (dispatch) => {
     console.log({ data });
     navigate("/ProfileDetailsPage")
     dispatch({ type: Constants.RESET_STATE })
-    let url = `${basePathUrl}/sa/e0162288-2bc8-4d0a-af55-8a9e241aadb4/profile-pic`;
+    let url = `${basePathUrl}/sa/${data}/profile-pic`;
 
     axios.get(url)
         .then(response => {

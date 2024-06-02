@@ -4,12 +4,7 @@ import { useSelector } from 'react-redux'
 export default function ProfileDetailsPage() {
 
     const { pic, loader, noDataFound } = useSelector((state) => state.entityReducer)
-    const [imageSrc, setImageSrc] = useState('');
-
-    console.log(pic)
-    useEffect(() => {
-        setImageSrc('data:image/jpeg;base64:' + pic)
-    },[pic])
+    
 
     return (
         <>
@@ -28,7 +23,7 @@ export default function ProfileDetailsPage() {
                     </div>
                     <div className="profile-image">
                         <div className="image">
-                            <img src={imageSrc} />
+                            <img src={pic?.base64String === undefined ?  require('../assets/images/no-data-found.gif') : 'data:image/png;base64,'+pic?.base64String} />
                         </div>
                     </div>
                     <div className="profile-content">
@@ -45,13 +40,13 @@ export default function ProfileDetailsPage() {
                 </div>
                 <div className='profile-all-details'>
                     <nav>
-                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">About</button>
+                        <div className="nav nav-tabs" id="nav-tab" role="tablist">
+                            <button className="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">About</button>
                         </div>
                     </nav>
 
-                    <div class="tab-content" id="nav-tabContent">
-                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div className="tab-content" id="nav-tabContent">
+                        <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                             <div className="card">
                                 <div className='card-header'>
                                     <h6>Personal Information</h6>
