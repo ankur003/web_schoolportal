@@ -44,6 +44,7 @@ import com.school.portal.requests.UserRequestModel;
 import com.school.portal.service.EmailService;
 import com.school.portal.service.UserEducationService;
 import com.school.portal.service.UserExperienceService;
+import com.school.portal.service.UserInfoService;
 import com.school.portal.service.UserService;
 import com.school.portal.utils.FileService;
 import com.school.portal.utils.SchoolPortalUtils;
@@ -80,6 +81,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	
 	@Autowired
 	private UserExperienceService userExperienceService;
+	
+	@Autowired
+	private UserInfoService userInfoService;
 	
 	public UserDetails loadUserByUsername(String username) {
 		User user = userRepo.findByUsernameAndIsActive(username, true);
@@ -300,6 +304,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		if (updateUserModel.getUserExperiences() != null) {
 			userExperienceService.saveOrUpdateUserExperiences(savedUser, updateUserModel.getUserExperiences());
 		}
+		if (updateUserModel.getUserInfo() != null) {
+			userInfoService.saveorUpdateUserInfo(savedUser, updateUserModel.getUserInfo());
+		}
 		return true;
 	}
 
@@ -365,11 +372,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 			address.setpVillage(updatableAddress.getpVillage());	
 		}
 		
-		
 		address.setUpdatedAt(LocalDateTime.now());
-		
 		addressRepo.save(address);
-		
 	}
 
 }

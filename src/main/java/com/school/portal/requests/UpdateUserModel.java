@@ -6,6 +6,7 @@ import java.util.List;
 import com.school.portal.domain.Address;
 import com.school.portal.domain.UserEducation;
 import com.school.portal.domain.UserExperience;
+import com.school.portal.domain.UserInfo;
 
 public class UpdateUserModel {
 
@@ -24,6 +25,8 @@ public class UpdateUserModel {
 	private List<UserEducation> userEducations;
 	
 	private List<UserExperience> userExperiences;
+	
+	private UserInfo userInfo;
 	
 	public String getFullName() {
 		return fullName;
@@ -87,6 +90,14 @@ public class UpdateUserModel {
 
 	public void setUserExperiences(List<UserExperience> userExperiences) {
 		this.userExperiences = userExperiences;
+	}
+
+	public UserInfo getUserInfo() {
+		return userInfo;
+	}
+
+	public void setUserInfo(UserInfo userInfo) {
+		this.userInfo = userInfo;
 	}
 	
 }

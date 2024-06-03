@@ -7,4 +7,6 @@ public interface UserInfoService {
 
 	UserInfo getUserInfo(User user);
 
+	void saveorUpdateUserInfo(User savedUser, UserInfo userInfo);
+
 }
