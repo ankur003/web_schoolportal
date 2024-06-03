@@ -3,6 +3,7 @@ package com.school.portal.service.impl;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,18 +68,37 @@ public class MasterClassServiceImpl implements MasterClassService {
 
 	@Override
 	public Boolean linkClassSections(LinkClassSectionModel linkClassSectionModel) {
-		MasterClass classMaster = masterClassRepo.findByMasterClassUuid(linkClassSectionModel.getClassUuid());
-		if (classMaster != null) {
-			List<MasterSection> masterSections = masterSectionRepo.findByMasterSectionUuidIn(linkClassSectionModel.getSectionUuids());
-			if (masterSections != null && masterSections.size() == linkClassSectionModel.getSectionUuids().size()) {
-				classMaster.setMasterSection(new HashSet<>(masterSections));
-				classMaster.setUpdatedAt(LocalDateTime.now());
-				masterClassRepo.save(classMaster);
-				return true;
-			}
-		}
-		return false;
+	    MasterClass classMaster = masterClassRepo.findByMasterClassUuid(linkClassSectionModel.getClassUuid());
+	    if (classMaster != null) {
+	        List<MasterSection> masterSections = masterSectionRepo.findByMasterSectionUuidIn(linkClassSectionModel.getSectionUuids());
+	        if (masterSections != null && masterSections.size() == linkClassSectionModel.getSectionUuids().size()) {
+	            Set<MasterSection> ms = classMaster.getMasterSection();
+	            if (ms == null) {
+	                ms = new HashSet<>();
+	                classMaster.setMasterSection(ms);
+	            }
+
+	            for (MasterSection masterSection : masterSections) {
+	                boolean found = false;
+	                for (MasterSection mS : ms) {
+	                    if (mS.getMasterSectionUuid().equals(masterSection.getMasterSectionUuid())) {
+	                        found = true;
+	                        break;
+	                    }
+	                }
+	                if (!found) {
+	                    ms.add(masterSection);
+	                }
+	            }
+
+	            classMaster.setUpdatedAt(LocalDateTime.now());
+	            masterClassRepo.save(classMaster);
+	            return true;
+	        }
+	    }
+	    return false;
 	}
+
 
 	@Override
 	public List<MasterClass> getMasterClasses() {

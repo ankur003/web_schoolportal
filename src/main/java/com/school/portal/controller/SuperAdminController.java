@@ -45,7 +45,6 @@ import com.school.portal.requests.HolidaysRequestModel;
 import com.school.portal.requests.LinkClassSectionModel;
 import com.school.portal.requests.UpdateUserModel;
 import com.school.portal.requests.UserRequestModel;
-import com.school.portal.requests.WhatsAppMessageRequest;
 import com.school.portal.response.LinkedMasterClassModel;
 import com.school.portal.response.MasterClassModel;
 import com.school.portal.response.MasterSectionModel;
