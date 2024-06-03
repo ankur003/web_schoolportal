@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.school.portal.domain.Address;
 import com.school.portal.domain.UserEducation;
 import com.school.portal.domain.UserExperience;
+import com.school.portal.domain.UserInfo;
 
 public class UserResponseModel {
 	
@@ -45,12 +46,13 @@ public class UserResponseModel {
 
 	private String createdBy;
 	
-	private Address Address;
+	private Address address;
 	
 	private List<UserEducation> userEducations;
 	
-	private List<UserExperience> UserExperiences;
-
+	private List<UserExperience> userExperiences;
+	
+	private UserInfo userInfo;
 	
 	public String getUserUuid() {
 		return userUuid;
@@ -181,11 +183,11 @@ public class UserResponseModel {
 	}
 
 	public Address getAddress() {
-		return Address;
+		return address;
 	}
 
 	public void setAddress(Address address) {
-		Address = address;
+		this.address = address;
 	}
 
 	public List<UserEducation> getUserEducations() {
@@ -197,11 +199,19 @@ public class UserResponseModel {
 	}
 
 	public List<UserExperience> getUserExperiences() {
-		return UserExperiences;
+		return userExperiences;
 	}
 
 	public void setUserExperiences(List<UserExperience> userExperiences) {
-		UserExperiences = userExperiences;
+		this.userExperiences = userExperiences;
+	}
+
+	public UserInfo getUserInfo() {
+		return userInfo;
+	}
+
+	public void setUserInfo(UserInfo userInfo) {
+		this.userInfo = userInfo;
 	}
 	
 }
