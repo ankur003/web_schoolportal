@@ -6,7 +6,6 @@ export default function StudentPage() {
     const dispatch = useDispatch()
 
     const { studentList, pageLimit, pageCount, loader, created } = useSelector(state => state.entityReducer);
-    console.log({ created })
 
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState("1");

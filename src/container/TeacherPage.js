@@ -6,7 +6,6 @@ export default function TeacherPage() {
     const dispatch = useDispatch()
 
     const { teacherList, pageLimit, pageCount, loader, noDataFound } = useSelector(state => state.entityReducer);
-    console.log({ loader, noDataFound });
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState("1");
     const [limit, setLimit] = useState("100");

@@ -3,17 +3,17 @@ import axios from '../../api';
 const basePathUrl = process.env.REACT_APP_BASE_PATH;
 
 export const getAllUserDetails = (data, navigate) => (dispatch) => {
+
     console.log({ data });
-    navigate("/ProfileDetailsPage")
-    dispatch({ type: Constants.RESET_STATE })
-    let url = `${basePathUrl}/sa/${data}/profile-pic`;
+    navigate("/ProfileDetailsPage");
+    let url = `${basePathUrl}/sa/user/${data}`;
 
     axios.get(url)
         .then(response => {
             console.log({ response });
             if (response.status === 200) {
                 dispatch({
-                    type: Constants.GET_ALL_USER_PROFILE,
+                    type: Constants.GET_ALL_USER_DETAILS,
                     payload: response.data
                 })
             }
@@ -33,10 +33,8 @@ export const getEntities = (data) => (dispatch) => {
     dispatch({ type: Constants.RESET_STATE })
     let url = "";
     url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}`;
-    console.log({ url })
     axios.get(url)
         .then(response => {
-            console.log({ response });
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_ALL_ENTITY,
@@ -59,10 +57,8 @@ export const getTeacherEntities = (data) => (dispatch) => {
     dispatch({ type: Constants.RESET_STATE })
     let url = "";
     url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&userType=${data?.userType}`;
-    console.log({ url })
     axios.get(url)
         .then(response => {
-            console.log({ response });
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_TEACHER,
@@ -85,10 +81,8 @@ export const getStudentEntities = (data) => (dispatch) => {
     dispatch({ type: Constants.RESET_STATE })
     let url = "";
     url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&userType=${data?.userType}`;
-    console.log({ url })
     axios.get(url)
         .then(response => {
-            console.log({ response });
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_STUDENT,
@@ -109,7 +103,6 @@ export const getStudentEntities = (data) => (dispatch) => {
 
 export const createUser = (data, SetIsModal) => (dispatch) => {
     axios.post(`${basePathUrl}/sa/user`, data).then(response => {
-        console.log({ response });
         if (response.status === 201) {
             SetIsModal(false);
             dispatch({

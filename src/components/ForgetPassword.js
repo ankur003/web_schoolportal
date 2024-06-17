@@ -33,7 +33,6 @@ export default function ForgetPassword() {
     const forgetPasswordHandler = () => {
         const config = { 'content-type': 'application/json' };
         let data = { username: userName, otp, newPassword, confirmPassword };
-        console.log({data})
         axios.post(`${basePathUrl}/password/reset`, data, config).then(response => {
             console.log({ response });
             if (response.status === 201) {

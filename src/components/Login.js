@@ -27,7 +27,6 @@ function Login(props) {
 		setLoader(true);
 		const config = { 'content-type': 'application/json' };
 		axios.post(`${basePathUrl}/login`, data, config).then(response => {
-			console.log({ response });
 			let { message, responseObject, status } = response.data;
 			if (status === 200) {
 				sessionStorage.setItem("role", responseObject.userType);

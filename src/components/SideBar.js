@@ -63,7 +63,6 @@ function SideBar(props) {
     };
 
     const result = findSubNavIndex(routes, pathname);
-    console.log({ result });
     useEffect(() => {
         let activeRoute = routes.find(r => r.to === pathname);
         if (activeRoute === undefined) {

@@ -46,10 +46,6 @@ const ProtectedRoute = () => {
         navigate('/');
     };
 
-    // useEffect(() => {
-    //     navigate('/ManageClasses')
-    // }, []);
-
     const { t, i18n } = useTranslation();
 
     const changeLanguage = (lng) => {

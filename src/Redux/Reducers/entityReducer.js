@@ -9,10 +9,10 @@ const initialState = {
     loader: false,
     noDataFound: false,
     created: false,
-    pic:""  
+    userDetails: {},
+    pic: ""
 }
 
-console.log("Reducer");
 
 export default function entityReducer(state = initialState, action) {
     switch (action.type) {
@@ -50,6 +50,12 @@ export default function entityReducer(state = initialState, action) {
             return {
                 ...state,
                 created: action.payload
+            }
+        case Constants.GET_ALL_USER_DETAILS:
+            return {
+                ...state,
+                loader: true,
+                userDetails: action.payload
             }
         case Constants.GET_ALL_USER_PROFILE:
             return {
