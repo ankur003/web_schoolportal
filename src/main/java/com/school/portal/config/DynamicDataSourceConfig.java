@@ -28,22 +28,19 @@ public class DynamicDataSourceConfig {
     public DataSource primaryDataSource() {
     	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-//        dataSourceBuilder.url("jdbc:mysql://blgzvsgk8gc0lmrukbvp-mysql.services.clever-cloud.com:3306/blgzvsgk8gc0lmrukbvp?createDatabaseIfNotExist=true&useSSL=false");
-//        dataSourceBuilder.username("umh4poimxymgqvs5");
-//        dataSourceBuilder.password("Tkvhn9xlPPGPwgACwLQF");
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&useSSL=false");
+        dataSourceBuilder.url("jdbc:mysql://viaduct.proxy.rlwy.net:11858/railway?createDatabaseIfNotExist=true&useSSL=false");
         dataSourceBuilder.username("root");
-        dataSourceBuilder.password("test");
+        dataSourceBuilder.password("irbGEAOakZBhZjmPtehHALkavHQRqVTJ");
         return dataSourceBuilder.build();
     }
-
     @Bean
     public DataSource secondaryDataSource() {
     	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&useSSL=false");
+        dataSourceBuilder.url("jdbc:mysql://viaduct.proxy.rlwy.net:11858/railway?createDatabaseIfNotExist=true&useSSL=false");
         dataSourceBuilder.username("root");
-        dataSourceBuilder.password("test");
+        dataSourceBuilder.password("irbGEAOakZBhZjmPtehHALkavHQRqVTJ");
+        //d
         return dataSourceBuilder.build();
 
     }
