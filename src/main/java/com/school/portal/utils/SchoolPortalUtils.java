@@ -31,12 +31,8 @@ public final class SchoolPortalUtils {
 
         // Generate a random number between 10000 and 99999
         Random random = new Random();
-        int randomPart = random.nextInt(90000) + 10000;
+        return random.nextInt(90000) + 10000;
 
-        // Combine the last 5 digits of the timestamp with the random number
-        int uniqueId = last5Digits * 100000 + randomPart;
-
-        return uniqueId;
 	}
 	
 	public static File convertMultipartFileToFile(final MultipartFile file) {
