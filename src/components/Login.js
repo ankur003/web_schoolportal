@@ -2,13 +2,15 @@ import React from 'react';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from '../Redux/Action/loginAction';
 
 
 function Login(props) {
 
 	const basePathUrl = process.env.REACT_APP_BASE_PATH;
+
+	const { role } = useSelector((state) => state.loginReducer);
 
 	let navigate = useNavigate();
 	const [userName, setUserName] = useState("");
@@ -34,8 +36,8 @@ function Login(props) {
 				sessionStorage.setItem("userName", responseObject.userName);
 				setLoader(false);
 				setError(false);
-				navigate('/ManageClasses');
 				dispatch(loginAction(message));
+				dispatch({ type: "GET_ROLE", payload: responseObject.userType });
 			}
 			else {
 				console.log({ status })
@@ -52,7 +54,9 @@ function Login(props) {
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			navigate('/ManageClasses');
+			if (role === 'SUPER_ADMIN') return navigate('/ManageClasses');
+			if (role === 'TEACHER') return navigate('/ProfileDetailsPage');
+			if (role === 'STUDENT') return navigate('/ProfileDetailsPage');
 		}
 		else {
 			navigate('/');

@@ -1,5 +1,6 @@
 export const LOGIN_SUCCESS = "GET_LOGIN_SUCCESS";
 export const LOGOUT_USER = "SET_LOGOUT_USER";
+export const GET_ROLE = "GET_ROLE";
 
 
 export const GET_CLASSES = "GET_CLASSES";

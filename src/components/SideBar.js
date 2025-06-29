@@ -46,9 +46,29 @@ function SideBar(props) {
             ]
         }
 
-    ]
+    ];
 
-    let routes = role === "SUPER_ADMIN" ? [...superAdmin] : "";
+    let TeackerRoutes = [
+        {
+            name: "Profile Details",
+            component: "ProfileDetailsPage",
+            transform: "Teacher Profile",
+            to: "/ProfileDetailsPage",
+            icon: "fa-solid fa-user",
+        },
+    ];
+
+    let StudentRoutes = [
+        {
+            name: "Profile Details",
+            component: "ProfileDetailsPage",
+            transform: "Student Profile",
+            to: "/ProfileDetailsPage",
+            icon: "fa-solid fa-user",
+        },
+    ];
+
+    let routes = role === "SUPER_ADMIN" ? [...superAdmin] : role === "TEACHER" ? [...TeackerRoutes] : [...StudentRoutes];
 
     const findSubNavIndex = (superAdminArray, route) => {
         for (const [mainIndex, item] of superAdminArray.entries()) {
