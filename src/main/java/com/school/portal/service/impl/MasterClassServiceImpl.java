@@ -3,6 +3,7 @@ package com.school.portal.service.impl;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,31 +123,31 @@ public class MasterClassServiceImpl implements MasterClassService {
 			return Boolean.FALSE;
 		}
 		
-		if (user.getMasterClass() == null || !user.getMasterClass().getMasterClassUuid().equals(assignClassSectionStudentModel.getClassUuid())) {
-			
-		}
+//		if (user.getMasterClass() == null || !user.getMasterClass().getMasterClassUuid().equals(assignClassSectionStudentModel.getClassUuid())) {
+//
+//		}
 		
-		if (user != null) {
-			if (user.getMasterClass() != null && 
-					user.getMasterClass().getMasterClassUuid() != assignClassSectionStudentModel.getClassUuid()) {
+//		if (user != null) {
+//			if (user.getMasterClass() != null &&
+//					user.getMasterClass().getMasterClassUuid() != assignClassSectionStudentModel.getClassUuid()) {
 				MasterSection masterSection = masterSectionRepo.findByMasterSectionUuid(assignClassSectionStudentModel.getSectionUuid());
-				if (masterSection != null) { 
+				if (masterSection != null) {
 					user.setMasterSection(masterSection);
 					user.setUpdatedAt(LocalDateTime.now());
 				}
-			}
-			if (user.getMasterSection() != null && 
-					user.getMasterSection().getMasterSectionUuid() != assignClassSectionStudentModel.getSectionUuid()) {
+//			}
+//			if (user.getMasterSection() != null &&
+//					user.getMasterSection().getMasterSectionUuid() != assignClassSectionStudentModel.getSectionUuid()) {
 				MasterClass masterClass = masterClassRepo.findByMasterClassUuid(assignClassSectionStudentModel.getClassUuid());
-				if (masterClass != null) { 
+				if (masterClass != null) {
 					user.setMasterClass(masterClass);
 					user.setUpdatedAt(LocalDateTime.now());
 				}
-			}
+//			}
+		if(Objects.equals(user.getUserType(), "TEACHER")) {
+			user.setIsClassTeacher(true);
+		}
 			userRepo.save(user);
 			return true;
 		}
-		return false;
 	}
-
-}

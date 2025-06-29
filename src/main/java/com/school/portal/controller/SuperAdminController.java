@@ -232,7 +232,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@PostMapping("/s/{userUuid}/class-section-assign")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> assignClassSectionToStudent(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid, 
 			@Valid @RequestBody AssignClassSectionStudentModel assignClassSectionStudentModel) {
 		Boolean isAssigned = masterClassService.assignClassSectionToStudent(userUuid, assignClassSectionStudentModel);
