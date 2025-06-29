@@ -73,8 +73,8 @@ export default function TeacherPage() {
                                         <th scope="col">Email Id</th>
                                         <th scope="col">Phone No</th>
                                         <th scope="col">Type</th>
-                                        <th scope="col">Created By</th>
-                                        <th scope="col">Created At</th>
+                                        <th scope="col">Class</th>
+                                        <th scope="col">Section</th>
                                         <th scop="col">Action</th>
                                     </tr>
                                     {/* <tr>
@@ -96,8 +96,8 @@ export default function TeacherPage() {
                                             <td>{data?.username}</td>
                                             <td>{data?.phoneNo ? data?.phoneNo : "N/A"}</td>
                                             <td>{data?.userType}</td>
-                                            <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
-                                            <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
+                                            <td>{data?.className ? data?.className : "N/A"}</td>
+                                            <td>{data?.sectionName ? data?.sectionName : "N/A"}</td>
                                             <td>
                                                 <button className="btn btn-success mr-r-4">Edit</button>
                                                 <button className="btn btn-danger">Delete</button>
