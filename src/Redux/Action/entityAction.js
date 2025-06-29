@@ -110,10 +110,10 @@ export const createUser = (data, SetIsModal) => (dispatch) => {
                 payload: true,
             })
             let param = { page: 1, limit: 100, userType: data.userType }
-            if (data.userType = "TEACHER") {
+            if (data.userType === "TEACHER") {
                 dispatch(getTeacherEntities(param));
             }
-            if (data.userType = "STUDENT") {
+            if (data.userType === "STUDENT") {
                 dispatch(getStudentEntities(param));
             }
 
