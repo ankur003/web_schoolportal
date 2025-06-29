@@ -49,7 +49,7 @@ public class Subject {
     private Set<Marks> marks = new HashSet<>();
     
     @Column(name = "is_active")
-    private Boolean isActive = false;
+    private Boolean isActive = true;
     
     @PrePersist
     protected void onCreate() {

@@ -21,8 +21,10 @@ import com.school.portal.enums.UserType;
 import com.school.portal.repo.RoleRepo;
 import com.school.portal.repo.UserRepo;
 import com.school.portal.utils.SchoolPortalUtils;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
+@EnableSwagger2
 public class SchoolPortalApplication {
 	
 	@Autowired
