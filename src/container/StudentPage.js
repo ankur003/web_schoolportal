@@ -1,20 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudentEntities, createUser } from '../Redux/Action/entityAction';
+import { getStudentEntities, createUser, linkClassSection } from '../Redux/Action/entityAction';
+import { getClasses } from '../Redux/Action/manageClassAction';
+import Select from 'react-select';
 
 export default function StudentPage() {
     const dispatch = useDispatch()
 
-    const { studentList, pageLimit, pageCount, loader, created } = useSelector(state => state.entityReducer);
+    const { studentList, pageLimit, pageCount, loader, created } =
+        useSelector(state => state.entityReducer);
+    const { classList, secList } = useSelector(state => state.manageClassesReducer);
 
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState("1");
     const [limit, setLimit] = useState("100");
     const [isModal, SetIsModal] = useState(false);
+    const [isModalLink, SetIsModalLink] = useState(false);
     const [formData, setFormData] = useState({
         username: '',
         fullName: '',
     });
+    const [classInput, setclassInput] = useState("");
+    const [selectedSections, setSelectedSections] = useState([]);
+    const sectionOptions = secList ? secList?.map(section => ({
+        label: section?.sectionName,
+        value: section?.masterSectionUuid
+    })) : "";
+    const [userId, setUserId] = useState()
 
     useEffect(() => {
         let data = { page, limit, userType: "STUDENT" }
@@ -51,9 +63,23 @@ export default function StudentPage() {
 
     const formSubmit = () => {
         let data = { "userType": "STUDENT", ...formData }
-        console.log({ data });
         dispatch(createUser(data, SetIsModal));
 
+    };
+
+    const handleChange = (selected) => {
+        setSelectedSections(selected);
+    };
+
+    const formSubmitClassSec = () => {
+        let data = { userId, className: classInput, sections: selectedSections?.value, userType: "STUDENT" };
+        dispatch(linkClassSection(data, SetIsModalLink));
+    }
+
+    const openLinkModal = (data) => {
+        SetIsModalLink(true);
+        setUserId(data?.userUuid)
+        dispatch(getClasses());
     }
 
 
@@ -77,7 +103,8 @@ export default function StudentPage() {
                                         <th scope="col">Full Name</th>
                                         <th scope="col">Email Id</th>
                                         <th scope="col">Phone No</th>
-                                        <th scope="col">Type</th>
+                                        <th scope="col">Class Name</th>
+                                        <th scope="col">Section</th>
                                         <th scope="col">Created By</th>
                                         <th scope="col">Created At</th>
                                         <th scop="col">Action</th>
@@ -96,16 +123,18 @@ export default function StudentPage() {
                                 <tbody>
                                     {dataList?.map((data, index) =>
                                         <tr key={index + 1}>
-                                            <th scope="row">{index}</th>
+                                            <th scope="row">{index + 1}</th>
                                             <td>{data?.fullName ? data?.fullName : "N/A"}</td>
                                             <td>{data?.username}</td>
                                             <td>{data?.phoneNo ? data?.phoneNo : "N/A"}</td>
-                                            <td>{data?.userType}</td>
+                                            <td>{data?.className ? data?.className : "N/A"}</td>
+                                            <td>{data?.sectionName ? data?.sectionName : "N/A"}</td>
                                             <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                             <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                             <td>
-                                                <button className="btn btn-success mr-r-4">Edit</button>
-                                                <button className="btn btn-danger">Delete</button>
+                                                <button className="btn btn-warning mr-r-4" onClick={() => { openLinkModal(data) }}>Link</button>
+                                                <button disabled className="btn btn-success mr-r-4">Edit</button>
+                                                <button disabled className="btn btn-danger">Delete</button>
                                             </td>
                                         </tr>
                                     )}
@@ -156,6 +185,51 @@ export default function StudentPage() {
                         </div>
                     </div>
                 </div>}
+
+            {isModalLink &&
+                <div className="modal d-block">
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Link Class with Section</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => SetIsModalLink(false)}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-content">
+                                    <div className="form-group">
+                                        <label className="form-group-label">Class Name</label>
+                                        <select className="form-control" name="className" onChange={(e) => setclassInput(e.target.value)}>
+                                            <option>Select</option>
+                                            {classList?.map((data, index) =>
+                                                <option key={index} value={data.masterClassUuid}>{data.className}</option>
+                                            )}
+                                        </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-group-label">Section Name</label>
+                                        <Select
+                                            name="sections"
+                                            options={sectionOptions}
+                                            value={selectedSections}
+                                            onChange={handleChange}
+                                            className="basic-multi-select"
+                                            classNamePrefix="select"
+                                            placeholder="Select Sections"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => SetIsModalLink(false)}>Close</button>
+                                <button type="button" className="btn btn-primary" onClick={() => formSubmitClassSec()}>Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>}
+
+
         </>
     )
 }

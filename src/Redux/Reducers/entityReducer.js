@@ -51,6 +51,11 @@ export default function entityReducer(state = initialState, action) {
                 ...state,
                 created: action.payload
             }
+        case Constants.LINK_CLASS_SECTION:
+            return {
+                ...state,
+                created: action.payload
+        }
         case Constants.GET_ALL_USER_DETAILS:
             return {
                 ...state,

@@ -59,6 +59,7 @@ export const getTeacherEntities = (data) => (dispatch) => {
     url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&userType=${data?.userType}`;
     axios.get(url)
         .then(response => {
+            console.log({ response });
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_TEACHER,
@@ -83,6 +84,7 @@ export const getStudentEntities = (data) => (dispatch) => {
     url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&userType=${data?.userType}`;
     axios.get(url)
         .then(response => {
+            console.log({ response });
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_STUDENT,
@@ -110,6 +112,33 @@ export const createUser = (data, SetIsModal) => (dispatch) => {
                 payload: true,
             })
             let param = { page: 1, limit: 100, userType: data.userType }
+            if (data.userType === "TEACHER") {
+                dispatch(getTeacherEntities(param));
+            }
+            if (data.userType === "STUDENT") {
+                dispatch(getStudentEntities(param));
+            }
+
+        }
+
+    }).catch(error => {
+        console.log(error);
+    });
+}
+
+export const linkClassSection = (data, SetIsModal) => (dispatch) => {
+    let dataBody = {
+        classUuid: data?.className,
+        sectionUuid: data?.sections
+    };
+    axios.post(`${basePathUrl}/sa/s/${data?.userId}/class-section-assign`, dataBody).then(response => {
+        if (response.status === 201) {
+            SetIsModal(false);
+            dispatch({
+                type: Constants.LINK_CLASS_SECTION,
+                payload: true,
+            })
+            let param = { page: 1, limit: 100, userType: data?.userType }
             if (data.userType === "TEACHER") {
                 dispatch(getTeacherEntities(param));
             }

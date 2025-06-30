@@ -202,8 +202,7 @@ function ManageClasses(props) {
                                             </div>
                                             <div className="form-group">
                                                 <label className="form-group-label">Section Name</label>
-                                                {/* <input type="text" className="form-control" name="linkSectionName" onChange={(e) => handlerChange(e)} placeholder="Enter Section Name" /> */}
-                                                <MultiSelect
+                                                 <MultiSelect
                                                     options={options}
                                                     value={selected}
                                                     onChange={setSelected}
