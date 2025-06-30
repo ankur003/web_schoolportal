@@ -42,7 +42,7 @@ public class LoginController extends AbstractController {
 
 	@PostMapping(value = "")
 	public ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser) {
-		User user = userService.checkCredaintials(loginUser); 
+		User user = userService.checkCredentials (loginUser);
 		if (user == null) {
 			LOGGER.warn("[LOGIN] user not found or user is inActive or passoword does not match");
 			return ResponseBuilder.response(HttpStatus.UNAUTHORIZED, true, "Login failed", ErrorCode.ERROR, ResponseCode.ACKNOWLEDGE, 

@@ -37,7 +37,6 @@ public class ResponseBuilder {
 		map.put("token", jwtToken);
 		map.put("userName", user.getUsername());
 		map.put("userType", user.getUserType());
-		map.put("userUuid", user.getUserUuid());
 		return map;
 	}
 	

@@ -1,16 +1,21 @@
 package com.school.portal.controller;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.school.portal.enums.ApprovalStatus;
+import com.school.portal.response.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,10 +51,6 @@ import com.school.portal.requests.HolidaysRequestModel;
 import com.school.portal.requests.LinkClassSectionModel;
 import com.school.portal.requests.UpdateUserModel;
 import com.school.portal.requests.UserRequestModel;
-import com.school.portal.response.LinkedMasterClassModel;
-import com.school.portal.response.MasterClassModel;
-import com.school.portal.response.MasterSectionModel;
-import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.HolidayService;
 import com.school.portal.service.MasterClassService;
 import com.school.portal.service.UserEducationService;
@@ -82,6 +83,7 @@ public class SuperAdminController extends AbstractController {
 	
 	@Autowired
 	private UserInfoService userInfoService;
+
 	
 	@PostMapping("/user")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
@@ -326,12 +328,27 @@ public class SuperAdminController extends AbstractController {
 	
 	@DeleteMapping("{holidayUuid}/holidays")
 	@PreAuthorize("hasRole('SUPER_ADMIN')")
-	public ResponseEntity<Object> deleteHolidy(@NotBlank(message = "holidayUuid can not be blank") @PathVariable("holidayUuid") String holidayUuid) {
+	public ResponseEntity<Object> deleteHoliday(@NotBlank(message = "holidayUuid can not be blank") @PathVariable("holidayUuid") String holidayUuid) {
 		Holidays holiday = holidayService.getHolidayDetails(holidayUuid);
 		if (holiday != null) {
 			holidayService.deleteHolidayDetails(holiday);
 		}
 		return ResponseEntity.ok().build();
 	}
-	
+
+	@GetMapping("/attendance")
+	public ResponseEntity<Object> getAttendanceList(@RequestParam(name = "userId", required = false) String userUuid,
+													@RequestParam(name = "status", required = false) ApprovalStatus status,
+													@RequestParam(name = "date", required = false) LocalDate date) {
+		List<UserAttendanceModel> userAttendanceModels =  userService.getUserAttendance(userUuid, status, date);
+		return ResponseEntity.ok(userAttendanceModels);
+	}
+
+	@PutMapping("/attendance")
+	public ResponseEntity<Object> updateAttendance(@RequestParam(name = "userId") String userUuid,
+												   @RequestParam(name = "status") ApprovalStatus status,
+												   @RequestParam(name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+		Boolean isUpdated = userService.updateAttendance(userUuid, status, date);
+		return ResponseEntity.ok(isUpdated);
+	}
 }

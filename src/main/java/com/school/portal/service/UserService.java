@@ -1,7 +1,11 @@
 package com.school.portal.service;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.util.List;
 
+import com.school.portal.enums.ApprovalStatus;
+import com.school.portal.response.UserAttendanceModel;
 import org.springframework.data.domain.Page;
 
 import com.school.portal.domain.Address;
@@ -15,7 +19,7 @@ import com.school.portal.requests.UserRequestModel;
 
 public interface UserService {
 
-	public User checkCredaintials(LoginUser loginUser);
+	public User checkCredentials(LoginUser loginUser);
 
 	public User getUser(String userEmail);
 	
@@ -41,4 +45,9 @@ public interface UserService {
 
 	public Boolean updateUserDetails(User user, UpdateUserModel updateUserModel);
 
+	Boolean markAttendance(User user);
+
+    List<UserAttendanceModel> getUserAttendance(String userUuid, ApprovalStatus status, LocalDate date);
+
+	Boolean updateAttendance(String userUuid, ApprovalStatus status, LocalDate date);
 }
