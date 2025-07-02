@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -122,32 +123,23 @@ public class MasterClassServiceImpl implements MasterClassService {
 		if (user == null) {
 			return Boolean.FALSE;
 		}
-		
-//		if (user.getMasterClass() == null || !user.getMasterClass().getMasterClassUuid().equals(assignClassSectionStudentModel.getClassUuid())) {
-//
-//		}
-		
-//		if (user != null) {
-//			if (user.getMasterClass() != null &&
-//					user.getMasterClass().getMasterClassUuid() != assignClassSectionStudentModel.getClassUuid()) {
-				MasterSection masterSection = masterSectionRepo.findByMasterSectionUuid(assignClassSectionStudentModel.getSectionUuid());
-				if (masterSection != null) {
-					user.setMasterSection(masterSection);
-					user.setUpdatedAt(LocalDateTime.now());
-				}
-//			}
-//			if (user.getMasterSection() != null &&
-//					user.getMasterSection().getMasterSectionUuid() != assignClassSectionStudentModel.getSectionUuid()) {
-				MasterClass masterClass = masterClassRepo.findByMasterClassUuid(assignClassSectionStudentModel.getClassUuid());
-				if (masterClass != null) {
-					user.setMasterClass(masterClass);
-					user.setUpdatedAt(LocalDateTime.now());
-				}
-//			}
-		if(Objects.equals(user.getUserType(), "TEACHER")) {
+
+        if (StringUtils.isNotBlank(assignClassSectionStudentModel.getSectionUuid())) {
+            MasterSection masterSection = masterSectionRepo.findByMasterSectionUuid(assignClassSectionStudentModel.getSectionUuid());
+            if (masterSection != null) {
+                user.setMasterSection(masterSection);
+                user.setUpdatedAt(LocalDateTime.now());
+            }
+        }
+        MasterClass masterClass = masterClassRepo.findByMasterClassUuid(assignClassSectionStudentModel.getClassUuid());
+		if (masterClass != null) {
+			user.setMasterClass(masterClass);
+			user.setUpdatedAt(LocalDateTime.now());
+		}
+		if (Objects.equals(user.getUserType(), "TEACHER")) {
 			user.setIsClassTeacher(true);
 		}
-			userRepo.save(user);
-			return true;
-		}
+		userRepo.save(user);
+		return true;
+	}
 	}

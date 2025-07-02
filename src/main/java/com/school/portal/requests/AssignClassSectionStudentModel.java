@@ -7,7 +7,7 @@ public class AssignClassSectionStudentModel {
 	@NotBlank(message = "classUuid can not be blank")
 	private String classUuid;
 	
-	@NotBlank(message = "sectionUuid can not be blank")
+	//@NotBlank(message = "sectionUuid can not be blank")
 	private String sectionUuid;
 
 	public String getClassUuid() {
