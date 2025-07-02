@@ -5,6 +5,7 @@ import com.school.portal.dto.LoginUser;
 import com.school.portal.enums.ApprovalStatus;
 import com.school.portal.enums.AttendanceStatus;
 import com.school.portal.enums.SearchOperation;
+import com.school.portal.enums.UserType;
 import com.school.portal.exception.AlreadyExistsException;
 import com.school.portal.facade.AuthenticationFacade;
 import com.school.portal.queryfilter.GenericSpesification;
@@ -137,6 +138,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 if (!isLinked) {
                     return null;
                 }
+                if (createUserModel.getUserType ().name ().equalsIgnoreCase(UserType.STUDENT.name())) {
+                	generateAndSetRollNumberAndEnrollmentNumber(user);
+                }
                 user = userRepo.save (user);
                 sendPasswordOnMail (user, tempPassword);
                 return user.getUserUuid ();
@@ -145,7 +149,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return null;
     }
 
-    private boolean linkStudentToClassSection(User user, CreateUserModel createUserModel) {
+    private void generateAndSetRollNumberAndEnrollmentNumber(User user) {
+		if (user.getMasterSection() == null) {
+			user.setRollNumber(masterClassRepo.count() + 1);
+		} else {
+			user.setRollNumber(masterSectionRepo.count() + 1);
+		}
+    	user.setEnrollmentNumber("ENROLL_" + SchoolPortalUtils.getUnique5DigitInteger());
+	}
+
+	private boolean linkStudentToClassSection(User user, CreateUserModel createUserModel) {
         if (StringUtils.isBlank (createUserModel.getClassUuid ())) {
             return true;
         }

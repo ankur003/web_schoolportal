@@ -32,6 +32,10 @@ public class User {
 	@Column(nullable = false, unique = true)
 	private String username;
 	
+	private long rollNumber;
+	
+	private String enrollmentNumber;
+	
 	private String fullName;
 	
 	private Long phoneNo;
@@ -223,6 +227,34 @@ public class User {
 
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	/**
+	 * @return the rollNumber
+	 */
+	public long getRollNumber() {
+		return rollNumber;
+	}
+
+	/**
+	 * @param rollNumber the rollNumber to set
+	 */
+	public void setRollNumber(long rollNumber) {
+		this.rollNumber = rollNumber;
+	}
+
+	/**
+	 * @return the enrollmentNumber
+	 */
+	public String getEnrollmentNumber() {
+		return enrollmentNumber;
+	}
+
+	/**
+	 * @param enrollmentNumber the enrollmentNumber to set
+	 */
+	public void setEnrollmentNumber(String enrollmentNumber) {
+		this.enrollmentNumber = enrollmentNumber;
 	}
 	
 }

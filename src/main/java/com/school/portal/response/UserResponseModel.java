@@ -54,6 +54,10 @@ public class UserResponseModel {
 	
 	private UserInfo userInfo;
 	
+	private long rollNumber;
+	
+	private String enrollmentNumber;
+	
 	public String getUserUuid() {
 		return userUuid;
 	}
@@ -212,6 +216,34 @@ public class UserResponseModel {
 
 	public void setUserInfo(UserInfo userInfo) {
 		this.userInfo = userInfo;
+	}
+
+	/**
+	 * @return the rollNumber
+	 */
+	public long getRollNumber() {
+		return rollNumber;
+	}
+
+	/**
+	 * @param rollNumber the rollNumber to set
+	 */
+	public void setRollNumber(long rollNumber) {
+		this.rollNumber = rollNumber;
+	}
+
+	/**
+	 * @return the enrollmentNumber
+	 */
+	public String getEnrollmentNumber() {
+		return enrollmentNumber;
+	}
+
+	/**
+	 * @param enrollmentNumber the enrollmentNumber to set
+	 */
+	public void setEnrollmentNumber(String enrollmentNumber) {
+		this.enrollmentNumber = enrollmentNumber;
 	}
 	
 }
