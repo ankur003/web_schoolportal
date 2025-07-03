@@ -142,6 +142,7 @@ export default function StudentPage() {
                                             <td>
                                                 {userRole === SUPER_ADMIN ? <>
                                                     <button className="btn btn-warning mr-r-4" onClick={() => { openLinkModal(data) }}>Link</button>
+                                                    <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
                                                     <button disabled className="btn btn-success mr-r-4">Edit</button>
                                                     <button disabled className="btn btn-danger">Delete</button>
                                                 </>

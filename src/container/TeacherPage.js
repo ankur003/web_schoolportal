@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getTeacherEntities, createUser, linkClassSection } from '../Redux/Action/entityAction';
 import Select from 'react-select';
 import { getClasses } from '../Redux/Action/manageClassAction';
+import { useNavigate } from 'react-router-dom';
 
 export default function TeacherPage() {
     const dispatch = useDispatch()
+    const navigate = useNavigate();
 
     const { teacherList, pageLimit, pageCount, loader, noDataFound } = useSelector(state => state.entityReducer);
     const { classList, secList } = useSelector(state => state.manageClassesReducer);
@@ -66,6 +68,11 @@ export default function TeacherPage() {
         dispatch(getClasses());
     }
 
+    const getAllUserDetails = (data) => {
+        dispatch({ type: "GET_USER_ID", payload: data });
+        navigate("/ProfileDetailsPage");
+    }
+
 
     // let inputFields = document.querySelectorAll('.form-control');
 
@@ -123,6 +130,7 @@ export default function TeacherPage() {
                                             <td>{data?.sectionName ? data?.sectionName : "N/A"}</td>
                                             <td>
                                                 <button className="btn btn-warning mr-r-4" onClick={() => { openLinkModal(data) }}>Link</button>
+                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
                                                 <button className="btn btn-success mr-r-4">Edit</button>
                                                 <button className="btn btn-danger">Delete</button>
                                             </td>
