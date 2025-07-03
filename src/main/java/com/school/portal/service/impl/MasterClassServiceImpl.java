@@ -123,9 +123,9 @@ public class MasterClassServiceImpl implements MasterClassService {
 		if (user == null) {
 			return Boolean.FALSE;
 		}
-
+		MasterSection masterSection = null;
         if (StringUtils.isNotBlank(assignClassSectionStudentModel.getSectionUuid())) {
-            MasterSection masterSection = masterSectionRepo.findByMasterSectionUuid(assignClassSectionStudentModel.getSectionUuid());
+            masterSection = masterSectionRepo.findByMasterSectionUuid(assignClassSectionStudentModel.getSectionUuid());
             if (masterSection != null) {
                 user.setMasterSection(masterSection);
                 user.setUpdatedAt(LocalDateTime.now());
@@ -138,8 +138,25 @@ public class MasterClassServiceImpl implements MasterClassService {
 		}
 		if (Objects.equals(user.getUserType(), "TEACHER")) {
 			user.setIsClassTeacher(true);
+		} else if (Objects.equals(user.getUserType(), "STUDENT")) { 
+			assignRollNumberAndEnrollmentNumber(masterClass, masterSection, user);
+
 		}
 		userRepo.save(user);
 		return true;
 	}
+
+	private void assignRollNumberAndEnrollmentNumber(MasterClass masterClass, MasterSection masterSection, User user) {
+		if (masterSection != null  && masterClass != null) {
+			List<User> users = userRepo.findByMasterClassAndMasterSection(masterClass, masterSection);
+			user.setRollNumber(users.size() + 1L);
+		} else if (masterClass != null) { 
+			List<User> users = userRepo.findByMasterClass(masterClass);
+			user.setRollNumber(users.size() + 1L);
+		}
+		if (StringUtils.isBlank(user.getEnrollmentNumber())) {
+			user.setEnrollmentNumber("ENROLL_" + LocalDateTime.now().getNano() + SchoolPortalUtils.getUnique5DigitInteger());
+		}
 	}
+	
+}

@@ -1,26 +1,18 @@
 package com.school.portal.service.impl;
 
-import com.school.portal.domain.*;
-import com.school.portal.dto.LoginUser;
-import com.school.portal.enums.ApprovalStatus;
-import com.school.portal.enums.AttendanceStatus;
-import com.school.portal.enums.SearchOperation;
-import com.school.portal.enums.UserType;
-import com.school.portal.exception.AlreadyExistsException;
-import com.school.portal.facade.AuthenticationFacade;
-import com.school.portal.queryfilter.GenericSpesification;
-import com.school.portal.queryfilter.SearchCriteria;
-import com.school.portal.repo.*;
-import com.school.portal.requests.*;
-import com.school.portal.response.AttendanceModel;
-import com.school.portal.response.AttendanceMonthlyReportResponse;
-import com.school.portal.response.UserAttendanceModel;
-import com.school.portal.response.UserResponseModel;
-import com.school.portal.service.*;
-import com.school.portal.specification.AttendanceSpec;
-import com.school.portal.utils.FileService;
-import com.school.portal.utils.SchoolPortalUtils;
-import lombok.RequiredArgsConstructor;
+import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,13 +29,47 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
-import javax.transaction.Transactional;
-import java.io.File;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.school.portal.domain.Address;
+import com.school.portal.domain.Attendance;
+import com.school.portal.domain.MasterClass;
+import com.school.portal.domain.MasterSection;
+import com.school.portal.domain.Otp;
+import com.school.portal.domain.Role;
+import com.school.portal.domain.User;
+import com.school.portal.dto.LoginUser;
+import com.school.portal.enums.ApprovalStatus;
+import com.school.portal.enums.AttendanceStatus;
+import com.school.portal.enums.SearchOperation;
+import com.school.portal.exception.AlreadyExistsException;
+import com.school.portal.facade.AuthenticationFacade;
+import com.school.portal.queryfilter.GenericSpesification;
+import com.school.portal.queryfilter.SearchCriteria;
+import com.school.portal.repo.AddressRepo;
+import com.school.portal.repo.AttendanceRepository;
+import com.school.portal.repo.MasterClassRepo;
+import com.school.portal.repo.MasterSectionRepo;
+import com.school.portal.repo.OtpRepo;
+import com.school.portal.repo.RoleRepo;
+import com.school.portal.repo.UserRepo;
+import com.school.portal.requests.AttendanceRequest;
+import com.school.portal.requests.ChangePasswordModel;
+import com.school.portal.requests.CreateUserModel;
+import com.school.portal.requests.UpdateUserModel;
+import com.school.portal.requests.UserRequestModel;
+import com.school.portal.response.AttendanceModel;
+import com.school.portal.response.AttendanceMonthlyReportResponse;
+import com.school.portal.response.UserAttendanceModel;
+import com.school.portal.response.UserResponseModel;
+import com.school.portal.service.EmailService;
+import com.school.portal.service.UserEducationService;
+import com.school.portal.service.UserExperienceService;
+import com.school.portal.service.UserInfoService;
+import com.school.portal.service.UserService;
+import com.school.portal.specification.AttendanceSpec;
+import com.school.portal.utils.FileService;
+import com.school.portal.utils.SchoolPortalUtils;
+
+import lombok.RequiredArgsConstructor;
 
 @Service(value = "userService")
 @RequiredArgsConstructor
@@ -138,9 +164,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 if (!isLinked) {
                     return null;
                 }
-                if (createUserModel.getUserType ().name ().equalsIgnoreCase(UserType.STUDENT.name())) {
-                	generateAndSetRollNumberAndEnrollmentNumber(user);
-                }
                 user = userRepo.save (user);
                 sendPasswordOnMail (user, tempPassword);
                 return user.getUserUuid ();
@@ -148,15 +171,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
         return null;
     }
-
-    private void generateAndSetRollNumberAndEnrollmentNumber(User user) {
-		if (user.getMasterSection() == null) {
-			user.setRollNumber(masterClassRepo.count() + 1);
-		} else {
-			user.setRollNumber(masterSectionRepo.count() + 1);
-		}
-    	user.setEnrollmentNumber("ENROLL_" + SchoolPortalUtils.getUnique5DigitInteger());
-	}
 
 	private boolean linkStudentToClassSection(User user, CreateUserModel createUserModel) {
         if (StringUtils.isBlank (createUserModel.getClassUuid ())) {

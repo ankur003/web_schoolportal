@@ -86,7 +86,7 @@ public class SuperAdminController extends AbstractController {
 
 	
 	@PostMapping("/user")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> createUser(@Valid @RequestBody CreateUserModel createUserModel) {
 		if (createUserModel.getUserType().equals(UserType.TEACHER) &&  (StringUtils.isNotBlank(createUserModel.getClassUuid()) 
 				|| StringUtils.isNotBlank(createUserModel.getSectionUuid()))) {
@@ -106,7 +106,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@GetMapping("/user/{userUuid}")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> getUserDetail(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid) {
 		User user = userService.getUserDetailByUuid(userUuid);
 		if (user == null) {
@@ -133,7 +133,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@GetMapping("/user")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> getAllUsers(@ModelAttribute UserRequestModel userRequestModel) {
 		Page<User> users = userService.getAllUsers(userRequestModel);
 		if (users == null || users.isEmpty() || CollectionUtils.isEmpty(users.getContent())) {
@@ -158,7 +158,7 @@ public class SuperAdminController extends AbstractController {
 
 	
 	@PutMapping("/user/{userUuid}")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> updateUserDetail(@NotBlank(message = "userUuid can not be blank") @PathVariable ("userUuid") String userUuid,
 		@RequestBody UpdateUserModel updateUserModel) {
 		User user = userService.getUserDetailByUuid(userUuid);
@@ -170,7 +170,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@PostMapping("/master-class")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> createMasterClasses(@Valid @RequestBody CreateMasterClassModel createMasterClassModel) {
 		String classUuid = masterClassService.createMasterClass(createMasterClassModel);
 		if (StringUtils.isBlank(classUuid)) {
@@ -180,7 +180,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@GetMapping("/master-class")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> getMasterClasses() {
 		List<MasterClass> mClasses = masterClassService.getMasterClasses();
 		if (CollectionUtils.isEmpty(mClasses)) {
@@ -191,7 +191,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@PostMapping("/master-section")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> createMasterSection(@Valid @RequestBody CreateMasterSectionsModel createMasterSectionsModel) {
 		String sectionUuid = masterClassService.createMasterSection(createMasterSectionsModel);
 		if (StringUtils.isBlank(sectionUuid)) {
@@ -201,7 +201,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@GetMapping("/master-section")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> getMasterSections() {
 		List<MasterSection> mSections = masterClassService.getMasterSections();
 		if (CollectionUtils.isEmpty(mSections)) {
@@ -212,7 +212,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@PostMapping("/class-section-link")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> linkClassSections(@Valid @RequestBody LinkClassSectionModel linkClassSectionModel) {
 		Boolean isLinked = masterClassService.linkClassSections(linkClassSectionModel);
 		if (Boolean.TRUE.equals(isLinked)) {
@@ -223,7 +223,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@GetMapping("/class-section-link")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> getLinkClassSections() {
 		List<MasterClass> masterClasses =  masterClassService.getLinkedClassSections();
 		if (CollectionUtils.isEmpty(masterClasses)) {
@@ -234,7 +234,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@PostMapping("/s/{userUuid}/class-section-assign")
-	//@PreAuthorize("hasRole('SUPER_ADMIN')")
+	////@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> assignClassSectionToStudent(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid, 
 			@Valid @RequestBody AssignClassSectionStudentModel assignClassSectionStudentModel) {
 		Boolean isAssigned = masterClassService.assignClassSectionToStudent(userUuid, assignClassSectionStudentModel);
@@ -245,7 +245,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@PutMapping("/{userUuid}/profile-pic")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> saveOrUpdateUserProfilePic(@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid,
 			@RequestParam("file") final MultipartFile multipartFile) {
 		User user = userService.getUserDetailByUuid(userUuid);
@@ -259,7 +259,7 @@ public class SuperAdminController extends AbstractController {
 	
 	@GetMapping(value = "/{userUuid}/profile-pic", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_OCTET_STREAM_VALUE })
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> downloadUserProfilePic(
 			@NotBlank(message = "userUuid can not be blank") @PathVariable("userUuid") String userUuid) {
 		User user = userService.getUserDetailByUuid(userUuid);
@@ -274,28 +274,28 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@DeleteMapping("/{userEducationUuid}/education")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> deleteUserEducation(@NotBlank(message = "userEducationUuid can not be blank") @PathVariable("userEducationUuid") String userEducationUuid) {
 		Boolean isDeleted = userEducationService.deleteUserEducation(userEducationUuid);
 		return ResponseBuilder.buildBooleanRespnse(isDeleted);
 	}
 	
 	@DeleteMapping("/{userExperienceUuid}/experience")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> deleteUserExperience(@NotBlank(message = "userExperienceUuid can not be blank") @PathVariable("userExperienceUuid") String userExperienceUuid) {
 		Boolean isDeleted = userExperience.deleteUserExperience(userExperienceUuid);
 		return ResponseBuilder.buildBooleanRespnse(isDeleted);
 	}
 	
 	@PutMapping("/holidays")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> saveHolidays(@Valid @RequestBody HolidaysRequestModel holiday) {
 		holidayService.saveHolidays(holiday);
 		return ResponseBuilder.buildBooleanRespnse(true);
 	}
 	
 	@GetMapping("/holidays")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> getAllHolidays() {
 		List<Holidays> holidays = holidayService.getHolidays();
 		if (CollectionUtils.isEmpty(holidays)) {
@@ -305,7 +305,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@GetMapping("{holidayUuid}/holidays")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> getHolidayDetails(@NotBlank(message = "holidayUuid can not be blank") @PathVariable("holidayUuid") String holidayUuid) {
 		Holidays holiday = holidayService.getHolidayDetails(holidayUuid);
 		if (holiday == null) {
@@ -315,7 +315,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@PutMapping("{holidayUuid}/holidays")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> updateHolidayDetails(@NotBlank(message = "holidayUuid can not be blank") @PathVariable("holidayUuid") String holidayUuid,
 			@Valid @RequestBody Holidays holidays) {
 		Holidays holiday = holidayService.getHolidayDetails(holidayUuid);
@@ -327,7 +327,7 @@ public class SuperAdminController extends AbstractController {
 	}
 	
 	@DeleteMapping("{holidayUuid}/holidays")
-	@PreAuthorize("hasRole('SUPER_ADMIN')")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> deleteHoliday(@NotBlank(message = "holidayUuid can not be blank") @PathVariable("holidayUuid") String holidayUuid) {
 		Holidays holiday = holidayService.getHolidayDetails(holidayUuid);
 		if (holiday != null) {
