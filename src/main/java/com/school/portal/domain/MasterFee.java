@@ -1,5 +1,6 @@
 package com.school.portal.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.school.portal.enums.FeeType;
 import lombok.*;
 
@@ -20,8 +21,11 @@ public class MasterFee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "class_id", nullable = false)
-    private Long classId;
+    @Column(name = "master_class_uuid", nullable = false)
+    private String masterClassUuid;
+
+    @Column(name = "master_fees_uuid", nullable = false)
+    private String masterFeesUuid;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "fee_type", nullable = false)
@@ -39,7 +43,8 @@ public class MasterFee {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "masterFee")
+    @JsonIgnore
+    @OneToMany(mappedBy = "masterFee", fetch = FetchType.LAZY)
     private List<FeePayment> feePayments;
 
     // Getters and setters

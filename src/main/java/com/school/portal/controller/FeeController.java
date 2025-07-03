@@ -5,6 +5,7 @@ import com.school.portal.domain.MasterFee;
 import com.school.portal.enums.FeeType;
 import com.school.portal.service.FeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,22 +30,31 @@ public class FeeController {
         return feeService.getAllMasterFees();
     }
 
-    @GetMapping("/master/class/{classId}")
-    public List<MasterFee> getFeesByClass(@PathVariable Long classId) {
-        return feeService.getFeesByClassId(classId);
+    @GetMapping("/master/class/{masterClassUuid}")
+    public List<MasterFee> getFeesByClass(@PathVariable String masterClassUuid) {
+        return feeService.findByMasterClassUuid(masterClassUuid);
     }
 
-    @GetMapping("/master/class/{classId}/type/{feeType}")
+    @GetMapping("/master/class/{masterClassUuid}/type/{feeType}")
     public List<MasterFee> getFeesByClassAndType(
-            @PathVariable Long classId,
+            @PathVariable String masterClassUuid,
             @PathVariable FeeType feeType) {
-        return feeService.getFeesByClassAndType(classId, feeType);
+        return feeService.findByMasterClassUuidAndFeeType(masterClassUuid, feeType);
     }
 
-    @GetMapping("/master/{id}")
-    public Optional<MasterFee> getMasterFeeById(@PathVariable Long id) {
-        return feeService.getMasterFeeById(id);
+    @GetMapping("/master/{masterFeesUuid}")
+    public Optional<MasterFee> getMasterFeeById(@PathVariable String masterFeesUuid) {
+        return feeService.getMasterFeeById(masterFeesUuid);
     }
+
+    @PutMapping("/master/{masterFeesUuid}")
+    public ResponseEntity<MasterFee> updateMasterFee(
+            @PathVariable String masterFeesUuid,
+            @RequestBody MasterFee updatedFee) {
+        MasterFee updated = feeService.updateMasterFee(masterFeesUuid, updatedFee);
+        return ResponseEntity.ok(updated);
+    }
+
 
     // ----------- FEE PAYMENTS -------------
 
@@ -58,8 +68,17 @@ public class FeeController {
         return feeService.getAllPayments();
     }
 
-    @GetMapping("/payment/student/{studentId}")
-    public List<FeePayment> getPaymentsByStudent(@PathVariable Long studentId) {
-        return feeService.getPaymentsByStudentId(studentId);
+    @GetMapping("/payment/student/{userUuid}")
+    public List<FeePayment> getPaymentsByStudent(@PathVariable String userUuid) {
+        return feeService.getPaymentsByUserUuid(userUuid);
     }
+
+    @PutMapping("/payment/{feePaymentUuid}")
+    public ResponseEntity<FeePayment> updatePayment(
+            @PathVariable String feePaymentUuid,
+            @RequestBody FeePayment updatedPayment) {
+        FeePayment payment = feeService.updateFeePayment(feePaymentUuid, updatedPayment);
+        return ResponseEntity.ok(payment);
+    }
+
 }

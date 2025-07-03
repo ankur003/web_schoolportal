@@ -19,8 +19,11 @@ public class FeePayment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "student_id", nullable = false)
-    private Long studentId;
+    @Column(name = "user_uuid", nullable = false)
+    private String userUuid;
+
+    @Column(name = "fee_payment_uuid", nullable = false)
+    private String feePaymentUuid;
 
     @ManyToOne
     @JoinColumn(name = "master_fee_id", nullable = false)
