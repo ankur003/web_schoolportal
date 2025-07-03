@@ -34,10 +34,13 @@ function Login(props) {
 				sessionStorage.setItem("role", responseObject.userType);
 				sessionStorage.setItem("token", responseObject.token);
 				sessionStorage.setItem("userName", responseObject.userName);
+				sessionStorage.setItem("userId", responseObject.userUuid);
 				setLoader(false);
 				setError(false);
 				dispatch(loginAction(message));
 				dispatch({ type: "GET_ROLE", payload: responseObject.userType });
+				dispatch({ type: "GET_USER_ID", payload: responseObject.userUuid });
+				dispatch({ type: "LOGIN_GET_USER_ID", payload: responseObject.userUuid });
 			}
 			else {
 				console.log({ status })

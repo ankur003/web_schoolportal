@@ -23,7 +23,14 @@ export const RESET_STATE = 'RESET_STATE';
 
 export const CREATE_USER = 'CREATE_USER';
 
+
 export const GET_ALL_USER_DETAILS = "GET_ALL_USER_DETAILS";
 
 export const GET_ALL_USER_PROFILE = "GET_ALL_USER_PROFILE";
 export const LINK_CLASS_SECTION = "LINK_CLASS_SECTION";
+
+export const SUPER_ADMIN = "SUPER_ADMIN";
+export const TEACHER = "TEACHER";   
+export const STUDENT = "STUDENT";
+export const GET_USER_ID = "GET_USER_ID";
+export const LOGIN_GET_USER_ID = "LOGIN_GET_USER_ID";

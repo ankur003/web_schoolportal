@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudentEntities, createUser, linkClassSection } from '../Redux/Action/entityAction';
+import { getStudentEntities, createUser, linkClassSection, getAllUserDetails } from '../Redux/Action/entityAction';
 import { getClasses } from '../Redux/Action/manageClassAction';
 import Select from 'react-select';
+import { STUDENT, SUPER_ADMIN } from '../Redux/Constants';
+import { useNavigate } from 'react-router-dom';
 
 export default function StudentPage() {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { studentList, pageLimit, pageCount, loader, created } =
         useSelector(state => state.entityReducer);
     const { classList, secList } = useSelector(state => state.manageClassesReducer);
+    const userRole = useSelector(state => state.loginReducer.role);
 
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState("1");
@@ -29,7 +33,7 @@ export default function StudentPage() {
     const [userId, setUserId] = useState()
 
     useEffect(() => {
-        let data = { page, limit, userType: "STUDENT" }
+        let data = { page, limit, userType: userRole === "STUDENT", isNotAdmin: true, sectionName: "B", className: "Class 3rd" }
         dispatch(getStudentEntities(data))
     }, [dispatch]);
 
@@ -64,7 +68,6 @@ export default function StudentPage() {
     const formSubmit = () => {
         let data = { "userType": "STUDENT", ...formData }
         dispatch(createUser(data, SetIsModal));
-
     };
 
     const handleChange = (selected) => {
@@ -82,14 +85,19 @@ export default function StudentPage() {
         dispatch(getClasses());
     }
 
+    const getAllUserDetails = (data) => {
+        dispatch({ type: "GET_USER_ID", payload: data });
+        navigate("/ProfileDetailsPage");
+    }
+
 
     return (
         <>
             <div className="header">
                 <h1>Students</h1>
-                <div className="header-right">
+                {userRole === SUPER_ADMIN && <div className="header-right">
                     <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Student</button>
-                </div>
+                </div>}
             </div>
             <div className="content-body">
                 {created ? "userCreated" : ""}
@@ -132,9 +140,14 @@ export default function StudentPage() {
                                             <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                             <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                             <td>
-                                                <button className="btn btn-warning mr-r-4" onClick={() => { openLinkModal(data) }}>Link</button>
-                                                <button disabled className="btn btn-success mr-r-4">Edit</button>
-                                                <button disabled className="btn btn-danger">Delete</button>
+                                                {userRole === SUPER_ADMIN ? <>
+                                                    <button className="btn btn-warning mr-r-4" onClick={() => { openLinkModal(data) }}>Link</button>
+                                                    <button disabled className="btn btn-success mr-r-4">Edit</button>
+                                                    <button disabled className="btn btn-danger">Delete</button>
+                                                </>
+                                                    :
+                                                    <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
+                                                }
                                             </td>
                                         </tr>
                                     )}

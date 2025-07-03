@@ -2,10 +2,7 @@ import * as Constants from '../Constants';
 import axios from '../../api';
 const basePathUrl = process.env.REACT_APP_BASE_PATH;
 
-export const getAllUserDetails = (data, navigate) => (dispatch) => {
-
-    console.log({ data });
-    navigate("/ProfileDetailsPage");
+export const getAllUserDetails = (data) => (dispatch) => {
     let url = `${basePathUrl}/sa/user/${data}`;
 
     axios.get(url)
@@ -14,8 +11,9 @@ export const getAllUserDetails = (data, navigate) => (dispatch) => {
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_ALL_USER_DETAILS,
-                    payload: response.data
+                    payload: response.data,
                 })
+
             }
             else if (response.status === 204) {
                 dispatch({
@@ -79,9 +77,14 @@ export const getTeacherEntities = (data) => (dispatch) => {
 }
 
 export const getStudentEntities = (data) => (dispatch) => {
+    console.log({ data });
     dispatch({ type: Constants.RESET_STATE })
     let url = "";
-    url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&userType=${data?.userType}`;
+    if (data?.isNotAdmin === true) {
+        url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&className=${data?.className}&sectionName=${data?.sectionName}`;
+    } else {
+        url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&userType=${data?.userType}`;
+    }
     axios.get(url)
         .then(response => {
             console.log({ response });

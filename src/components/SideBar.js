@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 function SideBar(props) {
     const [isActive, setIsActive] = useState("Manage classroom");
     const [isSubActive, setSubIsActive] = useState(0);
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     let { pathname } = useLocation();
     let role = sessionStorage.getItem("role");
+    let userId = sessionStorage.getItem("userId");
     let superAdmin = [
         {
             name: "Manage classroom",
@@ -15,6 +18,13 @@ function SideBar(props) {
             transform: "manageClassroom",
             to: "/ManageClasses",
             icon: "fa-solid fa-school"
+        },
+        {
+            name: "Attendance",
+            component: "AttendancePage",
+            transform: "Attendance",
+            to: "/AttendanceCalendarPage",
+            icon: "fa-solid fa-user",
         },
         {
             name: "Manage Entity",
@@ -56,6 +66,20 @@ function SideBar(props) {
             to: "/ProfileDetailsPage",
             icon: "fa-solid fa-user",
         },
+        {
+            name: "Student",
+            component: "StudentPage",
+            transform: "student",
+            to: "/StudentPage",
+            icon: "fa-solid fa-user",
+        },
+        {
+            name: "Attendance",
+            component: "AttendancePage",
+            transform: "Attendance",
+            to: "/AttendanceCalendarPage",
+            icon: "fa-solid fa-user",
+        },
     ];
 
     let StudentRoutes = [
@@ -64,6 +88,13 @@ function SideBar(props) {
             component: "ProfileDetailsPage",
             transform: "Student Profile",
             to: "/ProfileDetailsPage",
+            icon: "fa-solid fa-user",
+        },
+        {
+            name: "Attendance",
+            component: "AttendancePage",
+            transform: "Attendance",
+            to: "/AttendanceCalendarPage",
             icon: "fa-solid fa-user",
         },
     ];
@@ -98,6 +129,7 @@ function SideBar(props) {
 
 
     const sideBarHandler = (value) => {
+        console.log("value", value);
         setIsActive(value?.name);
         if (value?.subNav) {
             if (isSubActive === 0) {
@@ -107,7 +139,11 @@ function SideBar(props) {
         else {
             navigate(`${value.to}`);
         }
+        if (value.component === "ProfileDetailsPage") {
+            dispatch({ type: "GET_USER_ID", payload: userId });
+        }
     }
+
     const sideSubBarHandler = (value, index) => {
         setSubIsActive(index);
         navigate(`${value.to}`);

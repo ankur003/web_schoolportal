@@ -3,6 +3,8 @@ import * as Constants from '../Constants';
 const initialState = {
     message: {},
     role: "",
+    userId: {},
+    loginUserId: "",
 }
 
 export default function loginReducer(state = initialState, action) {
@@ -17,6 +19,18 @@ export default function loginReducer(state = initialState, action) {
             return {
                 ...state,
                 role: action.payload,
+            }
+        case Constants.GET_USER_ID:
+            console.log("reducer", action.payload);
+            return {
+                ...state,
+                userId: action.payload,
+            }
+        case Constants.LOGIN_GET_USER_ID:
+            console.log("reducer", action.payload);
+            return {
+                ...state,
+                loginUserId: action.payload,
             }
         // case Constants.SET_LOGOUT_USER:
         //     console.log("reducer", action)

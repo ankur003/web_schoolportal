@@ -1,0 +1,70 @@
+.attendance-calendar-page {
+  max-width: 800px;
+  margin: 48px auto;
+  padding: 36px 28px 24px 28px;
+  background: #f8fafc;
+  border-radius: 22px;
+  box-shadow: 0 8px 32px rgba(30, 136, 229, 0.10);
+  text-align: center;
+
+  .ant-picker-calendar {
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(67,160,71,0.08);
+    overflow: hidden;
+    background: #fff;
+    padding: 16px 8px;
+  }
+
+  .attendance-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 36px;
+    .ant-badge-status-dot {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      width: 12px;
+      height: 12px;
+    }
+    .ant-badge-status-text {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-left: 8px;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .legend {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    align-items: center;
+    font-size: 1.08rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(30,136,229,0.07);
+    padding: 14px 0;
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+  }
+
+  .present-dot, .absent-dot, .holiday-dot, .leave-dot {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    border: 2.5px solid #fff;
+  }
+  .present-dot { background: linear-gradient(135deg, #43a047 60%, #66bb6a 100%); }
+  .absent-dot { background: linear-gradient(135deg, #e53935 60%, #ff7043 100%); }
+  .holiday-dot { background: linear-gradient(135deg, #fbc02d 60%, #fff176 100%); }
+  .leave-dot { background: linear-gradient(135deg, #1e88e5 60%, #64b5f6 100%); }
+}

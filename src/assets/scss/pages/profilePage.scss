@@ -66,12 +66,18 @@
 
     .profile-all-details {
         padding-left: 20px;
+        height: calc(100vh - 125px);
+        overflow: auto;
 
         .form-content {
             padding-right: 10px;
-            height: calc(100vh - 258px);
+            // height: calc(100vh - 258px);
             overflow: overlay;
             box-sizing: border-box;
+        }
+
+        .card-body {
+            border-bottom: 1px solid #e1e1e1;
         }
     }
 }

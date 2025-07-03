@@ -1,26 +1,32 @@
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-// import { composeWithDevTools } from 'redux-devtools-extension';
-import logger from 'redux-logger';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import loginReducer from './Redux/Reducers/loginReducer';
 import manageClassesReducer from './Redux/Reducers/manageClassesReducer';
 import entityReducer from './Redux/Reducers/entityReducer';
 
 const rootReducer = combineReducers({
-    loginReducer,
-    manageClassesReducer,
-    entityReducer,
+  loginReducer,
+  manageClassesReducer,
+  entityReducer,
 });
 
-const middleware = [thunk];
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['loginReducer', 'manageClassesReducer', 'entityReducer'],
+};
 
-if (process.env.NODE_ENV !== 'development') {
-    middleware.push(logger)
-}
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// const store = createStore(rootReducer,applyMiddleware(...middleware));
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(...middleware)));
+const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false, // Needed for redux-persist
+    }),
+  devTools: process.env.NODE_ENV !== 'production',
+});
 
-
+export const persistor = persistStore(store);
 export default store;

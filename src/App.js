@@ -12,6 +12,7 @@ import ProfileDetailsPage from './container/ProfileDetailsPage';
 import ForgetPassword from './components/ForgetPassword';
 import ChangePassword from './components/ChangePassword';
 import { Navigate, useLocation } from 'react-router-dom';
+import AttendanceCalendarPage from './container/EntityCalender';
 
 const App = () => {
   // Assume you have a way to get the user's role, e.g., from localStorage or context
@@ -26,7 +27,7 @@ const App = () => {
 
   const RoleBasedRedirect = () => {
     const role = getUserRole();
-    if (role === 'SUPER_ADMIN') return <Navigate to="/ManageClasses" replace />;
+    if (role === 'SUPER_ADMIN') return (<Navigate to="/ManageClasses" replace />);
     if (role === 'TEACHER') return <Navigate to="/ProfileDetailsPage" replace />;
     if (role === 'STUDENT') return <Navigate to="/ProfileDetailsPage" replace />;
     // Default fallback
@@ -49,6 +50,7 @@ const App = () => {
           <Route element={<StudentPage />} path="/StudentPage" />
           <Route element={<TeacherPage />} path="/TeacherPage" />
           <Route element={<ProfileDetailsPage />} path="/ProfileDetailsPage" />
+          <Route element={<AttendanceCalendarPage />} path="/AttendanceCalendarPage" />
         </Route>
       </Routes>
     </Router>

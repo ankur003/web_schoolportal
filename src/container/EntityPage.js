@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 
 const EntityPage = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const userRole = sessionStorage.getItem("role");
 
     const { entityList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
 
@@ -37,6 +38,11 @@ const EntityPage = () => {
     //     let data = { page, limit, values, filter: true }
     //     dispatch(getEntities(data))
     // };
+
+    const getAllUserDetails = (data) => {
+        dispatch({ type: "GET_USER_ID", payload: data });
+        navigate("/ProfileDetailsPage");
+    }
 
     return (
         <>
@@ -81,7 +87,7 @@ const EntityPage = () => {
                                             <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                             <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                             <td>
-                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => dispatch(getAllUserDetails(data?.userUuid, navigate))}>View</button>
+                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
                                                 <button className="btn btn-success mr-r-4">Edit</button>
                                                 <button className="btn btn-danger">Delete</button>
                                             </td>

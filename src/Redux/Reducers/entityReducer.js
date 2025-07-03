@@ -10,7 +10,8 @@ const initialState = {
     noDataFound: false,
     created: false,
     userDetails: {},
-    pic: ""
+    pic: "",
+    isNavigate: false
 }
 
 
@@ -60,7 +61,7 @@ export default function entityReducer(state = initialState, action) {
             return {
                 ...state,
                 loader: true,
-                userDetails: action.payload
+                userDetails: action.payload,
             }
         case Constants.GET_ALL_USER_PROFILE:
             return {
