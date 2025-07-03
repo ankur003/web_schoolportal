@@ -155,3 +155,55 @@ export const linkClassSection = (data, SetIsModal) => (dispatch) => {
         console.log(error);
     });
 }
+
+export const updateUserDetails = (data,setState) => (dispatch) => {
+    const payload = {
+        address: {
+            cBuildingName: data.cBuildingName,
+            cCoutry: data.cCoutry,
+            cDistrict: data.cDistrict,
+            cFlatNo: data.cFlatNo,
+            cFloorNo: data.cFloorNo,
+            cHouseNo: data.cHouseNo,
+            cPinCode: data.cPinCode,
+            cState: data.cState,
+            cTehsil: data.cTehsil,
+            cVillage: data.cVillage,
+            pBuildingName: data.pBuildingName,
+            pCoutry: data.pCoutry,
+            pDistrict: data.pDistrict,
+            pFlatNo: data.pFlatNo,
+            pFloorNo: data.pFloorNo,
+            pHouseNo: data.pHouseNo,
+            pPinCode: data.pPinCode,
+            pState: data.pState,
+            pTehsil: data.pTehsil,
+            pVillage: data.pVillage,
+        },
+        fullName: data.fullName,
+        dob: data.dob,
+        doj: data.doj,
+        phoneNo: data.phoneNo,
+        userInfo: {
+            bloodGroup: data.bloodGroup,
+            fatherEmail: data.fatherEmailId,
+            fatherPh: data.fatherMobileNumber,
+            fatherName: data.fatherName,
+            motherEmail: data.motherEmailId,
+            motherPh: data.motherMobileNumber,
+            motherName: data.motherName,
+            motherOccupation: data.motherOccupation,
+            fatherOccupation: data.fatherOccupation,
+        },
+    };
+    axios.put(`${basePathUrl}/sa/user/${data.userId}`, payload)
+        .then(response => {
+            if (response.status === 200) {
+                setState(true);
+                 dispatch(getAllUserDetails(data.userId, null));
+            }
+        })
+        .catch(error => {
+            console.error("Error updating user details:", error);
+        });
+}

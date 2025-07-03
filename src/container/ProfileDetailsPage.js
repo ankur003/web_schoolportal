@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import EditAllProfileDetails from '../components/EditAllProfileDetails';
-import { getAllUserDetails } from '../Redux/Action/entityAction';
+import { getAllUserDetails, updateUserDetails } from '../Redux/Action/entityAction';
 import { SUPER_ADMIN } from '../Redux/Constants';
 
 export default function ProfileDetailsPage() {
@@ -25,6 +25,19 @@ export default function ProfileDetailsPage() {
         return years + " years " + months + " months " + days + " days";
     }
 
+    // Create a ref to access EditAllProfileDetails methods
+    const editRef = React.useRef();
+
+    // Example submit handler to get form data from child
+    const submitForm = () => {
+        if (editRef.current && editRef.current.getFormData) {
+            const data = editRef.current.getFormData();
+            // Do something with data, e.g., dispatch an action or API call
+            let payload = {userId: userId, ...data};
+            dispatch(updateUserDetails(payload, setIsEdit));
+            console.log("Form Data from EditAllProfileDetails:", data);
+        }
+    };
 
     useEffect(() => {
         dispatch(getAllUserDetails(userId, null));
@@ -51,13 +64,13 @@ export default function ProfileDetailsPage() {
                     <div className="profile-content">
                         <p><strong><i className="fas fa-circle text-success"></i>Status : </strong><b className="text-success text-capitalize">{userDetails?.isActive === true ? "Active" : userDetails?.isActive === false ? "Inactive" : userDetails?.isActive === null
                             ? userDetails?.isActive : "NA"}</b></p>
-                        <p><strong><i className="fas fa-sort-numeric-up-alt"></i>Roll No : </strong><strong>123</strong></p>
+                        <p><strong><i className="fas fa-sort-numeric-up-alt"></i>Roll No : </strong><strong>{userDetails?.rollNumber}</strong></p>
                         <p><strong><i className='fa-solid fa-school'></i>Class : </strong><span>{userDetails?.className ? userDetails.className : "NA"}</span> </p>
                         <p><strong><i className='fa-solid fa-school'></i>Section : </strong><span>{userDetails?.sectionName ? userDetails?.sectionName : "NA"}</span> </p>
                         <p><strong><i className="fas fa-envelope"></i>Email : </strong><span>{userDetails?.username ? userDetails?.username : "NA"}</span> </p>
                         <p><strong><i className="fas fa-mobile"></i>Mobile No : </strong><span>{userDetails?.phoneNo ? userDetails?.phoneNo : "NA"}</span> </p>
                         <p><strong><i className="fas fa-history"></i>Last Login : </strong> <span>5min ago</span> </p>
-                        <button className={isEdit ? "btn btn-primary btn-block" : "btn btn-success btn-block"} onClick={() => setIsEdit(!isEdit)}>{isEdit ? "Edit Profile" : "Save"}</button>
+                        <button className={isEdit ? "btn btn-primary btn-block" : "btn btn-success btn-block"} onClick={() => {isEdit ? setIsEdit(!isEdit) : submitForm() }}>{isEdit ? "Edit Profile" : "Save"}</button>
                     </div>
 
                 </div>
@@ -72,7 +85,7 @@ export default function ProfileDetailsPage() {
                         <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                             <div className="card">
                                 <div className='card-header'>
-                                    <h6>Personal Information</h6>
+                                    <h6>PERSONAL INFORMATION</h6>
                                 </div>
                                 {isEdit ?
                                     <>
@@ -306,7 +319,7 @@ export default function ProfileDetailsPage() {
                                         </div>
                                     </>
                                     :
-                                    <EditAllProfileDetails />
+                                    <EditAllProfileDetails ref={editRef} />
                                 }
                             </div>
                         </div>
