@@ -10,7 +10,9 @@ import java.time.LocalTime;
 public class TeacherTimeTableDTO {
     private Long id;
     private String teacherUuid;
-    private String classUuid;
+    private String teacherTimetableUuid;
+    private String masterClassUuid;
+    private String masterSectionUuid;
     private String subjectName;
     private String dayOfWeek;
     private LocalTime startTime;

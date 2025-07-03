@@ -21,8 +21,14 @@ public class TeacherTimeTable {
     @Column(name = "teacher_uuid", nullable = false)
     private String teacherUuid;
 
-    @Column(name = "class_uuid", nullable = false)
-    private String classUuid;
+    @Column(name = "teacher_timetable_uuid", nullable = false)
+    private String teacherTimetableUuid;
+
+    @Column(name = "master_class_uuid", nullable = false)
+    private String masterClassUuid;
+
+    @Column(name = "master_section_uuid", nullable = false)
+    private String masterSectionUuid;
 
     @Column(name = "subject_name", nullable = false)
     private String subjectName;

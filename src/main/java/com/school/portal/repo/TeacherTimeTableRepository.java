@@ -7,10 +7,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTable, Long> {
     List<TeacherTimeTable> findByTeacherUuid(String teacherUuid);
-    List<TeacherTimeTable> findByClassUuid(String classUuid);
+  //  List<TeacherTimeTable> findByClassUuid(String classUuid);
     List<TeacherTimeTable> findByDayOfWeek(String dayOfWeek);
 
     @Query("SELECT t FROM TeacherTimeTable t WHERE t.teacherUuid = :teacherUuid AND t.dayOfWeek = :dayOfWeek " +
@@ -22,4 +23,12 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
             @Param("startTime") LocalTime startTime,
             @Param("endTime") LocalTime endTime
     );
+
+    void deleteByTeacherTimetableUuid(String teacherTimetableUuid);
+
+    Optional<TeacherTimeTable> findByTeacherTimetableUuid(String teacherTimetableUuid);
+
+    List<TeacherTimeTable> findByMasterClassUuid(String classUuid);
+
+    List<TeacherTimeTable> findByMasterSectionUuid(String sectionUuid);
 }

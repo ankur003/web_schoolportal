@@ -32,9 +32,9 @@ public class TeacherTimeTableController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TeacherTimeTable> getById(@PathVariable Long id) {
-        return timetableService.getById(id)
+    @GetMapping("/{teacherTimetableUuid}")
+    public ResponseEntity<TeacherTimeTable> getById(@PathVariable String teacherTimetableUuid) {
+        return timetableService.findByTeacherTimetableUuid(teacherTimetableUuid)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -53,6 +53,13 @@ public class TeacherTimeTableController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/class/section/{sectionUuid}")
+    public List<TeacherTimeTableDTO> getBySection(@PathVariable String sectionUuid) {
+        return timetableService.getByClass(sectionUuid).stream()
+                .map(TeacherTimeTableMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/day/{dayOfWeek}")
     public List<TeacherTimeTableDTO> getByDay(@PathVariable String dayOfWeek) {
         return timetableService.getByDay(dayOfWeek).stream()
@@ -60,9 +67,9 @@ public class TeacherTimeTableController {
                 .collect(Collectors.toList());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        timetableService.deleteEntry(id);
+    @DeleteMapping("/{teacherTimetableUuid}")
+    public ResponseEntity<Void> delete(@PathVariable String teacherTimetableUuid) {
+        timetableService.deleteEntry(teacherTimetableUuid);
         return ResponseEntity.ok().build();
     }
 }

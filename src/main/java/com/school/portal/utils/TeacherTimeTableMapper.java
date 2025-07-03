@@ -8,8 +8,10 @@ public class TeacherTimeTableMapper {
     public static TeacherTimeTableDTO toDto(TeacherTimeTable entity) {
         return TeacherTimeTableDTO.builder()
                 .id(entity.getId())
+                .teacherTimetableUuid(entity.getTeacherTimetableUuid())
                 .teacherUuid(entity.getTeacherUuid())
-                .classUuid(entity.getClassUuid())
+                .masterClassUuid(entity.getMasterClassUuid())
+                .masterSectionUuid(entity.getMasterSectionUuid())
                 .subjectName(entity.getSubjectName())
                 .dayOfWeek(entity.getDayOfWeek())
                 .startTime(entity.getStartTime())
@@ -21,8 +23,10 @@ public class TeacherTimeTableMapper {
     public static TeacherTimeTable toEntity(TeacherTimeTableDTO dto) {
         return TeacherTimeTable.builder()
                 .id(dto.getId())
+                .teacherTimetableUuid(dto.getTeacherTimetableUuid())
                 .teacherUuid(dto.getTeacherUuid())
-                .classUuid(dto.getClassUuid())
+                .masterClassUuid(dto.getMasterClassUuid())
+                .masterSectionUuid(dto.getMasterSectionUuid())
                 .subjectName(dto.getSubjectName())
                 .dayOfWeek(dto.getDayOfWeek())
                 .startTime(dto.getStartTime())
