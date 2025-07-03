@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.school.portal.enums.ApprovalStatus;
+import com.school.portal.enums.AttendanceStatus;
+import com.school.portal.response.AttendanceMonthlyReportResponse;
 import com.school.portal.response.UserAttendanceModel;
 import org.springframework.data.domain.Page;
 
@@ -45,9 +47,11 @@ public interface UserService {
 
 	public Boolean updateUserDetails(User user, UpdateUserModel updateUserModel);
 
-	Boolean markAttendance(User user);
+	void markAttendance(User user, AttendanceStatus status, LocalDate date);
 
     List<UserAttendanceModel> getUserAttendance(String userUuid, ApprovalStatus status, LocalDate date);
 
 	Boolean updateAttendance(String userUuid, ApprovalStatus status, LocalDate date);
+
+	AttendanceMonthlyReportResponse getUserAttendanceForMonth(String userUuid, int year, int month);
 }

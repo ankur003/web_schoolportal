@@ -12,6 +12,8 @@ import com.school.portal.queryfilter.GenericSpesification;
 import com.school.portal.queryfilter.SearchCriteria;
 import com.school.portal.repo.*;
 import com.school.portal.requests.*;
+import com.school.portal.response.AttendanceModel;
+import com.school.portal.response.AttendanceMonthlyReportResponse;
 import com.school.portal.response.UserAttendanceModel;
 import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.*;
@@ -39,10 +41,8 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.YearMonth;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service(value = "userService")
@@ -381,16 +381,19 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public Boolean markAttendance(User user) {
-        boolean isExist = attendanceRepository.existsByUserAndAttendanceDate (user, LocalDate.now ());
+    public void markAttendance(User user, AttendanceStatus status, LocalDate date) {
+        if (date == null)
+            date = LocalDate.now ();
+        if (status == null)
+            status = AttendanceStatus.PRESENT;
+        boolean isExist = attendanceRepository.existsByUserAndStatusAndAttendanceDate (user, status, date);
         if (isExist)
             throw new AlreadyExistsException ("Attendance already marked for this date");
-        Attendance attendance = Attendance.builder ().attendanceDate (LocalDate.now ())
-                .user (user).status (AttendanceStatus.PRESENT)
+        Attendance attendance = Attendance.builder ().attendanceDate (date)
+                .user (user).status (status)
                 .approvalStatus (ApprovalStatus.PENDING)
                 .markedAt (LocalDateTime.now ()).build ();
         attendanceRepository.save (attendance);
-        return true;
     }
 
     @Override
@@ -425,5 +428,98 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public AttendanceMonthlyReportResponse getUserAttendanceForMonth(String userId, int year, int month) {
+        // Validate month
+        if (month < 1 || month > 12) {
+            throw new IllegalArgumentException("Month must be between 1 and 12");
+        }
+
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+
+        List<Attendance> attendanceList = attendanceRepository.findByUserIdAndDateRange(userId, startDate, endDate);
+
+        if (attendanceList.isEmpty()) {
+            return AttendanceMonthlyReportResponse.builder()
+                    .userUuid(userId)
+                    .year(year)
+                    .month(month)
+                    .totalDays(0)
+                    .presentDays(0)
+                    .absentDays(0)
+                    .lateDays(0)
+                    .halfDays(0)
+                    .sickLeaveDays(0)
+                    .casualLeaveDays(0)
+                    .attendancePercentage(0.0)
+                    .attendanceRecords(Collections.emptyList ())
+                    .build();
+        }
+
+        // Convert to DTOs
+        List<AttendanceModel> attendanceDtos = attendanceList.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+
+        // Calculate statistics
+        int totalDays = attendanceList.size();
+        int presentDays = (int) attendanceList.stream()
+                .filter(a -> a.getStatus() == AttendanceStatus.PRESENT)
+                .count();
+        int absentDays = (int) attendanceList.stream()
+                .filter(a -> a.getStatus() == AttendanceStatus.ABSENT)
+                .count();
+        int lateDays = (int) attendanceList.stream()
+                .filter(a -> a.getStatus() == AttendanceStatus.LATE)
+                .count();
+        int halfDays = (int) attendanceList.stream()
+                .filter(a -> a.getStatus() == AttendanceStatus.HALF_DAY)
+                .count();
+        int sickLeaveDays = (int) attendanceList.stream()
+                .filter(a -> a.getStatus() == AttendanceStatus.SICK_LEAVE)
+                .count();
+        int casualLeaveDays = (int) attendanceList.stream()
+                .filter(a -> a.getStatus() == AttendanceStatus.CASUAL_LEAVE)
+                .count();
+
+        double attendanceScore = presentDays + lateDays + (halfDays * 0.5) + sickLeaveDays + casualLeaveDays;
+        double attendancePercentage = totalDays > 0 ? (attendanceScore / totalDays) * 100 : 0.0;
+
+
+        String userName = attendanceList.get(0).getUser().getFullName ();
+
+        return AttendanceMonthlyReportResponse.builder()
+                .userUuid (userId)
+                .userName(userName)
+                .year(year)
+                .month(month)
+                .totalDays(totalDays)
+                .presentDays(presentDays)
+                .absentDays(absentDays)
+                .lateDays(lateDays)
+                .halfDays(halfDays)
+                .sickLeaveDays(sickLeaveDays)
+                .casualLeaveDays(casualLeaveDays)
+                .attendancePercentage(Math.round(attendancePercentage * 100.0) / 100.0)
+                .attendanceRecords(attendanceDtos)
+                .build();
+    }
+
+    private AttendanceModel convertToDto(Attendance attendance) {
+        return AttendanceModel.builder()
+                .id(attendance.getId())
+                .attendanceDate(attendance.getAttendanceDate())
+                .status(attendance.getStatus())
+                .markedAt(attendance.getMarkedAt())
+                .approvalStatus(attendance.getApprovalStatus())
+                .approvedAt(attendance.getApprovedAt())
+                .remarks(attendance.getRemarks())
+                .approvedByName(attendance.getApprovedBy() != null ?
+                        attendance.getApprovedBy().getFullName () : null)
+                .build();
     }
 }
