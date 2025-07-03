@@ -4,11 +4,13 @@ import storage from 'redux-persist/lib/storage';
 import loginReducer from './Redux/Reducers/loginReducer';
 import manageClassesReducer from './Redux/Reducers/manageClassesReducer';
 import entityReducer from './Redux/Reducers/entityReducer';
+import leaveRequestReducer from './Redux/Reducers/LeaveAndAttandanceReducer';
 
 const rootReducer = combineReducers({
   loginReducer,
   manageClassesReducer,
   entityReducer,
+  leaveRequestReducer,
 });
 
 const persistConfig = {

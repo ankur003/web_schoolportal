@@ -13,6 +13,7 @@ import ForgetPassword from './components/ForgetPassword';
 import ChangePassword from './components/ChangePassword';
 import { Navigate, useLocation } from 'react-router-dom';
 import AttendanceCalendarPage from './container/EntityCalender';
+import LeaveRequest from './container/LeaveRequest';
 
 const App = () => {
   // Assume you have a way to get the user's role, e.g., from localStorage or context
@@ -51,6 +52,7 @@ const App = () => {
           <Route element={<TeacherPage />} path="/TeacherPage" />
           <Route element={<ProfileDetailsPage />} path="/ProfileDetailsPage" />
           <Route element={<AttendanceCalendarPage />} path="/AttendanceCalendarPage" />
+          <Route element={<LeaveRequest />} path="/LeaveRequest" />
         </Route>
       </Routes>
     </Router>

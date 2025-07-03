@@ -34,3 +34,7 @@ export const TEACHER = "TEACHER";
 export const STUDENT = "STUDENT";
 export const GET_USER_ID = "GET_USER_ID";
 export const LOGIN_GET_USER_ID = "LOGIN_GET_USER_ID";
+
+export const SET_TECHER_CLASS_SECTION = "SET_TECHER_CLASS_SECTION";
+
+export const GET_LEAVE_REQUESTS = "GET_LEAVE_REQUESTS";

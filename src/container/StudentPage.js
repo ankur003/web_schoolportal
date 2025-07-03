@@ -14,6 +14,9 @@ export default function StudentPage() {
         useSelector(state => state.entityReducer);
     const { classList, secList } = useSelector(state => state.manageClassesReducer);
     const userRole = useSelector(state => state.loginReducer.role);
+    const { classSectionList } = useSelector(state => state.entityReducer);
+
+    console.log({ studentList });
 
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState("1");
@@ -33,7 +36,7 @@ export default function StudentPage() {
     const [userId, setUserId] = useState()
 
     useEffect(() => {
-        let data = { page, limit, userType: userRole === "STUDENT", isNotAdmin: true, sectionName: "B", className: "Class 3rd" }
+        let data = { page, limit, userType: "STUDENT", isNotAdmin: userRole === SUPER_ADMIN ? false : true, sectionName: classSectionList?.sectionName, className: classSectionList?.className }
         dispatch(getStudentEntities(data))
     }, [dispatch]);
 
@@ -100,7 +103,6 @@ export default function StudentPage() {
                 </div>}
             </div>
             <div className="content-body">
-                {created ? "userCreated" : ""}
                 {loader ?
                     dataList?.length > 0 ?
                         <div className="table-content">
@@ -141,7 +143,7 @@ export default function StudentPage() {
                                             <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                             <td>
                                                 {userRole === SUPER_ADMIN ? <>
-                                                    <button className="btn btn-warning mr-r-4" onClick={() => { openLinkModal(data) }}>Link</button>
+                                                    <button className={data?.className ? "btn mr-r-4 cursor-not-allowed" : "btn btn-warning mr-r-4"} disabled={data?.className && data?.className} onClick={() => { openLinkModal(data) }}>Link</button>
                                                     <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
                                                     <button disabled className="btn btn-success mr-r-4">Edit</button>
                                                     <button disabled className="btn btn-danger">Delete</button>

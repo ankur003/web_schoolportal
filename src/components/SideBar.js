@@ -54,6 +54,13 @@ function SideBar(props) {
                     // icon: "fa-solid fa-user",
                 },
             ]
+        },
+        {
+            name: "Leave Requests",
+            component: "LeaveRequest",
+            transform: "Leave Requests",
+            to: "/LeaveRequest",
+            icon: "fa-solid fa-user",
         }
 
     ];
@@ -80,6 +87,13 @@ function SideBar(props) {
             to: "/AttendanceCalendarPage",
             icon: "fa-solid fa-user",
         },
+        {
+            name: "Leave Requests",
+            component: "LeaveRequest",
+            transform: "Leave Requests",
+            to: "/LeaveRequest",
+            icon: "fa-solid fa-user",
+        }
     ];
 
     let StudentRoutes = [

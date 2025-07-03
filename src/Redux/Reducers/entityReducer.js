@@ -11,7 +11,8 @@ const initialState = {
     created: false,
     userDetails: {},
     pic: "",
-    isNavigate: false
+    isNavigate: false,
+    classSectionList: [],
 }
 
 
@@ -56,7 +57,7 @@ export default function entityReducer(state = initialState, action) {
             return {
                 ...state,
                 created: action.payload
-        }
+            }
         case Constants.GET_ALL_USER_DETAILS:
             return {
                 ...state,
@@ -68,6 +69,12 @@ export default function entityReducer(state = initialState, action) {
                 ...state,
                 loader: true,
                 pic: action.payload
+            }
+        case Constants.SET_TECHER_CLASS_SECTION:
+            console.log("SET_TECHER_CLASS_SECTION", action.payload);
+            return {
+                ...state,
+                classSectionList: action.payload
             }
         case Constants.RESET_STATE:
             return initialState;

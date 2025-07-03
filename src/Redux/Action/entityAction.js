@@ -4,7 +4,6 @@ const basePathUrl = process.env.REACT_APP_BASE_PATH;
 
 export const getAllUserDetails = (data) => (dispatch) => {
     let url = `${basePathUrl}/sa/user/${data}`;
-
     axios.get(url)
         .then(response => {
             console.log({ response });
@@ -13,7 +12,10 @@ export const getAllUserDetails = (data) => (dispatch) => {
                     type: Constants.GET_ALL_USER_DETAILS,
                     payload: response.data,
                 })
-
+                dispatch({
+                    type: Constants.SET_TECHER_CLASS_SECTION,
+                    payload: { className: response.data?.className, sectionName: response.data?.sectionName },
+                });
             }
             else if (response.status === 204) {
                 dispatch({
@@ -77,22 +79,28 @@ export const getTeacherEntities = (data) => (dispatch) => {
 }
 
 export const getStudentEntities = (data) => (dispatch) => {
-    console.log({ data });
-    dispatch({ type: Constants.RESET_STATE })
     let url = "";
     if (data?.isNotAdmin === true) {
         url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&className=${data?.className}&sectionName=${data?.sectionName}`;
     } else {
         url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&userType=${data?.userType}`;
+        dispatch({ type: Constants.RESET_STATE })
     }
     axios.get(url)
         .then(response => {
-            console.log({ response });
             if (response.status === 200) {
-                dispatch({
-                    type: Constants.GET_STUDENT,
-                    payload: response.data
-                })
+                if (data?.isNotAdmin === true) {
+                    console.log("getStudentEntities", response.data);
+                    let studentList = response.data?.data?.filter((item) => {
+                        return item.userType === "STUDENT";
+                    });
+                    console.log("studentList", studentList);
+                    dispatch({ type: Constants.GET_STUDENT, payload: { data: studentList } });
+
+                }
+                else {
+                    dispatch({ type: Constants.GET_STUDENT, payload: { data: response.data?.data } });
+                }
             }
             else if (response.status === 204) {
                 dispatch({
@@ -156,7 +164,7 @@ export const linkClassSection = (data, SetIsModal) => (dispatch) => {
     });
 }
 
-export const updateUserDetails = (data,setState) => (dispatch) => {
+export const updateUserDetails = (data, setState) => (dispatch) => {
     const payload = {
         address: {
             cBuildingName: data.cBuildingName,
@@ -200,7 +208,7 @@ export const updateUserDetails = (data,setState) => (dispatch) => {
         .then(response => {
             if (response.status === 200) {
                 setState(true);
-                 dispatch(getAllUserDetails(data.userId, null));
+                dispatch(getAllUserDetails(data.userId, null));
             }
         })
         .catch(error => {

@@ -30,6 +30,12 @@
 
 // end
 
+.cursor-not-allowed,
+.cursor-not-allowed * {
+    cursor: not-allowed !important;
+    background-color: #888 !important;
+}
+
 .nav-tabs {
     margin-bottom: 20px;
 
