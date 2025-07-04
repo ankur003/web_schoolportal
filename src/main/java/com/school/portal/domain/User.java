@@ -1,5 +1,6 @@
 package com.school.portal.domain;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -20,13 +21,13 @@ import javax.persistence.OneToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class User {
+public class User implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 	
-	@Column(unique = true, nullable = false, updatable = false)
+	@Column(name = "user_uuid", nullable = false,  updatable = false)
 	private String userUuid;
 
 	@Column(nullable = false, unique = true)
