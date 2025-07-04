@@ -22,7 +22,7 @@ public class MasterClass {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long masterClassId;
 	
-	@Column(nullable = false, unique = true)
+	@Column(name = "master_class_uuid", nullable = false, unique = true)
 	private String masterClassUuid;
 	
 	@Column(nullable = false, unique = true)
