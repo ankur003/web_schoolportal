@@ -16,13 +16,9 @@ public class AttendanceMonthlyReportResponse {
     private String userName;
     private int year;
     private int month;
-    private int totalDays;
-    private int presentDays;
-    private int absentDays;
-    private int lateDays;
-    private int halfDays;
-    private int sickLeaveDays;
-    private int casualLeaveDays;
-    private double attendancePercentage;
-    private List<AttendanceModel> attendanceRecords;
+    private String monthName;
+    private int totalWorkingDays;
+    private int totalDaysInMonth;
+    private AttendanceSummaryModel summary;
+    private List<AttendanceCalendarModel> calendar;
 }
