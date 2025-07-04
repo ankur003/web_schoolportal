@@ -28,7 +28,7 @@ public class MasterFee {
     private String masterFeesUuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "master_class_uuid", referencedColumnName = "uuid", insertable = false, updatable = false)
+    @JoinColumn(name = "master_class_uuid", referencedColumnName = "master_class_uuid", insertable = false, updatable = false)
     private MasterClass masterClass;
 
     @Enumerated(EnumType.STRING)
