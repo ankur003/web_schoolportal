@@ -19,10 +19,15 @@ public class StudentController {
     private final UserService userService;
 
     @PostMapping("/attendance")
-    @PreAuthorize("hasRole('TEACHER')")
+    //@PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<Object> markStudentAttendance(@RequestParam(name = "userId") String userUuid,
-                                                        @RequestParam AttendanceStatus status, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        userService.markAttendance (userService.getUserDetailByUuid (userUuid), status, date);
-        return ResponseEntity.ok().build();
+                                                        @RequestParam AttendanceStatus status, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                                        @RequestParam String catagory) {
+    	// catagory == "ATTENDANCE" OR "LEAVE"
+    	if (catagory.equals("ATTENDANCE") || catagory.equals("LEAVE")) { 
+            userService.markAttendance (userService.getUserDetailByUuid (userUuid), status, date, catagory);
+            return ResponseEntity.ok().build();
+    	}
+        return ResponseEntity.badRequest().build();
     }
 }

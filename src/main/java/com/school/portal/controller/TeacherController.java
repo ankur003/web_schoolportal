@@ -32,10 +32,15 @@ public class TeacherController extends AbstractController {
     @PostMapping("/attendance")
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<Object> markTeacherAttendance(@RequestParam(required = false) AttendanceStatus status,
-                                                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        User user = userService.getUserDetail (authenticationFacade.getAuthentication ().getName ());
-        userService.markAttendance (user, status, date);
-        return ResponseEntity.ok ().build ();
+                                                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                                        @RequestParam(required = true) String catagory) {
+    	// catagory == "ATTENDANCE" OR "LEAVE"
+    	if (catagory.equals("ATTENDANCE") || catagory.equals("LEAVE")) {
+    		 User user = userService.getUserDetail (authenticationFacade.getAuthentication ().getName ());
+    	     userService.markAttendance (user, status, date, catagory);
+    	     return ResponseEntity.ok ().build ();
+    	} 
+        return ResponseEntity.badRequest().build();
     }
 
 }

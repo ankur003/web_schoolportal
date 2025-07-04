@@ -47,11 +47,11 @@ public interface UserService {
 
 	public Boolean updateUserDetails(User user, UpdateUserModel updateUserModel);
 
-	void markAttendance(User user, AttendanceStatus status, LocalDate date);
+	void markAttendance(User user, AttendanceStatus status, LocalDate date, String catagory);
 
     List<UserAttendanceModel> getUserAttendance(String userUuid, ApprovalStatus status, LocalDate date);
 
-	Boolean updateAttendance(String userUuid, ApprovalStatus status, LocalDate date);
+	Boolean updateAttendance(String userUuid, ApprovalStatus status, LocalDate date, String catagory);
 
 	AttendanceMonthlyReportResponse getUserAttendanceForMonth(String userUuid, int year, int month);
 }

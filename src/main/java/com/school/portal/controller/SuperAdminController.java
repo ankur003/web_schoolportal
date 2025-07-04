@@ -347,8 +347,12 @@ public class SuperAdminController extends AbstractController {
 	@PutMapping("/attendance")
 	public ResponseEntity<Object> updateAttendance(@RequestParam(name = "userId") String userUuid,
 												   @RequestParam(name = "status") ApprovalStatus status,
-												   @RequestParam(name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-		Boolean isUpdated = userService.updateAttendance(userUuid, status, date);
-		return ResponseEntity.ok(isUpdated);
+												   @RequestParam(name = "date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+												   @RequestParam String catagory) {
+		if (catagory.equals("ATTENDANCE") || catagory.equals("LEAVE")) { 
+			Boolean isUpdated = userService.updateAttendance(userUuid, status, date, catagory);
+			return ResponseEntity.ok(isUpdated); 
+		}
+		return ResponseEntity.badRequest().build();
 	}
 }

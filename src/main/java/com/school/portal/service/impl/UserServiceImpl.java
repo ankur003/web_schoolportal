@@ -388,7 +388,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public void markAttendance(User user, AttendanceStatus status, LocalDate date) {
+    public void markAttendance(User user, AttendanceStatus status, LocalDate date, String catagory) {
         if (date == null)
             date = LocalDate.now ();
         if (status == null)
@@ -399,6 +399,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         Attendance attendance = Attendance.builder ().attendanceDate (date)
                 .user (user).status (status)
                 .approvalStatus (ApprovalStatus.PENDING)
+                .catagory(catagory)
                 .markedAt (LocalDateTime.now ()).build ();
         attendanceRepository.save (attendance);
     }
@@ -413,13 +414,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     .user (modelMapper.map (attendance.getUser (), UserResponseModel.class))
                     .date (attendance.getAttendanceDate ())
                     .status (attendance.getApprovalStatus ())
+                    .category(attendance.getCatagory())
                     .build ();
         }).collect (Collectors.toList ());
     }
 
     @Override
     @Transactional
-    public Boolean updateAttendance(String userUuid, ApprovalStatus status, LocalDate date) {
+    public Boolean updateAttendance(String userUuid, ApprovalStatus status, LocalDate date,  String catagory) {
         Attendance attendance = attendanceRepository.findByUser_UserUuidAndAttendanceDate (userUuid, date).get ();
         User user = getUserDetail (authenticationFacade.getAuthentication ().getName ());
         if (attendance != null) {
@@ -431,6 +433,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             attendance.setApprovedBy (user);
             attendance.setApprovedAt (LocalDateTime.now ());
             attendance.setUpdatedAt (LocalDateTime.now ());
+            attendance.setCatagory(catagory);
             attendanceRepository.save (attendance);
             return true;
         }

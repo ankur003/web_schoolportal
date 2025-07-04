@@ -57,6 +57,9 @@ public class Attendance {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @Column(name = "catagory")
+    private String catagory;
 
     @PrePersist
     protected void onCreate() {

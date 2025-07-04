@@ -16,4 +16,5 @@ public class UserAttendanceModel {
     private ApprovalStatus status;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
+    private String category;
 }
