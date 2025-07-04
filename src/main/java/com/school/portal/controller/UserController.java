@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-@CrossOrigin(origins = "localhost:4200")
-@RestController(value = "/user")
+@RestController
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
 
 	private final UserService userService;
-	@GetMapping("/getString")
-	public String getString() {
-		return "Mr. BANSALA";
-	}
+//	@GetMapping("/getString")
+//	public String getString() {
+//		return "Mr. BANSALA";
+//	}
 
 	@GetMapping("/{userId}/monthly-attendance")
 	public ResponseEntity<Object> getUserMonthlyAttendance(@PathVariable(name = "userId") String userUuid,

@@ -438,6 +438,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public AttendanceMonthlyReportResponse getUserAttendanceForMonth(String userUuid, int year, int month) {
         // Validate month
         if (month < 1 || month > 12) {
