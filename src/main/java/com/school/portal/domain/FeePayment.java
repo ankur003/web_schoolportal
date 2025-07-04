@@ -22,6 +22,10 @@ public class FeePayment {
     @Column(name = "user_uuid", nullable = false)
     private String userUuid;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_uuid", referencedColumnName = "user_uuid", insertable = false, updatable = false)
+    private User user;
+
     @Column(name = "fee_payment_uuid", nullable = false)
     private String feePaymentUuid;
 
