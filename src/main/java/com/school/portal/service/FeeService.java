@@ -77,6 +77,10 @@ public class FeeService {
     // FEE PAYMENT
     public FeePayment addFeePayment(FeePayment feePayment) {
         feePayment.setFeePaymentUuid (SchoolPortalUtils.getUniqueUuid ());
+        MasterFee masterFee = masterFeeRepository.findByMasterFeesUuid(feePayment.getMasterFee().getMasterFeesUuid())
+                .orElseThrow(() -> new RuntimeException("MasterFee not found"));
+        // Now set it in FeePayment
+        feePayment.setMasterFee(masterFee);
         return feePaymentRepository.save(feePayment);
     }
 
