@@ -101,7 +101,7 @@ public class FeeService {
         existing.setPaymentMode(updatedPayment.getPaymentMode());
         existing.setTransactionId(updatedPayment.getTransactionId());
         existing.setRemarks(updatedPayment.getRemarks());
-        existing.setMasterFee(updatedPayment.getMasterFee()); // Optional
+        //existing.setMasterFee(updatedPayment.getMasterFee()); // Optional
         existing.setUpdatedAt(LocalDateTime.now());
 
         return feePaymentRepository.save(existing);
