@@ -1,7 +1,9 @@
 package com.school.portal.service;
 
 import com.school.portal.domain.FeePayment;
+import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterFee;
+import com.school.portal.domain.MasterSection;
 import com.school.portal.dto.MasterFeeResponseDTO;
 import com.school.portal.enums.FeeType;
 import com.school.portal.repo.FeePaymentRepository;
@@ -12,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,18 +38,38 @@ public class FeeService {
     @Transactional(readOnly = true)
     public List<MasterFeeResponseDTO> getAllMasterFees() {
         return masterFeeRepository.findAll().stream()
-                .map(fee -> MasterFeeResponseDTO.builder()
-                        .id(fee.getId())
-                        .masterClassUuid(fee.getMasterClassUuid())
-                        .className(fee.getMasterClass() != null ? fee.getMasterClass().getClassName() : null)
-                        .masterFeesUuid(fee.getMasterFeesUuid())
-                        .feeType(fee.getFeeType())
-                        .totalFee(fee.getTotalFee())
-                        .academicYear(fee.getAcademicYear())
-                        .createdAt(fee.getCreatedAt())
-                        .build())
+                .map(fee -> {
+                    MasterClass masterClass = fee.getMasterClass();
+
+                    List<String> sectionNames = new ArrayList<>();
+                    String className = null;
+
+                    if (masterClass != null) {
+                        className = masterClass.getClassName();
+
+                        if (masterClass.getMasterSection() != null) {
+                            sectionNames = masterClass.getMasterSection().stream()
+                                    .map(MasterSection::getSectionName)
+                                    .filter(Objects::nonNull)
+                                    .collect(Collectors.toList());
+                        }
+                    }
+
+                    return MasterFeeResponseDTO.builder()
+                            .id(fee.getId())
+                            .masterClassUuid(fee.getMasterClassUuid())
+                            .className(className)
+                            .sectionName(sectionNames)
+                            .masterFeesUuid(fee.getMasterFeesUuid())
+                            .feeType(fee.getFeeType())
+                            .totalFee(fee.getTotalFee())
+                            .academicYear(fee.getAcademicYear())
+                            .createdAt(fee.getCreatedAt())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
+
 
 
     public List<MasterFee> findByMasterClassUuid(String classId) {

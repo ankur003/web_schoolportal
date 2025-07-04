@@ -4,6 +4,7 @@ import com.school.portal.enums.FeeType;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,6 +15,7 @@ public class MasterFeeResponseDTO {
     private Long id;
     private String masterClassUuid;
     private String className;
+    private List<String> sectionName;
     private String masterFeesUuid;
     private FeeType feeType;
     private Double totalFee;
