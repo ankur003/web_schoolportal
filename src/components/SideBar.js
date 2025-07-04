@@ -20,11 +20,18 @@ function SideBar(props) {
             icon: "fa-solid fa-school"
         },
         {
-            name: "Attendance",
-            component: "AttendancePage",
-            transform: "Attendance",
-            to: "/AttendanceCalendarPage",
-            icon: "fa-solid fa-user",
+            name: "Manage Fees",
+            component: "FeeModule",
+            transform: "Fee Management",
+            to: "/FeeModule",
+            icon: "fa-solid fa-money-bill"
+        },
+        {
+            name: "Manage Payment",
+            component: "PaymentDetails",
+            transform: "Manage Payment",
+            to: "/PaymentDetails",
+            icon: "fa-solid fa-money-bill"
         },
         {
             name: "Manage Entity",
@@ -60,7 +67,7 @@ function SideBar(props) {
             component: "LeaveRequest",
             transform: "Leave Requests",
             to: "/LeaveRequest",
-            icon: "fa-solid fa-user",
+            icon: "fa-solid fa-calendar-check",
         }
 
     ];
@@ -85,14 +92,14 @@ function SideBar(props) {
             component: "AttendancePage",
             transform: "Attendance",
             to: "/AttendanceCalendarPage",
-            icon: "fa-solid fa-user",
+            icon: "fa-solid fa-calendar-check", // Changed to attendance-related icon
         },
         {
             name: "Leave Requests",
             component: "LeaveRequest",
             transform: "Leave Requests",
             to: "/LeaveRequest",
-            icon: "fa-solid fa-user",
+            icon: "fa-solid fa-calendar-check",
         }
     ];
 

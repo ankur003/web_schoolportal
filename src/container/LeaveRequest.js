@@ -6,14 +6,15 @@ import { getLeaveRequestDetails, leaveRequestAction, leaveRequestApply } from ".
 
 const LeaveRequest = () => {
     const dispatch = useDispatch();
-    const userRole = useSelector((state) => state.loginReducer.role);
+    const { userId, role } = useSelector((state) => state.loginReducer);
     const { leaveRequest, loader, noDataFound } = useSelector((state) => state.leaveRequestReducer);
     let requests = leaveRequest || [];
     const [isModal, SetIsModal] = useState(false);
 
     useEffect(() => {
-        dispatch(getLeaveRequestDetails());
-    }, []);
+        let data = { userId: role !== SUPER_ADMIN ? userId : "" };
+        dispatch(getLeaveRequestDetails(data));
+    }, [dispatch, userId]);
 
     const handleAction = (userUuid, date, action) => {
         let data = {
@@ -48,7 +49,7 @@ const LeaveRequest = () => {
         <>
             <div className="header">
                 <h1>Leave Requests</h1>
-                {userRole !== SUPER_ADMIN && <div className="header-right">
+                {role !== SUPER_ADMIN && <div className="header-right">
                     <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Apply Leave</button>
                 </div>}
             </div>
@@ -66,12 +67,12 @@ const LeaveRequest = () => {
                                         <th>User Type</th>
                                         <th>Date</th>
                                         <th>Status</th>
-                                        {userRole === SUPER_ADMIN && <th>Actions</th>}
+                                        {role === SUPER_ADMIN && <th>Actions</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {requests.map((req) => (
-                                        <tr key={req.user.userUuid + req.date}>
+                                    {requests.map((req, index) => (
+                                        <tr key={index}>
                                             <td>{req.user.fullName}</td>
                                             <td>{req.user.username}</td>
                                             <td>{req.user.className}</td>
@@ -79,7 +80,7 @@ const LeaveRequest = () => {
                                             <td>{req.user.userType}</td>
                                             <td>{req.date}</td>
                                             <td><div className={req.status === "APPROVED" ? "fw-bold text-success" : req.status === "REJECTED" ? "fw-bold text-danger" : "fw-bold text-warning"}>{req.status}</div></td>
-                                            {userRole === SUPER_ADMIN && (
+                                            {role === SUPER_ADMIN && (
                                                 <td>
                                                     {req.status === "PENDING" &&
                                                         <>

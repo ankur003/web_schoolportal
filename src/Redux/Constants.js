@@ -30,7 +30,7 @@ export const GET_ALL_USER_PROFILE = "GET_ALL_USER_PROFILE";
 export const LINK_CLASS_SECTION = "LINK_CLASS_SECTION";
 
 export const SUPER_ADMIN = "SUPER_ADMIN";
-export const TEACHER = "TEACHER";   
+export const TEACHER = "TEACHER";
 export const STUDENT = "STUDENT";
 export const GET_USER_ID = "GET_USER_ID";
 export const LOGIN_GET_USER_ID = "LOGIN_GET_USER_ID";
@@ -38,3 +38,8 @@ export const LOGIN_GET_USER_ID = "LOGIN_GET_USER_ID";
 export const SET_TECHER_CLASS_SECTION = "SET_TECHER_CLASS_SECTION";
 
 export const GET_LEAVE_REQUESTS = "GET_LEAVE_REQUESTS";
+
+export const GET_ALL_FEE = "GET_ALL_FEE";
+export const ADD_OR_EDIT_FEE = "ADD_OR_EDIT_FEE";
+export const GET_ALL_PAYMENT = "GET_ALL_PAYMENT";
+export const ADD_OR_UPDATE_PAYMENT = "ADD_OR_UPDATE_PAYMENT";

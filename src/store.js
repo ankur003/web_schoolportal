@@ -5,18 +5,21 @@ import loginReducer from './Redux/Reducers/loginReducer';
 import manageClassesReducer from './Redux/Reducers/manageClassesReducer';
 import entityReducer from './Redux/Reducers/entityReducer';
 import leaveRequestReducer from './Redux/Reducers/LeaveAndAttandanceReducer';
+import feeManageReducer from './Redux/Reducers/feeManageReducer';
 
 const rootReducer = combineReducers({
   loginReducer,
   manageClassesReducer,
   entityReducer,
   leaveRequestReducer,
+  feeManageReducer
 });
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['loginReducer', 'manageClassesReducer', 'entityReducer'],
+  whitelist: ['loginReducer', 'manageClassesReducer', 'entityReducer', 'leaveRequestReducer',
+    'feeManageReducer'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

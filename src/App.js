@@ -1,6 +1,6 @@
 import '././assets/scss/main.scss';
 import React from 'react';
-import './i18n'; 
+import './i18n';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './container/ProtectedRoute';
 import Login from './components/Login';
@@ -14,6 +14,8 @@ import ChangePassword from './components/ChangePassword';
 import { Navigate, useLocation } from 'react-router-dom';
 import AttendanceCalendarPage from './container/EntityCalender';
 import LeaveRequest from './container/LeaveRequest';
+import FeeModule from './container/FeeModule';
+import PaymentDetails from './container/PaymentDetails';
 
 const App = () => {
   // Assume you have a way to get the user's role, e.g., from localStorage or context
@@ -53,6 +55,8 @@ const App = () => {
           <Route element={<ProfileDetailsPage />} path="/ProfileDetailsPage" />
           <Route element={<AttendanceCalendarPage />} path="/AttendanceCalendarPage" />
           <Route element={<LeaveRequest />} path="/LeaveRequest" />
+          <Route element={<FeeModule />} path="/FeeModule" />
+          <Route element={<PaymentDetails />} path="/PaymentDetails" />
         </Route>
       </Routes>
     </Router>
