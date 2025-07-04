@@ -5,6 +5,7 @@ import com.school.portal.enums.FeeType;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Table(name = "master_fees")
-public class MasterFee {
+public class MasterFee implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
