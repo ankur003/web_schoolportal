@@ -2,6 +2,7 @@ package com.school.portal.service;
 
 import com.school.portal.domain.FeePayment;
 import com.school.portal.domain.MasterFee;
+import com.school.portal.dto.MasterFeeResponseDTO;
 import com.school.portal.enums.FeeType;
 import com.school.portal.repo.FeePaymentRepository;
 import com.school.portal.repo.MasterFeeRepository;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FeeService {
@@ -30,9 +32,21 @@ public class FeeService {
     }
 
     @Transactional(readOnly = true)
-    public List<MasterFee> getAllMasterFees() {
-        return masterFeeRepository.findAll();
+    public List<MasterFeeResponseDTO> getAllMasterFees() {
+        return masterFeeRepository.findAll().stream()
+                .map(fee -> MasterFeeResponseDTO.builder()
+                        .id(fee.getId())
+                        .masterClassUuid(fee.getMasterClassUuid())
+                        .className(fee.getMasterClass() != null ? fee.getMasterClass().getClassName() : null)
+                        .masterFeesUuid(fee.getMasterFeesUuid())
+                        .feeType(fee.getFeeType())
+                        .totalFee(fee.getTotalFee())
+                        .academicYear(fee.getAcademicYear())
+                        .createdAt(fee.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
+
 
     public List<MasterFee> findByMasterClassUuid(String classId) {
         return masterFeeRepository.findByMasterClassUuid(classId);

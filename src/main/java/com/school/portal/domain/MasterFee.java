@@ -27,6 +27,10 @@ public class MasterFee {
     @Column(name = "master_fees_uuid", nullable = false)
     private String masterFeesUuid;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "master_class_uuid", referencedColumnName = "uuid", insertable = false, updatable = false)
+    private MasterClass masterClass;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "fee_type", nullable = false)
     private FeeType feeType;  // NEW FIELD

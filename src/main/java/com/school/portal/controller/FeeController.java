@@ -2,6 +2,7 @@ package com.school.portal.controller;
 
 import com.school.portal.domain.FeePayment;
 import com.school.portal.domain.MasterFee;
+import com.school.portal.dto.MasterFeeResponseDTO;
 import com.school.portal.enums.FeeType;
 import com.school.portal.service.FeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class FeeController {
     }
 
     @GetMapping("/master")
-    public List<MasterFee> getAllMasterFees() {
+    public List<MasterFeeResponseDTO> getAllMasterFees() {
         return feeService.getAllMasterFees();
     }
 
