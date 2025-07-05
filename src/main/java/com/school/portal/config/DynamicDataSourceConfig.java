@@ -28,18 +28,18 @@ public class DynamicDataSourceConfig {
     public DataSource primaryDataSource() {
     	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&useSSL=false");
+        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false");
         dataSourceBuilder.username("root");
-        dataSourceBuilder.password("root");
+        dataSourceBuilder.password("test");
         return dataSourceBuilder.build();
     }
     @Bean
     public DataSource secondaryDataSource() {
     	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&useSSL=false");
+        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false");
         dataSourceBuilder.username("root");
-        dataSourceBuilder.password("root");
+        dataSourceBuilder.password("test");
         //d
         return dataSourceBuilder.build();
 
