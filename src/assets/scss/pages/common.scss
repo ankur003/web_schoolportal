@@ -3,7 +3,7 @@
 
 body {
     background: $body-gradient;
-    overflow: hidden;
+    // overflow: hidden;
 
     // &::before {
     //     content: '';
@@ -195,4 +195,10 @@ body {
             box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
         }
     }
+}
+
+.bg-custom {
+    background: #F09819;
+    color: $white;
+    padding: 5px 8px;
 }

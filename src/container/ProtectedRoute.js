@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Outlet, Navigate, useNavigate } from 'react-router-dom';
 import SideBar from '../components/SideBar';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 // import { routesList } from '../../src/routes.js';
 
 const Header = styled.header`
@@ -40,6 +41,7 @@ const ProtectedRoute = () => {
     let navigate = useNavigate();
     const [isActive, setIsActive] = useState(true)
     const isAuthenticated = sessionStorage.getItem("token");
+    const { role } = useSelector((state) => state.loginReducer);
     const user = sessionStorage.getItem("userName");
     const logoutHandler = () => {
         sessionStorage.removeItem("token");
@@ -71,7 +73,7 @@ const ProtectedRoute = () => {
                     </ul>
                     <div className="dropdown">
                         <button className="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                            {user} <i className="fas fa-ellipsis-v"></i>
+                            <span className='badge bg-custom'>{role}</span> {user} <i className="fas fa-ellipsis-v"></i>
                         </button>
                         <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <li><a className="dropdown-item" onClick={logoutHandler}>Logout</a></li>
