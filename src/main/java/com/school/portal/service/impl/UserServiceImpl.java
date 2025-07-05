@@ -413,8 +413,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             return UserAttendanceModel.builder ()
                     .user (modelMapper.map (attendance.getUser (), UserResponseModel.class))
                     .date (attendance.getAttendanceDate ())
-                    .status (attendance.getApprovalStatus ())
+                    .approvalStatus(attendance.getApprovalStatus ())
                     .category(attendance.getCatagory())
+                    .attendanceStatus(attendance.getStatus())
                     .build ();
         }).collect (Collectors.toList ());
     }
