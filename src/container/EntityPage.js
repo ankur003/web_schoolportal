@@ -79,7 +79,7 @@ const EntityPage = () => {
                                 <tbody>
                                     {dataList?.map((data, index) =>
                                         <tr key={index}>
-                                            <th scope="row">{index + 1}</th>
+                                            <td scope="row">{index + 1}</td>
                                             <td >{data?.fullName ? data?.fullName : "N/A"}</td>
                                             <td>{data?.username}</td>
                                             <td>{data?.phoneNo ? data?.phoneNo : "N/A"}</td>

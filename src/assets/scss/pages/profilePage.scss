@@ -2,7 +2,8 @@
 @import "../utils/mixin";
 
 .profile-content-body {
-    padding-left: 320px;
+    padding-left: 320px !important;
+    padding-top: 0px !important;
     position: relative;
 
     .main-profile {
@@ -24,8 +25,8 @@
             padding: 50px 20px;
 
             .image {
-                height: 200px;
-                width: 200px;
+                height: 183px;
+                width: 183px;
                 border-radius: 50%;
 
                 img {
@@ -66,7 +67,7 @@
 
     .profile-all-details {
         padding-left: 20px;
-        height: calc(100vh - 125px);
+        height: calc(100vh - 133px);
         overflow: auto;
 
         .form-content {

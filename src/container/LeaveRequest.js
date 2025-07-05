@@ -8,19 +8,21 @@ const LeaveRequest = () => {
     const dispatch = useDispatch();
     const { userId, role } = useSelector((state) => state.loginReducer);
     const { leaveRequest, loader, noDataFound } = useSelector((state) => state.leaveRequestReducer);
-    let requests = leaveRequest || [];
+    let requests = leaveRequest.filter(mapData => mapData.category === "LEAVE") || [];
     const [isModal, SetIsModal] = useState(false);
 
     useEffect(() => {
-        let data = { userId: role !== SUPER_ADMIN ? userId : "" };
+        let data = { userId: role !== SUPER_ADMIN && userId };
+        console.log({ data })
         dispatch(getLeaveRequestDetails(data));
-    }, [dispatch, userId]);
+    }, []);
 
     const handleAction = (userUuid, date, action) => {
         let data = {
             userUuid: userUuid,
             date: date,
-            action: action
+            action: action,
+            catagory: "LEAVE"
         };
         dispatch(leaveRequestAction(data));
     };
@@ -41,7 +43,8 @@ const LeaveRequest = () => {
     const formSubmit = async () => {
         let data = {
             leaveType: formData.leaveType,
-            date: formData.date
+            date: formData.date,
+            catagory: "LEAVE"
         };
         dispatch(leaveRequestApply(data, SetIsModal));
     };
@@ -60,11 +63,15 @@ const LeaveRequest = () => {
                             <table className="table  table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Full Name</th>
-                                        <th>Email</th>
-                                        <th>Class</th>
-                                        <th>Section</th>
-                                        <th>User Type</th>
+                                        {role === SUPER_ADMIN && <>
+                                            <th>Full Name</th>
+                                            <th>Email</th>
+                                            <th>Class</th>
+                                            <th>Section</th>
+                                            <th>User Type</th>
+                                        </>
+                                        }
+                                        <th>Leave Type</th>
                                         <th>Date</th>
                                         <th>Status</th>
                                         {role === SUPER_ADMIN && <th>Actions</th>}
@@ -73,16 +80,20 @@ const LeaveRequest = () => {
                                 <tbody>
                                     {requests.map((req, index) => (
                                         <tr key={index}>
-                                            <td>{req.user.fullName}</td>
-                                            <td>{req.user.username}</td>
-                                            <td>{req.user.className}</td>
-                                            <td>{req.user.sectionName}</td>
-                                            <td>{req.user.userType}</td>
+                                            {role === SUPER_ADMIN && <>
+                                                <td>{req.user.fullName}</td>
+                                                <td>{req.user.username}</td>
+                                                <td>{req.user.className}</td>
+                                                <td>{req.user.sectionName}</td>
+                                                <td>{req.user.userType}</td>
+                                            </>
+                                            }
+                                            <td>{req.attendanceStatus}</td>
                                             <td>{req.date}</td>
-                                            <td><div className={req.status === "APPROVED" ? "fw-bold text-success" : req.status === "REJECTED" ? "fw-bold text-danger" : "fw-bold text-warning"}>{req.status}</div></td>
+                                            <td><div className={req.approvalStatus === "APPROVED" ? "fw-bold text-success" : req.approvalStatus === "REJECTED" ? "fw-bold text-danger" : "fw-bold text-warning"}>{req.approvalStatus}</div></td>
                                             {role === SUPER_ADMIN && (
                                                 <td>
-                                                    {req.status === "PENDING" &&
+                                                    {req.approvalStatus === "PENDING" &&
                                                         <>
                                                             <button className="btn btn-success mr-r-4"
                                                                 onClick={() =>

@@ -54,7 +54,7 @@ function ManageClasses(props) {
                 </div>
             </div>
             <div className="content-body">
-                <ul className="nav nav-tabs" id="myTab" role="tablist">
+                <ul className="nav nav-tabs custom-nav-tab" id="myTab" role="tablist">
                     <li className="nav-item" role="presentation">
                         <button className="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true" onClick={() => setActive("home-tab")}>Classes</button>
                     </li>
@@ -82,7 +82,7 @@ function ManageClasses(props) {
                                     <tbody>
                                         {classList?.map((data, index) =>
                                             <tr key={index}>
-                                                <th scope="row">{index + 1}</th>
+                                                <td scope="row">{index + 1}</td>
                                                 <td>{data?.className}</td>
                                                 <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                                 <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
@@ -114,7 +114,7 @@ function ManageClasses(props) {
                                 <tbody>
                                     {secList?.map((data, index) =>
                                         <tr key={index}>
-                                            <th scope="row">{index + 1}</th>
+                                            <td scope="row">{index + 1}</td>
                                             <td>{data?.sectionName}</td>
                                             <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                             <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
@@ -146,7 +146,7 @@ function ManageClasses(props) {
                                 <tbody>
                                     {linkList?.map((data, index) =>
                                         <tr key={index}>
-                                            <th scope="row">{index + 1}</th>
+                                            <td scope="row">{index + 1}</td>
                                             <td>{data?.className}</td>
                                             <td>{data?.masterSection?.length > 0 ? data?.masterSection?.sort().map((data, index) => <span key={index}>{data?.sectionName + ","}</span>) : "no section linked"}</td>
                                             <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>

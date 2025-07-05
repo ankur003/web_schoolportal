@@ -3,6 +3,7 @@ import * as Constants from '../Constants';
 
 const initialState = {
     leaveRequest: [],
+    attandanceList: [],
     loader: false,
     noDataFound: false,
 }
@@ -20,6 +21,12 @@ export default function leaveRequestReducer(state = initialState, action) {
         case Constants.CREATED_SUCCESSFULLY:
             return {
                 ...state,
+                loader: true
+            }
+        case Constants.GET_ALL_ATTANDANCE:
+            return {
+                ...state,
+                attandanceList: payload.data,
                 loader: true
             }
         case Constants.NO_DATA_FOUND:

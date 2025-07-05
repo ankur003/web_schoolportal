@@ -45,6 +45,7 @@ export const AddOrEditFee = (data, setShowModal) => (dispatch) => {
                     payload: response.data
                 });
                 setShowModal(false);
+                dispatch(fetchFees());
             }
         })
         .catch(error => {
@@ -74,7 +75,7 @@ export const fetchPayments = () => (dispatch) => {
         });
 };
 
-export const addOrUpdatePayment = (data,setShowModal) => (dispatch) => {
+export const addOrUpdatePayment = (data, setShowModal) => (dispatch) => {
     setShowModal(false)
     let url = `${basePathUrl}/fees/payment`;
     const method = data?.paymentUuid ? "put" : "post";

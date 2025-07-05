@@ -9,7 +9,8 @@ const Header = styled.header`
   display: flex;
   justify-content:space-between;
   padding: 12px;
-  background-color: #356ec5;
+  background: transparent;
+  color: white;
   z-index: 999;
   position: fixed;
     top: 0;

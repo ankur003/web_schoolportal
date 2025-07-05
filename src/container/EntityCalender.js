@@ -3,22 +3,22 @@ import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLeaveRequestDetails, leaveRequestApply } from '../Redux/Action/LeaveAndAttandanceAction';
+import { getAttandance, getLeaveRequestDetails, leaveRequestApply } from '../Redux/Action/LeaveAndAttandanceAction';
 
 export default function AttendanceBigCalendar() {
   const dispatch = useDispatch();
 
   const { userId, role } = useSelector((state) => state.loginReducer);
-  const { leaveRequest, loader, noDataFound } = useSelector((state) => state.leaveRequestReducer);
+  const { attandanceList, loader, noDataFound } = useSelector((state) => state.leaveRequestReducer);
 
-  console.log("Leave Request Data:", leaveRequest);
+  console.log("Leave Request Data:", attandanceList);
 
   const [isModal, SetIsModal] = useState(false);
   const [formData, setFormData] = useState({
-    leaveType: "",
-    date: ""
+    attendanceType: "",
+    date: "",
   });
-
+  console.log({ formData })
   const locales = {
     'en-US': require('date-fns/locale/en-US')
   };
@@ -31,12 +31,24 @@ export default function AttendanceBigCalendar() {
     locales,
   });
 
-  const statusMap = {
-    '2025-07-01': { title: 'Present', color: '#43a047' },
-    '2025-07-02': { title: 'Absent', color: '#e53935' },
-    '2025-07-05': { title: 'Holiday', color: '#fbc02d' },
-    '2025-07-06': { title: 'Leave', color: '#1e88e5' }
-  };
+  const statusMap = attandanceList
+    ? attandanceList.reduce((acc, section) => {
+      acc[section.date] = {
+        title: section.attendanceStatus,
+        color:
+          section.category === "LEAVE"
+            ? "#1e88e5"
+            : section.attendanceStatus === "PRESENT"
+              ? "#43a047"
+              : section.attendanceStatus === "LATE"
+                ? "#fbc02d"
+                : "#e53935"
+      };
+      return acc;
+    }, {})
+    : {};
+
+
 
   const events = Object.entries(statusMap).map(([date, status]) => ({
     title: status.title,
@@ -59,7 +71,7 @@ export default function AttendanceBigCalendar() {
   }
 
   useEffect(() => {
-    dispatch(getLeaveRequestDetails());
+    dispatch(getAttandance(userId));
   }, [dispatch]);
 
   const handlerChange = (e) => {
@@ -73,8 +85,9 @@ export default function AttendanceBigCalendar() {
 
   const formSubmit = async () => {
     let data = {
-      leaveType: formData.leaveType,
-      date: formData.date
+      leaveType: formData.attendanceType,
+      date: formData.date,
+      catagory: "ATTENDANCE"
     };
     dispatch(leaveRequestApply(data, SetIsModal));
   };
@@ -117,7 +130,7 @@ export default function AttendanceBigCalendar() {
                 <div className="form-content">
                   <div className="form-group">
                     <label className="form-group-label">Attendance Type</label>
-                    <select className="form-control" name="attendanceType" onChange={(e) => handlerChange(e)}>
+                    <select className="form-control" name="attendanceType" value={formData.attendanceType} onChange={(e) => handlerChange(e)}>
                       <option value="">Select Attendance Type</option>
                       <option value="LATE">Late</option>
                       <option value="PRESENT">Present</option>

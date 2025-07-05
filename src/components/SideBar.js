@@ -20,6 +20,13 @@ function SideBar(props) {
             icon: "fa-solid fa-school"
         },
         {
+            name: "Manage Time Table",
+            component: "TimeTable",
+            transform: "TimeTable",
+            to: "/TimeTable",
+            icon: "fa-solid fa-table"
+        },
+        {
             name: "Manage Fees",
             component: "FeeModule",
             transform: "Fee Management",
@@ -81,6 +88,13 @@ function SideBar(props) {
             icon: "fa-solid fa-user",
         },
         {
+            name: "Manage Time Table",
+            component: "TimeTable",
+            transform: "TimeTable",
+            to: "/TimeTable",
+            icon: "fa-solid fa-table"
+        },
+        {
             name: "Student",
             component: "StudentPage",
             transform: "student",
@@ -110,6 +124,13 @@ function SideBar(props) {
             transform: "Student Profile",
             to: "/ProfileDetailsPage",
             icon: "fa-solid fa-user",
+        },
+        {
+            name: "Manage Time Table",
+            component: "TimeTable",
+            transform: "TimeTable",
+            to: "/TimeTable",
+            icon: "fa-solid fa-table"
         },
         {
             name: "Attendance",
@@ -171,7 +192,7 @@ function SideBar(props) {
     }
     return (
         <div className="side-bar">
-            <ul>
+            <ul className="mainSubClass">
                 {routes.map((data, index) =>
                     <li key={index} className={isActive === data?.name ? "active" : " "}>
                         <a className={data?.subNav ? "collapsed" : ""} data-bs-toggle="collapse" data-bs-target={data?.subNav?.length > 0 ? "#collapseWidthExample" + index : "#collapseWidthExample" + index} onClick={() => sideBarHandler(data)}><span className='icon'><i className={data?.icon}></i></span>{t(data?.transform)}

@@ -10,15 +10,17 @@
     position: relative;
 
     .login-icon {
-        height: 200px;
-        width: 200px;
+        height: 150px;
+        width: 150px;
         position: fixed;
         top: 10px;
         left: 10px;
+        border-radius: 50%;
 
         img {
             height: 100%;
             width: 100%;
+             border-radius: 50%;
         }
     }
 
@@ -38,14 +40,14 @@
 
         h5 {
             font-size: 20px;
-            color: $content-color;
+            color: $white;
             margin-bottom: 40px;
         }
 
         a {
             display: block;
             margin-bottom: 80px;
-            color: $blue;
+            color: $white;
             cursor: pointer;
             text-decoration: underline;
         }
@@ -58,7 +60,7 @@
                 @include position-top-left;
                 bottom: 0;
                 width: 40px;
-                background-color: $blue;
+                background: $blue;
                 margin: 0;
                 border-top-left-radius: 4px;
                 border-bottom-left-radius: 4px;
@@ -76,7 +78,7 @@
         }
 
         .btn {
-            width:60%;
+            width: 60%;
             padding: 5px 20px;
             background-color: $blue;
             font-size: 18px !important;
@@ -89,7 +91,7 @@
         width: 250px;
         background-color: $blue;
         position: fixed;
-        display:none;
+        display: none;
 
         &.top-right {
             top: 0;

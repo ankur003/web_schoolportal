@@ -10,6 +10,7 @@ function PaymentDetails() {
     const { feeList } = useSelector((state) => state.feeManageReducer);
     const { paymentList, loader } = useSelector((state) => state.feeManageReducer);
     const { studentList } = useSelector((state) => state.entityReducer);
+    console.log({ feeList, studentList });
     const [isModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
         userUuid: "",
@@ -45,11 +46,13 @@ function PaymentDetails() {
             transactionId: formData.transactionId,
             userUuid: formData.userUuid
         };
-        dispatch(addOrUpdatePayment(data,setShowModal));
+        console.log({ data })
+        dispatch(addOrUpdatePayment(data, setShowModal));
     };
 
     const handlerChange = (e) => {
         const { name, value } = e.target;
+        console.log({ name, value })
         if (name === "masterFeesUuid") {
             // Find the selected fee object
             const selectedFee = feeList.find(fee => fee.masterClassUuid === value);
@@ -59,13 +62,13 @@ function PaymentDetails() {
 
             // Set both masterClassUuid and masterFeesUuid in formData
             setFormData((prevData) => ({
-            ...prevData,
-            masterFeesUuid: selectedFee ? selectedFee.masterFeesUuid : "",
+                ...prevData,
+                masterFeesUuid: selectedFee ? selectedFee.masterFeesUuid : "",
             }));
         } else {
             setFormData((prevData) => ({
-            ...prevData,
-            [name]: value
+                ...prevData,
+                [name]: value
             }));
         }
     };
@@ -86,7 +89,7 @@ function PaymentDetails() {
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>User UUID</th>
+                                        <th>User</th>
                                         <th>Class</th>
                                         <th>Fee Type</th>
                                         <th>Total Fee</th>
@@ -102,7 +105,7 @@ function PaymentDetails() {
                                     {paymentList?.map((p, idx) => (
                                         <tr key={p.id}>
                                             <td>{p.id}</td>
-                                            <td>{p.userUuid}</td>
+                                            <td>{p?.user?.fullName}</td>
                                             <td>{p.masterFee?.masterClass?.className}</td>
                                             <td>{p.masterFee?.feeType}</td>
                                             <td>{p.masterFee?.totalFee}</td>
@@ -112,7 +115,7 @@ function PaymentDetails() {
                                             <td>{p.transactionId}</td>
                                             <td>{p.remarks}</td>
                                             <td>
-                                                <button className="btn btn-success" onClick={() => openEditModal(idx)}>Edit</button>
+                                                <button className="btn btn-success" onClick={() => " "}>Edit</button>
                                             </td>
                                         </tr>
                                     ))}
@@ -140,7 +143,7 @@ function PaymentDetails() {
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Fee Details</h5>
+                                <h5 className="modal-title" id="exampleModalLabel">Add Payment</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => setShowModal(false)}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -160,7 +163,7 @@ function PaymentDetails() {
                                     </div>
                                     <div className="form-group">
                                         <label className="form-group-label">Class</label>
-                                        <select className="form-control" name="masterFeesUuid" onChange={handlerChange} value={formData.masterFeesUuid} required>
+                                        <select className="form-control" name="masterFeesUuid" onChange={handlerChange} value={formData.masterClassUuid} required>
                                             <option value="">Select Class</option>
                                             {feeList.map((classItem, index) => (
                                                 <option key={index} value={classItem.masterClassUuid}>

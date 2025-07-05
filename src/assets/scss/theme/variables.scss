@@ -11,7 +11,10 @@ $yellow: #ffcf00;
 $light-gray: #F2F3F4;
 $indigo: #8171d9;
 $pink: #e83e8c;
-$blue:#356ec5;
+$blue: linear-gradient(135deg, #667eea, #764ba2);
+$redRadiant: linear-gradient(135deg, #ff6b6b, #ee5a24);
+$body-gradient: linear-gradient(135deg, #667eea 0%, #ff6b6b 100%);
+$yellowGradient: linear-gradient(90deg, #ffcf00 0%, #ffe066 100%);
 
 $side-nav-text-color:rgb(233, 238, 240);
 $dark-theme:#cc2900;

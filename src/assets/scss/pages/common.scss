@@ -1,6 +1,34 @@
 @import "../theme/variables";
 @import "../utils/mixin";
 
+body {
+    background: $body-gradient;
+    overflow: hidden;
+
+    // &::before {
+    //     content: '';
+    //     position: absolute;
+    //     top: -50%;
+    //     left: -50%;
+    //     width: 200%;
+    //     height: 200%;
+    //     background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    //     animation: float 6s ease-in-out infinite;
+    // }
+
+    // @keyframes float {
+
+    //     0%,
+    //     100% {
+    //         transform: translateY(0px) rotate(0deg);
+    //     }
+
+    //     50% {
+    //         transform: translateY(-20px) rotate(180deg);
+    //     }
+    // }
+}
+
 // scrollbar css 
 /* width */
 ::-webkit-scrollbar {
@@ -58,22 +86,47 @@
 }
 
 // table
+.table-content {
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
 
 .table {
+    text-align: center;
+    border-radius: 12px;
+
     tr {
         vertical-align: middle;
     }
 
     thead {
+        border-color: transparent;
+        border-top-right-radius: 12px;
+        border-top-left-radius: 12px;
+
         th {
-            color: $text-color;
+            color: $white;
+            background: $blue;
+            border: 0;
+            text-transform: uppercase;
+
+            &:first-child {
+                border-color: transparent;
+                border-top-left-radius: 12px;
+            }
+
+            &:last-child {
+                border-color: transparent;
+                border-top-right-radius: 12px;
+            }
         }
     }
 
     tbody {
         td {
             color: $content-color;
-            font-size: 12px;
+            font-size: 14px;
+            font-weight: 600;
         }
     }
 }
@@ -115,5 +168,31 @@
 
     .card-footer {
         border-top: 0;
+    }
+}
+
+.custom-nav-tab {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    border: 0;
+
+    .nav-link {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: $white !important;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        min-width: 80px;
+        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+
+        &.active {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
     }
 }

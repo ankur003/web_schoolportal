@@ -4,7 +4,7 @@
 
 .main-wrapper {
     height: 100vh;
-    background-color: $light-gray;
+    // background-color: $light-gray;
     padding: 53px 0 0 200px;
 
     .main-header {
@@ -32,8 +32,9 @@
             top: 0px;
             left: 0px;
             right: 0px;
-            border-bottom: 1px solid $border-color;
-            background-color: $white;
+            // border-bottom: 1px solid $border-color;
+            background: transparent;
+            color: $white;
             padding: 12px 18px;
             height: 49px;
             display: flex;
@@ -50,28 +51,42 @@
                 .btn {
                     font-size: 14px !important;
                 }
+
+                .btn-outline-primary {
+                    background: $yellowGradient;
+                    color: $black;
+                    border: none;
+                    transition: box-shadow 0.2s;
+                    box-shadow: 0 2px 8px rgba(255, 207, 0, 0.15);
+
+                    &:hover,
+                    &:focus {
+                        background: linear-gradient(90deg, #ffe066 0%, #ffcf00 100%);
+                        color: $black;
+                        box-shadow: 0 4px 16px rgba(255, 207, 0, 0.25);
+                    }
+                }
             }
         }
 
         .content-body {
             height: 100%;
             overflow: auto;
-            padding-right: 12px;
+            padding: 10px 50px 0px 40px;
         }
     }
 }
 
 .side-bar {
-    background-color: $white;
+    background: transparent;
     position: fixed;
     left: 0;
     bottom: 0;
     top: 53px;
     width: 200px;
     z-index: 999;
-    border-right: 1px solid $border-color;
 
-    ul {
+    ul.mainSubClass {
         list-style: none;
         padding: 0;
         margin: 0;
@@ -85,7 +100,9 @@
                 text-decoration: none;
                 align-items: center;
                 position: relative;
-                color: $content-color;
+                color: $white;
+                border-top-right-radius: 35px;
+                border-bottom-right-radius: 35px;
 
                 .icon {
                     margin-right: 8px;
@@ -102,15 +119,20 @@
                 }
             }
 
-            &.active a,
-            &:hover a {
-                background-color: $blue;
+            &.active a {
+                background: $blue;
                 transition: all .5s ease-in-out;
                 color: $white !important;
             }
 
+            &:hover a {
+                color: $border-color;
+            }
+
             .subList {
-                background-color: #638bc8;
+                list-style-type: none;
+                padding: 0px;
+                margin: 0px;
 
                 li {
                     a {
@@ -125,39 +147,41 @@
                         }
 
                         &:hover {
-                            background-color: #0e3f8a !important;
+                            background-color: $white !important;
                             transition: all .5s ease-in-out;
-                            color: $white !important;
+                            color: $black !important;
                         }
                     }
-                }
-            }
-
-            &.active {
-                .subList {
-                    li {
-                        a {
-                            padding: 12px 15px;
-                            cursor: pointer;
-                            font-size: 14px;
-                            text-decoration: none;
-
-                            .icon {
-                                margin-right: 8px;
-                            }
-                        }
-
-                        &.active a,
-                        &:hover a {
-                            background-color: #0e3f8a !important;
-                            transition: all .5s ease-in-out;
-                            color: $white !important;
-                        }
-                    }
-
                 }
             }
         }
+    }
+}
+
+.side-bar ul.mainSubClass li.active {
+    .subList {
+
+        li {
+            a {
+                padding: 12px 15px;
+                cursor: pointer;
+                font-size: 14px;
+                text-decoration: none;
+                background: initial;
+
+                .icon {
+                    margin-right: 8px;
+                }
+            }
+
+            &.active a,
+            &:hover a {
+                background-color: #0e3f8a !important;
+                transition: all .5s ease-in-out;
+                color: $white !important;
+            }
+        }
+
     }
 }
 
@@ -185,11 +209,12 @@
         justify-content: center;
         border-radius: 2px;
         cursor: pointer;
+
         &:hover,
         &.active {
             background-color: $white !important;
             color: $content-color;
         }
-        
+
     }
 }

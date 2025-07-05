@@ -65,7 +65,7 @@ const FeeModule = () => {
             <div className="header">
                 <h1>Fee Management</h1>
                 {role === SUPER_ADMIN && <div className="header-right">
-                    <button type="button" className="btn btn-outline-primary" onClick={() => setShowModal(true)}>Add Fee</button>
+                    <button type="button" className="btn btn-outline-primary" onClick={() => setShowModal(true)}>Create New Fee</button>
                 </div>}
             </div>
             <div className="content-body">
@@ -122,7 +122,7 @@ const FeeModule = () => {
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Fee Details</h5>
+                                <h5 className="modal-title" id="exampleModalLabel">CREATE FEE</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => setShowModal(false)}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
