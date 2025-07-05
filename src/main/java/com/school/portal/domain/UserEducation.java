@@ -18,7 +18,7 @@ public class UserEducation {
 	@JsonIgnore
 	private Long userEducationId;
 	
-	@Column(unique = true, nullable = false, updatable = false)
+	@Column(unique = true, nullable = false, updatable = false, length = 191)
 	private String userEducationUuid; 
 
 	@JsonIgnore

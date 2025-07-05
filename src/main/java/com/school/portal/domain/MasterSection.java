@@ -1,5 +1,6 @@
 package com.school.portal.domain;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -9,13 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class MasterSection {
+public class MasterSection implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "master_section_id", nullable = false, unique = true)
 	private Long masterSectionId;
 	
-	@Column(nullable = false, unique = true)
+	@Column(name = "master_section_uuid",nullable = false, unique = true, length = 191)
 	private String masterSectionUuid;
 	
 	@Column(nullable = false, unique = true)

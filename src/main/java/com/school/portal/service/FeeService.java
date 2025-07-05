@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,17 +38,19 @@ public class FeeService {
                 .map(fee -> {
                     MasterClass masterClass = fee.getMasterClass();
 
-                    List<String> sectionNames = new ArrayList<>();
+                    Map<String, String> sectionMap = new HashMap<>();
                     String className = null;
 
                     if (masterClass != null) {
                         className = masterClass.getClassName();
 
                         if (masterClass.getMasterSection() != null) {
-                            sectionNames = masterClass.getMasterSection().stream()
-                                    .map(MasterSection::getSectionName)
-                                    .filter(Objects::nonNull)
-                                    .collect(Collectors.toList());
+                            sectionMap = masterClass.getMasterSection().stream()
+                                    .filter(sec -> sec.getMasterSectionUuid() != null && sec.getSectionName() != null)
+                                    .collect(Collectors.toMap(
+                                            MasterSection::getSectionName,
+                                            MasterSection::getMasterSectionUuid
+                                    ));
                         }
                     }
 
@@ -59,7 +58,7 @@ public class FeeService {
                             .id(fee.getId())
                             .masterClassUuid(fee.getMasterClassUuid())
                             .className(className)
-                            .sectionName(sectionNames)
+                            .sections(sectionMap) // <-- set map here
                             .masterFeesUuid(fee.getMasterFeesUuid())
                             .feeType(fee.getFeeType())
                             .totalFee(fee.getTotalFee())
@@ -69,6 +68,7 @@ public class FeeService {
                 })
                 .collect(Collectors.toList());
     }
+
 
 
 
@@ -91,7 +91,7 @@ public class FeeService {
         // Update allowed fields
         existingFee.setFeeType(updatedData.getFeeType());
         existingFee.setTotalFee(updatedData.getTotalFee());
-        existingFee.setAcademicYear(updatedData.getAcademicYear());
+        //existingFee.setAcademicYear(updatedData.getAcademicYear());
         existingFee.setUpdatedAt(LocalDateTime.now());
 
         return masterFeeRepository.save(existingFee);
@@ -125,6 +125,7 @@ public class FeeService {
         existing.setPaymentMode(updatedPayment.getPaymentMode());
         existing.setTransactionId(updatedPayment.getTransactionId());
         existing.setRemarks(updatedPayment.getRemarks());
+        existing.setMasterSectionUuid(updatedPayment.getMasterSectionUuid());
         //existing.setMasterFee(updatedPayment.getMasterFee()); // Optional
         existing.setUpdatedAt(LocalDateTime.now());
 

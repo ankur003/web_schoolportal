@@ -18,7 +18,7 @@ public class UserExperience {
 	@JsonIgnore
 	private Long userExperienceId;
 	
-	@Column(unique = true, nullable = false, updatable = false)
+	@Column(unique = true, nullable = false, updatable = false, length = 191)
 	private String userExperienceUuid; 
 
 	@JsonIgnore

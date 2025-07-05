@@ -23,7 +23,7 @@ public class MasterClass implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long masterClassId;
 	
-	@Column(name = "master_class_uuid", nullable = false, unique = true)
+	@Column(name = "master_class_uuid", nullable = false, unique = true, length = 191)
 	private String masterClassUuid;
 	
 	@Column(nullable = false, unique = true)

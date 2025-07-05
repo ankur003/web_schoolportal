@@ -4,7 +4,7 @@ import com.school.portal.enums.FeeType;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -15,7 +15,7 @@ public class MasterFeeResponseDTO {
     private Long id;
     private String masterClassUuid;
     private String className;
-    private List<String> sectionName;
+    private Map<String, String> sections;
     private String masterFeesUuid;
     private FeeType feeType;
     private Double totalFee;

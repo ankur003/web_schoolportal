@@ -18,7 +18,7 @@ public class Holidays {
 	@JsonIgnore
 	private Long holidayId;
 	
-	@Column(unique = true, nullable = false, updatable = false)
+	@Column(unique = true, nullable = false, updatable = false, length = 191)
 	private String holidayUuid; 
 	
 	@Column(unique = true, nullable = false)

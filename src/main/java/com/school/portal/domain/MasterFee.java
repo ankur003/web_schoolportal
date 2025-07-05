@@ -22,10 +22,10 @@ public class MasterFee implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "master_class_uuid", nullable = false, length = 36)
+    @Column(name = "master_class_uuid", nullable = false, length = 191)
     private String masterClassUuid;
 
-    @Column(name = "master_fees_uuid", nullable = false)
+    @Column(name = "master_fees_uuid", nullable = false, length = 191)
     private String masterFeesUuid;
 
     @ManyToOne(fetch = FetchType.LAZY)

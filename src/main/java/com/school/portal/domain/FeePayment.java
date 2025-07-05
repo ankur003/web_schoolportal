@@ -19,19 +19,26 @@ public class FeePayment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_uuid", nullable = false)
+    @Column(name = "user_uuid", nullable = false, length = 191)
     private String userUuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_uuid", referencedColumnName = "user_uuid", insertable = false, updatable = false)
     private User user;
 
-    @Column(name = "fee_payment_uuid", nullable = false)
+    @Column(name = "fee_payment_uuid", nullable = false, length = 191)
     private String feePaymentUuid;
 
     @ManyToOne
     @JoinColumn(name = "master_fee_id", nullable = false)
     private MasterFee masterFee;
+
+    @Column(name = "master_section_uuid", nullable = false , length = 191)
+    private String masterSectionUuid;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "master_section_uuid", referencedColumnName ="master_section_uuid", insertable = false, updatable = false)
+    private MasterSection masterSection;
 
     @Column(name = "amount_paid", nullable = false)
     private Double amountPaid;

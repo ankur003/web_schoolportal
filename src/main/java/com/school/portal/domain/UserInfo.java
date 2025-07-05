@@ -19,7 +19,7 @@ public class UserInfo {
 	@JsonIgnore
 	private Long userInfoId;
 	
-	@Column(unique = true, nullable = false, updatable = false)
+	@Column(unique = true, nullable = false, updatable = false, length = 191)
 	@JsonIgnore
 	private String userInfoUuid;
 	

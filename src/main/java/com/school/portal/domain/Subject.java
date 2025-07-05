@@ -24,7 +24,7 @@ public class Subject {
     @Column(name = "subject_id")
     private Integer subjectId;
     
-    @Column(name = "subject_name", nullable = false, length = 100)
+    @Column(name = "subject_name", nullable = false, length = 191)
     private String subjectName;
     
     @Column(name = "subject_code", unique = true, length = 20)

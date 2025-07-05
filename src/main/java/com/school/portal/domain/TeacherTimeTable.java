@@ -18,10 +18,10 @@ public class TeacherTimeTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "teacher_uuid", nullable = false)
+    @Column(name = "teacher_uuid", nullable = false, length = 191)
     private String teacherUuid;
 
-    @Column(name = "teacher_timetable_uuid", nullable = false)
+    @Column(name = "teacher_timetable_uuid", nullable = false, length = 191)
     private String teacherTimetableUuid;
 
     @Column(name = "master_class_uuid", nullable = false)

@@ -19,7 +19,7 @@ public class Address {
 	@JsonIgnore
 	private Long addressId;
 	
-	@Column(unique = true, nullable = false, updatable = false)
+	@Column(unique = true, nullable = false, updatable = false, length = 191)
 	@JsonIgnore
 	private String addressUuid;
 	
