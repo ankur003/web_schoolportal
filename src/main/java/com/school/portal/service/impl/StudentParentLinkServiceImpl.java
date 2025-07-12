@@ -2,6 +2,7 @@ package com.school.portal.service.impl;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,6 +71,17 @@ public class StudentParentLinkServiceImpl implements StudentParentLinkService {
 			studentParentLink.setCreatedAt(new Date());
 			studentParentLink.setUpdatedAt(new Date());
 			studentParentLinkRepository.save(studentParentLink);
+		}
+		
+	}
+
+	@Override
+	public void delinkParantToStudent(Long parentId, Long studentId) {
+		List<StudentParentLink> data = studentParentLinkRepository.findByStudentIdAndParentId(studentId, parentId);
+		if (CollectionUtils.isNotEmpty(data)) { 
+			for (StudentParentLink studentParentLink : data) {
+				studentParentLinkRepository.delete(studentParentLink);
+			}
 		}
 		
 	}

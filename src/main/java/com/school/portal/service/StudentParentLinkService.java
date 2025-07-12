@@ -12,4 +12,6 @@ public interface StudentParentLinkService {
 
 	void linkParantToStudent(Long parentId, Long studentId);
 
+	void delinkParantToStudent(Long parentId, Long studentId);
+
 }
