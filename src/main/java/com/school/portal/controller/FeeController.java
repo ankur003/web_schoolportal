@@ -1,16 +1,26 @@
 package com.school.portal.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.school.portal.domain.FeePayment;
 import com.school.portal.domain.MasterFee;
+import com.school.portal.dto.FeePaymentDto;
 import com.school.portal.dto.MasterFeeResponseDTO;
 import com.school.portal.enums.FeeType;
 import com.school.portal.service.FeeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/fees")
@@ -60,12 +70,15 @@ public class FeeController {
     // ----------- FEE PAYMENTS -------------
 
     @PostMapping("/payment")
-    public FeePayment addFeePayment(@RequestBody FeePayment feePayment) {
-        return feeService.addFeePayment(feePayment);
+    public ResponseEntity<Object> addFeePayment(@RequestBody FeePayment feePayment) {
+    	feePayment = feeService.addFeePayment(feePayment);
+    	Map<String, String> map = new HashMap<>();
+    	map.put("feePaymentUuid", feePayment.getFeePaymentUuid());
+    	return ResponseEntity.ok(map);
     }
 
     @GetMapping("/payment")
-    public List<FeePayment> getAllPayments() {
+    public List<FeePaymentDto> getAllPayments() {
         return feeService.getAllPayments();
     }
 

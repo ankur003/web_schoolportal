@@ -1,21 +1,26 @@
 package com.school.portal.service;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.school.portal.domain.FeePayment;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterFee;
 import com.school.portal.domain.MasterSection;
+import com.school.portal.dto.FeePaymentDto;
 import com.school.portal.dto.MasterFeeResponseDTO;
 import com.school.portal.enums.FeeType;
 import com.school.portal.repo.FeePaymentRepository;
 import com.school.portal.repo.MasterFeeRepository;
 import com.school.portal.utils.SchoolPortalUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class FeeService {
@@ -112,8 +117,8 @@ public class FeeService {
         return feePaymentRepository.findByUserUuid(userUuid);
     }
 
-    public List<FeePayment> getAllPayments() {
-        return feePaymentRepository.findAll();
+    public List<FeePaymentDto> getAllPayments() {
+        return feePaymentRepository.findAllFeePaymentsAsDto();
     }
 
     public FeePayment updateFeePayment(String feePaymentUuid, FeePayment updatedPayment) {
