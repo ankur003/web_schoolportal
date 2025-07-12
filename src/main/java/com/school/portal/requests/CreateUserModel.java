@@ -29,6 +29,8 @@ public class CreateUserModel {
 
 	@NotNull(message = "userType" + ERROR_MSG_SUFFIX)
 	private UserType userType;
+	
+	private String userUuid; // in case of parent creation
 
 	public String getUsername() {
 		return username;
@@ -92,6 +94,20 @@ public class CreateUserModel {
 
 	public void setSectionUuid(String sectionUuid) {
 		this.sectionUuid = sectionUuid;
+	}
+
+	/**
+	 * @return the userUuid
+	 */
+	public String getUserUuid() {
+		return userUuid;
+	}
+
+	/**
+	 * @param userUuid the userUuid to set
+	 */
+	public void setUserUuid(String userUuid) {
+		this.userUuid = userUuid;
 	}
 	
 }

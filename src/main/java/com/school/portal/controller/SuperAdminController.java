@@ -8,18 +8,14 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import com.school.portal.enums.ApprovalStatus;
-import com.school.portal.response.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +38,7 @@ import com.school.portal.domain.User;
 import com.school.portal.domain.UserEducation;
 import com.school.portal.domain.UserExperience;
 import com.school.portal.domain.UserInfo;
+import com.school.portal.enums.ApprovalStatus;
 import com.school.portal.enums.UserType;
 import com.school.portal.requests.AssignClassSectionStudentModel;
 import com.school.portal.requests.CreateMasterClassModel;
@@ -51,6 +48,11 @@ import com.school.portal.requests.HolidaysRequestModel;
 import com.school.portal.requests.LinkClassSectionModel;
 import com.school.portal.requests.UpdateUserModel;
 import com.school.portal.requests.UserRequestModel;
+import com.school.portal.response.LinkedMasterClassModel;
+import com.school.portal.response.MasterClassModel;
+import com.school.portal.response.MasterSectionModel;
+import com.school.portal.response.UserAttendanceModel;
+import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.HolidayService;
 import com.school.portal.service.MasterClassService;
 import com.school.portal.service.UserEducationService;
@@ -96,6 +98,12 @@ public class SuperAdminController extends AbstractController {
 		if (StringUtils.isNotBlank(createUserModel.getSectionUuid()) && 
 				StringUtils.isBlank(createUserModel.getClassUuid()) ) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
+		if (createUserModel.getUserType().equals(UserType.PARENT) && (StringUtils.isBlank(createUserModel.getClassUuid())
+				|| StringUtils.isBlank(createUserModel.getSectionUuid()))) {
+			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are creating the parent witout passing either student classUuid or student sectionUuid");
 		}
 		
 		String userUuid = userService.createUser(createUserModel);

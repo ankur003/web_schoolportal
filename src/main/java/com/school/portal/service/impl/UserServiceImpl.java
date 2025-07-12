@@ -37,6 +37,7 @@ import com.school.portal.dto.LoginUser;
 import com.school.portal.enums.ApprovalStatus;
 import com.school.portal.enums.AttendanceStatus;
 import com.school.portal.enums.SearchOperation;
+import com.school.portal.enums.UserType;
 import com.school.portal.exception.AlreadyExistsException;
 import com.school.portal.facade.AuthenticationFacade;
 import com.school.portal.queryfilter.GenericSpesification;
@@ -54,6 +55,7 @@ import com.school.portal.requests.CreateUserModel;
 import com.school.portal.requests.UpdateUserModel;
 import com.school.portal.requests.UserRequestModel;
 import com.school.portal.service.EmailService;
+import com.school.portal.service.StudentParentLinkService;
 import com.school.portal.service.UserEducationService;
 import com.school.portal.service.UserExperienceService;
 import com.school.portal.service.UserInfoService;
@@ -89,6 +91,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private final UserExperienceService userExperienceService;
 
     private final UserInfoService userInfoService;
+    
+    private final StudentParentLinkService parentLinkService;
 
     private final AttendanceRepository attendanceRepository;
 
@@ -153,17 +157,31 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 roles.add (role);
                 user.setRoles (roles);
                 user.setUpdatedAt (LocalDateTime.now ());
-                boolean isLinked = linkStudentToClassSection (user, createUserModel);
-                if (!isLinked) {
-                    return null;
+                if (!createUserModel.getUserType ().equals(UserType.PARENT)) {
+                	boolean isLinked = linkStudentToClassSection (user, createUserModel);
+                	 if (!isLinked) {
+                         return null;
+                     }
                 }
                 user = userRepo.save (user);
+                if (createUserModel.getUserType ().equals(UserType.PARENT)) {
+                	linkageParentStudent(user, createUserModel);
+                }
                 sendPasswordOnMail (user, tempPassword);
                 return user.getUserUuid ();
             }
         }
         return null;
     }
+
+	private void linkageParentStudent(User user, CreateUserModel createUserModel) {
+		Long parentId = user.getUserId();
+		User student = userRepo.findByUserUuidAndIsActive(createUserModel.getUserUuid(), true);
+		if (student != null) {
+			Long studentId = student.getUserId();
+			parentLinkService.linkParantToStudent(parentId, studentId);
+		}
+	}
 
 	private boolean linkStudentToClassSection(User user, CreateUserModel createUserModel) {
         if (StringUtils.isBlank (createUserModel.getClassUuid ())) {

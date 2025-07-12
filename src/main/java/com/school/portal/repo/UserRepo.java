@@ -22,5 +22,7 @@ public interface UserRepo extends JpaRepository<User, Long> , PagingAndSortingRe
 
 	List<User> findByMasterClass(MasterClass masterClass);
 
+	List<User> findByUserIdInAndUserType(List<Long> studentIds, String string);
+
 
 }
