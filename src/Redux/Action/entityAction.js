@@ -216,15 +216,15 @@ export const linkClassSection = (data, SetIsModal, toast) => (dispatch) => {
                 dispatch(getStudentEntities(param));
             }
             toast.success("Class and Section linked successfully");
-
         }
 
     }).catch(error => {
         console.log(error);
+        toast.error("Something went wrong");
     });
 }
 
-export const updateUserDetails = (data, setState) => (dispatch) => {
+export const updateUserDetails = (data, setState,toast) => (dispatch) => {
     const payload = {
         address: {
             cBuildingName: data.cBuildingName,
@@ -269,9 +269,11 @@ export const updateUserDetails = (data, setState) => (dispatch) => {
             if (response.status === 200) {
                 setState(true);
                 dispatch(getAllUserDetails(data.userId, null));
+                toast.success("User details updated successfully");
             }
         })
         .catch(error => {
             console.error("Error updating user details:", error);
+            toast.error("Something went wrong");
         });
 }

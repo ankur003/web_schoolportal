@@ -53,7 +53,7 @@ export default function TeacherPage() {
 
     const formSubmit = () => {
         let data = { "userType": "TEACHER", ...formData }
-        dispatch(createUser(data, SetIsModal,toast)); 
+        dispatch(createUser(data, SetIsModal, toast));
     }
 
     const handleChange = (selected) => {
@@ -62,7 +62,7 @@ export default function TeacherPage() {
 
     const formSubmitClassSec = () => {
         let data = { userId, className: classInput, sections: selectedSections?.value, userType: "TEACHER" };
-        dispatch(linkClassSection(data, SetIsModalLink));
+        dispatch(linkClassSection(data, SetIsModalLink, toast));
     }
 
     const openLinkModal = (data) => {
@@ -123,7 +123,7 @@ export default function TeacherPage() {
                         :
                         <NoDataFound />
                     :
-                   <Loader />
+                    <Loader />
                 }
             </div >
 
@@ -132,7 +132,7 @@ export default function TeacherPage() {
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel"> Create Student</h5>
+                                <h5 className="modal-title" id="exampleModalLabel">Create Teacher</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => SetIsModal(false)}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>

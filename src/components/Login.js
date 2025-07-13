@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from '../Redux/Action/loginAction';
+import { toast } from 'react-toastify';
 
 
 function Login(props) {
@@ -41,6 +42,7 @@ function Login(props) {
 				dispatch({ type: "GET_ROLE", payload: responseObject.userType });
 				dispatch({ type: "GET_USER_ID", payload: responseObject.userUuid });
 				dispatch({ type: "LOGIN_GET_USER_ID", payload: responseObject.userUuid });
+				toast.success("Login successful");
 			}
 			else {
 				console.log({ status })

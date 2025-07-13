@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 function ManageClasses(props) {
     const { t, i18n } = useTranslation();
-    const { classList, secList, linkList, loader } = useSelector(state => state.manageClassesReducer);
+    const { classList, secList, linkList } = useSelector(state => state.manageClassesReducer);
     const dispatch = useDispatch();
 
     const [active, setActive] = useState("home-tab");
@@ -23,7 +23,7 @@ function ManageClasses(props) {
         label: section?.sectionName,
         value: section?.masterSectionUuid
     })) : "";
-    
+
     useEffect(() => {
         dispatch(getClasses());
     }, [dispatch]);
@@ -46,7 +46,7 @@ function ManageClasses(props) {
                 <div className="header-right">
                     {active === "home-tab" ?
                         <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Class Name</button> :
-                        active === "profile-tab" ? <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Section</button> : <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Link Class & Section</button>}
+                        active === "profile-tab" && <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Section</button>}
                 </div>
             </div>
             <div className="content-body">
@@ -148,6 +148,7 @@ function ManageClasses(props) {
                                                 <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                                 <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                                 <td>
+                                                    <button type="button" className="btn btn-warning mr-r-4" onClick={() => { SetIsModal(true); setFormState({ ...formState, className: data?.className }) }}>Link</button>
                                                     <button className="btn btn-success mr-r-4">Edit</button>
                                                     <button className="btn btn-danger">Delete</button>
                                                 </td>
@@ -189,12 +190,7 @@ function ManageClasses(props) {
                                         <div className="form-content">
                                             <div className="form-group">
                                                 <label className="form-group-label">Class Name</label>
-                                                <select className="form-control" name="className" onChange={(e) => handlerChange(e)}>
-                                                    <option>Select</option>
-                                                    {classList?.map((data, index) =>
-                                                        <option key={index} value={data.masterClassUuid}>{data.className}</option>
-                                                    )}
-                                                </select>
+                                                <input type="text" className="form-control" name="className" value={formState?.className} placeholder="Enter Class Name" onChange={(e) => handlerChange(e)} />
                                             </div>
                                             <div className="form-group">
                                                 <label className="form-group-label">Section Name</label>

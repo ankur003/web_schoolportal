@@ -4,6 +4,7 @@ import { Outlet, Navigate, useNavigate } from 'react-router-dom';
 import SideBar from '../components/SideBar';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 // import { routesList } from '../../src/routes.js';
 
 const Header = styled.header`
@@ -47,6 +48,7 @@ const ProtectedRoute = () => {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("role");
         navigate('/');
+        toast.success("Logout successful");
     };
 
     const { t, i18n } = useTranslation();

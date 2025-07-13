@@ -31,9 +31,11 @@ body {
 
 .content-filter {
     margin-bottom: 15px;
+
     .form-group {
         margin-bottom: 0px;
         height: 100%;
+
         .btn {
             height: 100%;
             font-size: 16px !important;
@@ -49,17 +51,17 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: $redRadiant;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: $yellowGradient;
 }
 
 *::placeholder {
@@ -94,6 +96,11 @@ body {
     .close {
         background-color: transparent;
         border: 0;
+        color: $white;
+    }
+    .modal-header {
+        background: $blue;
+        color: $white;
     }
 }
 
@@ -213,4 +220,27 @@ body {
     background: #F09819;
     color: $white;
     padding: 5px 8px;
+}
+
+.btn-warning {
+     background: $yellowGradient;
+}
+
+.btn-success {
+    background: $greenGradient;
+    color: $white;
+}
+
+.btn-primary {
+    background: $blue;
+    color: $white;
+}
+
+.btn-danger {
+    background: $redRadiant;
+    color: $white;
+}
+.btn-secondary {
+    background: $grayGradient;
+    color: $white;
 }

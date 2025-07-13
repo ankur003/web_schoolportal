@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 export default function ForgetPassword() {
     let navigate = useNavigate();
@@ -21,12 +22,16 @@ export default function ForgetPassword() {
             console.log({ response });
             if (response.status === 200) {
                 setIsShow(true);
+                toast.success("OTP sent to your registered email");
             } else {
                 setIsShow(false);
+                toast.error("Failed to send OTP. Please try again.");
             }
         })
             .catch(error => {
                 console.log(error);
+                toast.error("Failed to send OTP. Please try again.");
+                setIsShow(false);
             });
     };
 
@@ -37,12 +42,15 @@ export default function ForgetPassword() {
             console.log({ response });
             if (response.status === 201) {
                 navigate('/');
+                toast.success("Password reset successfully. Please login with your new password.");
             } else {
                 setIsShow(false);
+                toast.error("Failed to reset password. Please try again.");
             }
         })
             .catch(error => {
                 console.log(error);
+                toast.error("Failed to reset password. Please try again.");
             });
     };
     return (
@@ -79,8 +87,8 @@ export default function ForgetPassword() {
                             </div>
                             <div className="form-group password-form">
                                 <label className="form-icon"><i className="fa fa-lock"></i></label>
-                                <input type={!isShowPassword ? "password" : "text"}  className="form-control" value={confirmPassword || ""} placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} />
-                                <span className="show-password-icon" onClick={()=>setIsShowPassword(!isShowPassword)}>{isShowPassword ? <i className="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}</span>
+                                <input type={!isShowPassword ? "password" : "text"} className="form-control" value={confirmPassword || ""} placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} />
+                                <span className="show-password-icon" onClick={() => setIsShowPassword(!isShowPassword)}>{isShowPassword ? <i className="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}</span>
                             </div>
                             <a onClick={() => navigate('/')}>Back To Login</a>
                             <button className="btn btn-block btn-primary" onClick={forgetPasswordHandler}>Confirm Password</button>

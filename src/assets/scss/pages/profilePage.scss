@@ -5,6 +5,24 @@
     padding-left: 320px !important;
     padding-top: 0px !important;
     position: relative;
+    
+
+    .card-header {
+
+        background: $blue;
+        color: $white;
+        padding: 10px 15px;
+        border-radius: 0;
+
+        h5 {
+            margin: 0;
+            font-size: 16px;
+        }
+    }
+
+    .card {
+        margin-bottom: 20px
+    }
 
     .main-profile {
         @include position-top-left;
@@ -69,6 +87,7 @@
         padding-left: 20px;
         height: calc(100vh - 133px);
         overflow: auto;
+        padding-right: 12px;
 
         .form-content {
             padding-right: 10px;
@@ -79,6 +98,15 @@
 
         .card-body {
             border-bottom: 1px solid #e1e1e1;
+        }
+    }
+
+    .info-card-body {
+        .card-body p {
+            background-color: $light-gray;
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 6px;
         }
     }
 }
