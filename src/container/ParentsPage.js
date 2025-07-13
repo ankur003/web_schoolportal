@@ -142,9 +142,14 @@ export default function ParentsPage() {
                                             <td>
                                                 {childrenMap[data?.userUuid] ? (
                                                     childrenMap[data?.userUuid].length > 0 ? (
-                                                        childrenMap[data?.userUuid].map((child, idx) => (
-                                                            <a href='#' onClick={() => getAllUserDetails(child?.userUuid)} key={idx}>{child.fullName} {idx != 0 ? "," : ""}</a>
-                                                        ))
+                                                        childrenMap[data?.userUuid].map((child, idx) => {
+                                                            return (
+                                                                <>
+                                                                    <a href='#' onClick={() => getAllUserDetails(child?.userUuid)} key={idx}>{child.fullName}</a>
+                                                                    {idx !== 0 ? ", " : " "}
+                                                                </>
+                                                            )
+                                                        })
                                                     ) : (
                                                         <span>No Children</span>
                                                     )
