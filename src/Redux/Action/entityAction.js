@@ -6,7 +6,6 @@ export const getAllUserDetails = (data) => (dispatch) => {
     let url = `${basePathUrl}/sa/user/${data}`;
     axios.get(url)
         .then(response => {
-            console.log({ response });
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_ALL_USER_DETAILS,
@@ -30,8 +29,6 @@ export const getAllUserDetails = (data) => (dispatch) => {
 }
 
 export const getEntities = (data) => (dispatch) => {
-    dispatch({ type: Constants.RESET_STATE })
-    console.log("getEntities data", data);
     let url = "";
     if (data?.filter) {
         url = `${basePathUrl}/sa/user?fullName=${data?.values?.fullName}&username=${data?.values?.username}&userType=${data?.values?.userType}&className=${data?.values?.className}&sectionName=${data?.values?.sectionName}&page=1&limit=100`;
@@ -41,6 +38,7 @@ export const getEntities = (data) => (dispatch) => {
     }
     else {
         url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}`;
+        dispatch({ type: Constants.RESET_STATE })
     }
     axios.get(url)
         .then(response => {
@@ -72,7 +70,6 @@ export const getTeacherEntities = (data) => (dispatch) => {
     url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&userType=${data?.userType}`;
     axios.get(url)
         .then(response => {
-            console.log({ response });
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_TEACHER,
@@ -104,11 +101,9 @@ export const getStudentEntities = (data) => (dispatch) => {
         .then(response => {
             if (response.status === 200) {
                 if (data?.isNotAdmin === true) {
-                    console.log("getStudentEntities", response.data);
                     let studentList = response.data?.data?.filter((item) => {
                         return item.userType === "STUDENT";
                     });
-                    console.log("studentList", studentList);
                     dispatch({ type: Constants.GET_STUDENT, payload: { data: studentList } });
 
                 }
@@ -133,13 +128,10 @@ export const getParentEntities = (data) => (dispatch) => {
     axios.get(url)
         .then(response => {
             if (response.status === 200) {
-                console.log("getStudentEntities", response.data);
                 if (data?.isNotAdmin === true) {
-                    console.log("getStudentEntities", response.data);
                     let parentList = response.data?.data?.filter((item) => {
                         return item.userType === "PARENT";
                     });
-                    console.log("parentList", parentList);
                     dispatch({ type: Constants.GET_PARENT, payload: { data: parentList } });
                 }
                 else {

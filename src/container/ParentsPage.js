@@ -3,6 +3,7 @@ import { MultiSelect } from "react-multi-select-component";
 import Loader from '../components/Loader'
 import NoDataFound from '../components/NoDataFound'
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import { getClasses } from '../Redux/Action/manageClassAction';
 import { createUser, getChildrenListByPar, getEntities, getParentEntities } from '../Redux/Action/entityAction';
@@ -13,7 +14,7 @@ export default function ParentsPage() {
     const navigate = useNavigate();
 
     const { entityList, parentList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
-    const { classList, secList } = useSelector(state => state.manageClassesReducer);
+    const { linkList, secList } = useSelector(state => state.manageClassesReducer);
 
     const [childrenMap, setChildrenMap] = useState({});
     const [isModal, setIsModal] = useState(false);
@@ -23,9 +24,40 @@ export default function ParentsPage() {
     const [formData, setFormData] = useState({
         fullName: "",
         username: "",
-        className: "",
-        sectionNames: ""
     });
+
+    const [selectedClass, setSelectedClass] = useState([]);
+    const classOptionsList = linkList ? linkList?.map(section => ({
+        label: section?.className,
+        value: section?.masterClassUuid
+    })) : "";
+
+    const [selectedSections, setSelectedSections] = useState([]);
+    const [sectionList, setSectionList] = useState([]);
+    const sectionOptionsList = sectionList ? sectionList?.map(section => ({
+        label: section?.sectionName,
+        value: section?.masterSectionUuid
+    })) : "";
+
+
+    const handleChange = (selected) => {
+        setSelectedClass(selected);
+        const selectedClassUuids = Array.isArray(selected) ? selected.map(s => s.value) : [selected.value];
+        const filteredSections = linkList
+            .filter(cls => selectedClassUuids.includes(cls.masterClassUuid))
+            .flatMap(cls => cls.masterSection);
+        setSectionList(filteredSections);
+    };
+
+    const handleChangeSections = (selected) => {
+        setSelectedSections(selected);
+        let data = { page, limit, userType: "STUDENT", values: { sectionName: selected?.label, className: selectedClass?.label }, Studentfilter: true };
+        dispatch(getEntities(data));
+        if (selected.value !== "") {
+
+        }
+    }
+
 
     useEffect(() => {
         dispatch(getClasses());
@@ -34,7 +66,7 @@ export default function ParentsPage() {
     useEffect(() => {
         let data = { page, limit, userType: "PARENT", isNotAdmin: true };
         dispatch(getParentEntities(data, toast));
-    }, []);
+    }, [dispatch]);
 
     const options = entityList?.map(student => ({
         label: student?.fullName,
@@ -48,18 +80,15 @@ export default function ParentsPage() {
             "fullName": formData?.fullName,
             "username": formData?.username,
             "userUuid": sectionID[0],
-            "sectionUuid": document.getElementById("sectionNames").id,
-            "classUuid": document.getElementById("className").id
+            "sectionUuid": selectedSections?.label,
+            "classUuid": selectedClass?.label
         };
         dispatch(createUser(data, setIsModal, toast));
     }
 
     const handlerChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        if (formData?.className !== "" && formData?.sectionNames !== "") {
-            let data = { page, limit, userType: "STUDENT", values: { sectionName: formData?.sectionNames, className: formData?.className }, Studentfilter: true };
-            dispatch(getEntities(data));
-        }
+
     }
 
     const getAllUserDetails = (data) => {
@@ -72,7 +101,6 @@ export default function ParentsPage() {
             parentList.forEach(parent => {
                 if (!childrenMap[parent.userUuid]) {
                     dispatch(getChildrenListByPar(parent.userUuid)).then(children => {
-                        console.log("Children List for Parent:", parent.userUuid, children);
                         setChildrenMap(prev => ({
                             ...prev,
                             [parent.userUuid]: (children || []).map(child => ({
@@ -84,7 +112,6 @@ export default function ParentsPage() {
                 }
             });
         }
-        // eslint-disable-next-line
     }, [parentList]);
 
     return (
@@ -175,23 +202,29 @@ export default function ParentsPage() {
                                         <div className='flex-50 pd-r-5'>
                                             <div className="form-group">
                                                 <label className="form-group-label">Class Name</label>
-                                                <select className="form-control" id="className" name="className" placeholder="Select Class" onChange={(e) => handlerChange(e)}>
-                                                    <option value="">Select Class</option>
-                                                    {classList?.map((data, index) =>
-                                                        <option key={index} id={data?.classUuid} value={data?.className}>{data.className}</option>
-                                                    )}
-                                                </select>
+                                                <Select
+                                                    name="sections"
+                                                    options={classOptionsList}
+                                                    value={selectedClass}
+                                                    onChange={handleChange}
+                                                    className="basic-multi-select"
+                                                    classNamePrefix="select"
+                                                    placeholder="Select Sections"
+                                                />
                                             </div>
                                         </div>
                                         <div className='flex-50 pd-l-5'>
                                             <div className="form-group">
                                                 <label className="form-group-label">Section Name</label>
-                                                <select className="form-control" id="sectionNames" name="sectionNames" placeholder="Select Section" onChange={(e) => handlerChange(e)}>
-                                                    <option value="">Select Section</option>
-                                                    {secList?.map((data, index) =>
-                                                        <option key={index} id={data?.sectionUuid} value={data?.sectionName}>{data.sectionName}</option>
-                                                    )}
-                                                </select>
+                                                <Select
+                                                    name="sections"
+                                                    options={sectionOptionsList}
+                                                    value={selectedSections}
+                                                    onChange={handleChangeSections}
+                                                    className="basic-multi-select"
+                                                    classNamePrefix="select"
+                                                    placeholder="Select Sections"
+                                                />
                                             </div>
                                         </div>
                                         <div className='flex-100'>
@@ -211,7 +244,14 @@ export default function ParentsPage() {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => setIsModal(false)}>Close</button>
-                                <button type="button" className="btn btn-primary" onClick={() => formSubmit()}>Save changes</button>
+                                <button
+                                    type="button"
+                                    disabled={!selectedSections?.value}
+                                    className={!selectedSections?.value ? "btn btn-primary cursor-not-allowed" : "btn btn-primary"}
+                                    onClick={() => formSubmit()}
+                                >
+                                    Save changes
+                                </button>
                             </div>
                         </div>
                     </div>
