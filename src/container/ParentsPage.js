@@ -14,7 +14,7 @@ export default function ParentsPage() {
     const navigate = useNavigate();
 
     const { entityList, parentList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
-    const { linkList, secList } = useSelector(state => state.manageClassesReducer);
+    const { linkList } = useSelector(state => state.manageClassesReducer);
 
     const [childrenMap, setChildrenMap] = useState({});
     const [isModal, setIsModal] = useState(false);
@@ -53,11 +53,7 @@ export default function ParentsPage() {
         setSelectedSections(selected);
         let data = { page, limit, userType: "STUDENT", values: { sectionName: selected?.label, className: selectedClass?.label }, Studentfilter: true };
         dispatch(getEntities(data));
-        if (selected.value !== "") {
-
-        }
     }
-
 
     useEffect(() => {
         dispatch(getClasses());
@@ -66,29 +62,15 @@ export default function ParentsPage() {
     useEffect(() => {
         let data = { page, limit, userType: "PARENT", isNotAdmin: true };
         dispatch(getParentEntities(data, toast));
-    }, [dispatch]);
+    }, [parentList, page, limit]);
 
     const options = entityList?.map(student => ({
         label: student?.fullName,
         value: student?.userUuid
     })) || [];
 
-    const formSubmit = () => {
-        let sectionID = selected?.map(item => (item?.value));
-        let data = {
-            "userType": "PARENT",
-            "fullName": formData?.fullName,
-            "username": formData?.username,
-            "userUuid": sectionID[0],
-            "sectionUuid": selectedSections?.label,
-            "classUuid": selectedClass?.label
-        };
-        dispatch(createUser(data, setIsModal, toast));
-    }
-
     const handlerChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-
     }
 
     const getAllUserDetails = (data) => {
@@ -113,6 +95,19 @@ export default function ParentsPage() {
             });
         }
     }, [parentList]);
+
+     const formSubmit = () => {
+        let sectionID = selected?.map(item => (item?.value));
+        let data = {
+            "userType": "PARENT",
+            "fullName": formData?.fullName,
+            "username": formData?.username,
+            "userUuid": sectionID[0],
+            "sectionUuid": selectedSections?.label,
+            "classUuid": selectedClass?.label
+        };
+        dispatch(createUser(data, setIsModal, toast));
+    }
 
     return (
         <>
