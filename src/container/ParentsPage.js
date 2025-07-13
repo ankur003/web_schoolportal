@@ -62,7 +62,7 @@ export default function ParentsPage() {
     useEffect(() => {
         let data = { page, limit, userType: "PARENT", isNotAdmin: true };
         dispatch(getParentEntities(data, toast));
-    }, [parentList, page, limit]);
+    }, []);
 
     const options = entityList?.map(student => ({
         label: student?.fullName,
@@ -174,7 +174,7 @@ export default function ParentsPage() {
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel"> Create Student</h5>
+                                <h5 className="modal-title" id="exampleModalLabel">Create Parent</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => setIsModal(false)}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -204,7 +204,7 @@ export default function ParentsPage() {
                                                     onChange={handleChange}
                                                     className="basic-multi-select"
                                                     classNamePrefix="select"
-                                                    placeholder="Select Sections"
+                                                    placeholder="Select Class"
                                                 />
                                             </div>
                                         </div>
