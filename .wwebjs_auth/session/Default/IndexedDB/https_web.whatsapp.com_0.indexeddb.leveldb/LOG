@@ -1,0 +1,26 @@
+2025/07/13-17:35:30.364 63d0 Reusing MANIFEST C:\Users\ankur\OneDrive\Documents\w\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/07/13-17:35:30.364 63d0 Recovering log #57
+2025/07/13-17:35:30.382 63d0 Reusing old log C:\Users\ankur\OneDrive\Documents\w\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000057.log 
+2025/07/13-17:35:30.382 63d0 Delete type=2 #55
+2025/07/13-17:35:30.382 63d0 Delete type=2 #58
+2025/07/13-17:35:32.259 63d0 Level-0 table #62: started
+2025/07/13-17:35:32.265 63d0 Level-0 table #62: 117133 bytes OK
+2025/07/13-17:35:32.266 63d0 Delete type=0 #57
+2025/07/13-17:35:32.266 63d0 Manual compaction at level-0 from '\x00\x1f\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00 \x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/07/13-17:35:32.268 63d0 Level-0 table #64: started
+2025/07/13-17:35:32.278 63d0 Level-0 table #64: 446 bytes OK
+2025/07/13-17:35:32.280 63d0 Delete type=0 #61
+2025/07/13-17:35:32.280 63d0 Manual compaction at level-0 from '\x00 \x00\x00\x00' @ 72057594037927935 : 1 .. '\x00!\x00\x00\x00' @ 0 : 0; will stop at '\x00 \x00\x00\x05' @ 166609 : 0
+2025/07/13-17:35:32.280 63d0 Compacting 1@0 + 1@1 files
+2025/07/13-17:35:32.288 63d0 Generated table #65@0: 3223 keys, 66735 bytes
+2025/07/13-17:35:32.288 63d0 Compacted 1@0 + 1@1 files => 66735 bytes
+2025/07/13-17:35:32.288 63d0 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/07/13-17:35:32.289 63d0 Delete type=2 #64
+2025/07/13-17:35:32.289 63d0 Manual compaction at level-0 from '\x00 \x00\x00\x05' @ 166609 : 0 .. '\x00!\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/07/13-17:35:34.576 1b40 Compacting 1@1 + 1@2 files
+2025/07/13-17:35:34.637 1b40 Generated table #66@1: 32245 keys, 1372588 bytes
+2025/07/13-17:35:34.637 1b40 Compacted 1@1 + 1@2 files => 1372588 bytes
+2025/07/13-17:35:34.638 1b40 compacted to: files[ 0 0 1 0 0 0 0 ]
+2025/07/13-17:35:34.638 1b40 Delete type=2 #59
+2025/07/13-17:35:34.638 1b40 Delete type=2 #62
+2025/07/13-17:35:34.638 1b40 Delete type=2 #65
