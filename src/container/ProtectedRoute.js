@@ -69,10 +69,10 @@ const ProtectedRoute = () => {
             <div className="main-wrapper">
                 <Header className="main-header">
                     <H1><img alt="logo" src={require('../../src/assets/images/logo.jpg')} />The School Portal</H1>
-                    <ul className="language-button">
+                    {/* <ul className="language-button">
                         <li className={isActive ? "active" : ""} onClick={() => changeLanguage('en')}>En</li>
                         <li className={!isActive ? "active" : ""} onClick={() => changeLanguage('hi')}>Hi</li>
-                    </ul>
+                    </ul> */}
                     <div className="dropdown">
                         <button className="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             <span className='badge bg-custom'>{role}</span> {user} <i className="fas fa-ellipsis-v"></i>
