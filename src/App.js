@@ -2,6 +2,7 @@ import '././assets/scss/main.scss';
 import React from 'react';
 import './i18n';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Bounce, ToastContainer } from 'react-toastify';
 import ProtectedRoute from './container/ProtectedRoute';
 import Login from './components/Login';
 import ManageClasses from './container/ManageClasses';
@@ -39,29 +40,44 @@ const App = () => {
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/ForgetPassword" element={<ForgetPassword />} />
-        <Route
-          path="/redirect"
-          element={<RoleBasedRedirect />}
-        />
-        <Route element={<ProtectedRoute />} >
-          <Route element={<ManageClasses />} path="/ManageClasses" />
-          <Route element={<EntityPage />} path="/EntityPage" />
-          <Route element={<ChangePassword />} path="/ChangePassword" />
-          <Route element={<StudentPage />} path="/StudentPage" />
-          <Route element={<TeacherPage />} path="/TeacherPage" />
-          <Route element={<ProfileDetailsPage />} path="/ProfileDetailsPage" />
-          <Route element={<AttendanceCalendarPage />} path="/AttendanceCalendarPage" />
-          <Route element={<LeaveRequest />} path="/LeaveRequest" />
-          <Route element={<FeeModule />} path="/FeeModule" />
-          <Route element={<PaymentDetails />} path="/PaymentDetails" />
-          <Route element={<TimeTable />} path="/TimeTable" />
-        </Route>
-      </Routes>
-    </Router>
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/ForgetPassword" element={<ForgetPassword />} />
+          <Route
+            path="/redirect"
+            element={<RoleBasedRedirect />}
+          />
+          <Route element={<ProtectedRoute />} >
+            <Route element={<ManageClasses />} path="/ManageClasses" />
+            <Route element={<EntityPage />} path="/EntityPage" />
+            <Route element={<ChangePassword />} path="/ChangePassword" />
+            <Route element={<StudentPage />} path="/StudentPage" />
+            <Route element={<TeacherPage />} path="/TeacherPage" />
+            <Route element={<ProfileDetailsPage />} path="/ProfileDetailsPage" />
+            <Route element={<AttendanceCalendarPage />} path="/AttendanceCalendarPage" />
+            <Route element={<LeaveRequest />} path="/LeaveRequest" />
+            <Route element={<FeeModule />} path="/FeeModule" />
+            <Route element={<PaymentDetails />} path="/PaymentDetails" />
+            <Route element={<TimeTable />} path="/TimeTable" />
+          </Route>
+        </Routes>
+      </Router>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Bounce}
+      />
+    </>
   );
 };
 

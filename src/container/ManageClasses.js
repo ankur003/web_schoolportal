@@ -3,6 +3,7 @@ import { MultiSelect } from "react-multi-select-component";
 import { useDispatch, useSelector } from 'react-redux';
 import { getClasses, createClassAndSection } from '../Redux/Action/manageClassAction';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 function ManageClasses(props) {
     const { t, i18n } = useTranslation();
@@ -27,7 +28,7 @@ function ManageClasses(props) {
 
 
 
-    useEffect(() => {   
+    useEffect(() => {
         dispatch(getClasses());
     }, [dispatch, loader]);
 
@@ -38,7 +39,7 @@ function ManageClasses(props) {
     const formSubmit = (type) => {
         let sectionID = selected?.map(item => (item?.value));
         let data = { formState, sectionID };
-        dispatch(createClassAndSection(data, type))
+        dispatch(createClassAndSection(data, type, toast))
         SetIsModal(false);
 
     };
@@ -98,68 +99,68 @@ function ManageClasses(props) {
                         </div>
                     </div>
                     <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                      
+
                         <div className="table-content">
-                        {secList?.length > 0 ?
-                            <table className="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Section Name</th>
-                                        <th scope="col">Created By</th>
-                                        <th scope="col">Created At</th>
-                                        <th scop="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {secList?.map((data, index) =>
-                                        <tr key={index}>
-                                            <td scope="row">{index + 1}</td>
-                                            <td>{data?.sectionName}</td>
-                                            <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
-                                            <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
-                                            <td>
-                                                <button className="btn btn-success mr-r-4">Edit</button>
-                                                <button className="btn btn-danger">Delete</button>
-                                            </td>
+                            {secList?.length > 0 ?
+                                <table className="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Section Name</th>
+                                            <th scope="col">Created By</th>
+                                            <th scope="col">Created At</th>
+                                            <th scop="col">Action</th>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                             : "loading"}
+                                    </thead>
+                                    <tbody>
+                                        {secList?.map((data, index) =>
+                                            <tr key={index}>
+                                                <td scope="row">{index + 1}</td>
+                                                <td>{data?.sectionName}</td>
+                                                <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
+                                                <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
+                                                <td>
+                                                    <button className="btn btn-success mr-r-4">Edit</button>
+                                                    <button className="btn btn-danger">Delete</button>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                                : "loading"}
                         </div>
                     </div>
                     <div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
                         <div className="table-content">
-                        {linkList?.length > 0 ?
-                            <table className="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Class Name</th>
-                                        <th scope="col">Section Name</th>
-                                        <th scope="col">Created By</th>
-                                        <th scope="col">Created At</th>
-                                        <th scop="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {linkList?.map((data, index) =>
-                                        <tr key={index}>
-                                            <td scope="row">{index + 1}</td>
-                                            <td>{data?.className}</td>
-                                            <td>{data?.masterSection?.length > 0 ? data?.masterSection?.sort().map((data, index) => <span key={index}>{data?.sectionName + ","}</span>) : "no section linked"}</td>
-                                            <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
-                                            <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
-                                            <td>
-                                                <button className="btn btn-success mr-r-4">Edit</button>
-                                                <button className="btn btn-danger">Delete</button>
-                                            </td>
+                            {linkList?.length > 0 ?
+                                <table className="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Class Name</th>
+                                            <th scope="col">Section Name</th>
+                                            <th scope="col">Created By</th>
+                                            <th scope="col">Created At</th>
+                                            <th scop="col">Action</th>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                             : "loading"}
+                                    </thead>
+                                    <tbody>
+                                        {linkList?.map((data, index) =>
+                                            <tr key={index}>
+                                                <td scope="row">{index + 1}</td>
+                                                <td>{data?.className}</td>
+                                                <td>{data?.masterSection?.length > 0 ? data?.masterSection?.sort().map((data, index) => <span key={index}>{data?.sectionName + ","}</span>) : "no section linked"}</td>
+                                                <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
+                                                <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
+                                                <td>
+                                                    <button className="btn btn-success mr-r-4">Edit</button>
+                                                    <button className="btn btn-danger">Delete</button>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                                : "loading"}
                         </div>
                     </div>
                 </div>
@@ -202,7 +203,7 @@ function ManageClasses(props) {
                                             </div>
                                             <div className="form-group">
                                                 <label className="form-group-label">Section Name</label>
-                                                 <MultiSelect
+                                                <MultiSelect
                                                     options={options}
                                                     value={selected}
                                                     onChange={setSelected}

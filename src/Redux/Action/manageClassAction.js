@@ -37,7 +37,7 @@ export const getClasses = () => (dispatch) => {
         });
 }
 
-export const createClassAndSection = (data, type) => (dispatch) => {
+export const createClassAndSection = (data, type,toaster) => (dispatch) => {
     let value = {};
     if (type === "CreateClass") {
         value = { className: data.formState.className };
@@ -52,10 +52,10 @@ export const createClassAndSection = (data, type) => (dispatch) => {
         .then(response => {
             console.log({response});
             if(response.status == 201) {
-                
+                toaster.success("Created Successfully!")
             }
             if(response.status == 304) {
-                
+                toaster.info("Nothing changed!")
             }
             dispatch(getClasses());
         })

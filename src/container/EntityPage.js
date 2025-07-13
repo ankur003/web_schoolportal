@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEntities, getAllUserDetails } from '../Redux/Action/entityAction';
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 
 const EntityPage = () => {
@@ -9,9 +10,17 @@ const EntityPage = () => {
     const dispatch = useDispatch();
     const userRole = sessionStorage.getItem("role");
 
-    const { entityList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
 
+    const { entityList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
+    const { classList, secList } = useSelector(state => state.manageClassesReducer);
     const [dataList, setDataList] = useState([]);
+    const [inputFields, setInputFields] = useState({
+        fullName: "",
+        username: "",
+        userType: "",
+        className: "",
+        sectionName: ""
+    });
     const [page, setPage] = useState("1");
     const [limit, setLimit] = useState("100");
 
@@ -27,17 +36,10 @@ const EntityPage = () => {
         setLimit(pageLimit);
     }, [entityList, pageCount, pageLimit]);
 
-    // let inputFields = document.querySelectorAll('.form-control');
-
-    // const filterHandler = (e, param) => {
-    //     const values = {};
-    //     inputFields.forEach(input => {
-    //         values[input.name] = input.value;
-    //     });
-    //     console.log({ values })
-    //     let data = { page, limit, values, filter: true }
-    //     dispatch(getEntities(data))
-    // };
+    const filterHandler = () => {
+        let data = { page, limit, values: inputFields, filter: true, toast }
+        dispatch(getEntities(data));
+    };
 
     const getAllUserDetails = (data) => {
         dispatch({ type: "GET_USER_ID", payload: data });
@@ -50,6 +52,56 @@ const EntityPage = () => {
                 <h1>Manage Entity</h1>
             </div>
             <div className="content-body">
+                <div className="content-filter">
+                    <div className='d-flex'>
+                        <div className="flex-16_6 pd-r-5">
+                            <div className="form-group">
+                                <input type="text" className="form-control" onChange={(e) => setInputFields({ ...inputFields, fullName: e.target.value })} placeholder="Full Name" />
+                            </div>
+                        </div>
+                        <div className="flex-16_6 pd-l-5 pd-r-5">
+                            <div className="form-group">
+                                <input type="text" className="form-control" onChange={(e) => setInputFields({ ...inputFields, username: e.target.value })} placeholder="Email" />
+                            </div>
+                        </div>
+                        <div className="flex-16_6 pd-l-5 pd-r-5">
+                            <div className="form-group">
+                                <select className="form-control" placeholder="Select User Type" onChange={(e) => setInputFields({ ...inputFields, userType: e.target.value })}>
+                                    <option value="">Select User Type</option>
+                                    <option value="STUDENT">Student</option>
+                                    <option value="TEACHER">Teacher</option>
+                                    <option value="PARENT">Parent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="flex-16_6 pd-l-5 pd-r-5">
+                            <div className="form-group">
+                                <select className="form-control" name="className" placeholder="Select Class" onChange={(e) => setInputFields({ ...inputFields, className: e.target.value })}>
+                                    <option>Select Class</option>
+                                    {classList?.map((data, index) =>
+                                        <option key={index} value={data?.className}>{data.className}</option>
+                                    )}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="flex-16_6 pd-l-5 pd-r-5">
+                            <div className="form-group">
+                                <select className="form-control" placeholder="Select Section" onChange={(e) => setInputFields({ ...inputFields, sectionName: e.target.value })}>
+                                    <option value="">Select Section</option>
+                                    {secList?.map((data, index) =>
+                                        <option key={index} value={data?.sectionName}>{data.sectionName}</option>
+                                    )}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="flex-16_6 pd-l-5">
+                            <div className="form-group">
+                                <button className="btn btn-block btn-success" onClick={() => filterHandler()}>Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {loader ?
                     dataList?.length > 0 ?
                         <div className="table-content">
@@ -65,16 +117,6 @@ const EntityPage = () => {
                                         <th scope="col">Created At</th>
                                         <th scop="col">Action</th>
                                     </tr>
-                                    {/* <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col"><input type='text' name="fullName" onChange={(e) => filterHandler(e, "fullName")} placeholder='Full Name' className='form-control' /></th>
-                                    <th scope="col"><input type='text' name="username" onChange={(e) => filterHandler(e, "username")} placeholder='Email' className='form-control' /></th>
-                                    <th scope="col"><input type='text' onChange={(e) => filterHandler(e)} placeholder='Phone Number' className='form-control' disabled /></th>
-                                    <th scope="col"><input type='text' name="userType" onChange={(e) => filterHandler(e, "userType")} placeholder='User Type' className='form-control' /></th>
-                                    <th scope="col"></th>
-                                    <th scope="col"></th>
-                                    <th scop="col"></th>
-                                </tr> */}
                                 </thead>
                                 <tbody>
                                     {dataList?.map((data, index) =>

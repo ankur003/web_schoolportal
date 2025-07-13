@@ -41,34 +41,55 @@ function SideBar(props) {
             icon: "fa-solid fa-money-bill"
         },
         {
-            name: "Manage Entity",
+            name: "All Entity",
             component: "EntityPage",
-            transform: "manageEntity",
+            transform: "allEntity",
+            to: "/EntityPage",
             icon: "fa-solid fa-user",
-            subNav: [
-                {
-                    name: "All Entity",
-                    component: "EntityPage",
-                    transform: "allEntity",
-                    to: "/EntityPage",
-                    // icon: "fa-solid fa-user",
-                },
-                {
-                    name: "Teachers",
-                    component: "TeacherPage",
-                    transform: "teachers",
-                    to: "/TeacherPage",
-                    // icon: "fa-solid fa-user",
-                },
-                {
-                    name: "Student",
-                    component: "StudentPage",
-                    transform: "student",
-                    to: "/StudentPage",
-                    // icon: "fa-solid fa-user",
-                },
-            ]
         },
+        {
+            name: "Teachers",
+            component: "TeacherPage",
+            transform: "teachers",
+            to: "/TeacherPage",
+            icon: "fa-solid fa-user",
+        },
+        {
+            name: "Student",
+            component: "StudentPage",
+            transform: "student",
+            to: "/StudentPage",
+            icon: "fa-solid fa-user",
+        },
+        // {
+        //     name: "Manage Entity",
+        //     component: "EntityPage",
+        //     transform: "manageEntity",
+        //     icon: "fa-solid fa-user",
+        //     subNav: [
+        //         {
+        //             name: "All Entity",
+        //             component: "EntityPage",
+        //             transform: "allEntity",
+        //             to: "/EntityPage",
+        //             // icon: "fa-solid fa-user",
+        //         },
+        //         {
+        //             name: "Teachers",
+        //             component: "TeacherPage",
+        //             transform: "teachers",
+        //             to: "/TeacherPage",
+        //             // icon: "fa-solid fa-user",
+        //         },
+        //         {
+        //             name: "Student",
+        //             component: "StudentPage",
+        //             transform: "student",
+        //             to: "/StudentPage",
+        //             // icon: "fa-solid fa-user",
+        //         },
+        //     ]
+        // },
         {
             name: "Leave Requests",
             component: "LeaveRequest",

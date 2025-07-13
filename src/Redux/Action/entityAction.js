@@ -31,8 +31,14 @@ export const getAllUserDetails = (data) => (dispatch) => {
 
 export const getEntities = (data) => (dispatch) => {
     dispatch({ type: Constants.RESET_STATE })
+    console.log("getEntities data", data);
     let url = "";
-    url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}`;
+    if (data?.filter) {
+        url = `${basePathUrl}/sa/user?fullName=${data?.values?.fullName}&username=${data?.values?.username}&userType=${data?.values?.userType}&className=${data?.values?.className}&sectionName=${data?.values?.sectionName}&page=1&limit=100`;
+    }
+    else {
+        url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}`;
+    }
     axios.get(url)
         .then(response => {
             if (response.status === 200) {
@@ -40,6 +46,9 @@ export const getEntities = (data) => (dispatch) => {
                     type: Constants.GET_ALL_ENTITY,
                     payload: response.data
                 })
+                if (data?.filter) {
+                    data?.toast?.success("Submitted successfully");
+                }
             }
             else if (response.status === 204) {
                 dispatch({
@@ -50,6 +59,7 @@ export const getEntities = (data) => (dispatch) => {
         })
         .catch(error => {
             console.log(error);
+            toast.error("Something went wrong");
         });
 }
 
@@ -75,6 +85,7 @@ export const getTeacherEntities = (data) => (dispatch) => {
         })
         .catch(error => {
             console.log(error);
+
         });
 }
 
@@ -114,7 +125,7 @@ export const getStudentEntities = (data) => (dispatch) => {
         });
 }
 
-export const createUser = (data, SetIsModal) => (dispatch) => {
+export const createUser = (data, SetIsModal, toast) => (dispatch) => {
     axios.post(`${basePathUrl}/sa/user`, data).then(response => {
         if (response.status === 201) {
             SetIsModal(false);
@@ -129,15 +140,16 @@ export const createUser = (data, SetIsModal) => (dispatch) => {
             if (data.userType === "STUDENT") {
                 dispatch(getStudentEntities(param));
             }
-
+            toast.success("User created successfully");
         }
 
     }).catch(error => {
         console.log(error);
+        toast.error("Something went wrong");
     });
 }
 
-export const linkClassSection = (data, SetIsModal) => (dispatch) => {
+export const linkClassSection = (data, SetIsModal, toast) => (dispatch) => {
     let dataBody = {
         classUuid: data?.className,
         sectionUuid: data?.sections
@@ -156,6 +168,7 @@ export const linkClassSection = (data, SetIsModal) => (dispatch) => {
             if (data.userType === "STUDENT") {
                 dispatch(getStudentEntities(param));
             }
+            toast.success("Class and Section linked successfully");
 
         }
 

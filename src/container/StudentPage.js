@@ -5,34 +5,36 @@ import { getClasses } from '../Redux/Action/manageClassAction';
 import Select from 'react-select';
 import { STUDENT, SUPER_ADMIN } from '../Redux/Constants';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
+import NoDataFound from '../components/NoDataFound';
+import { toast } from 'react-toastify';
 
 export default function StudentPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { studentList, pageLimit, pageCount, loader, created } =
+    const { studentList, pageLimit, pageCount, loader } =
         useSelector(state => state.entityReducer);
-    const { classList, secList } = useSelector(state => state.manageClassesReducer);
+    const { linkList } = useSelector(state => state.manageClassesReducer);
     const userRole = useSelector(state => state.loginReducer.role);
     const { classSectionList } = useSelector(state => state.entityReducer);
-
-    console.log({ studentList });
 
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState("1");
     const [limit, setLimit] = useState("100");
     const [isModal, SetIsModal] = useState(false);
     const [isModalLink, SetIsModalLink] = useState(false);
+    const [sectionOptions, setSectionOptions] = useState([]);
+    const sectionOptionsList = sectionOptions ? sectionOptions?.map(section => ({
+        label: section?.sectionName,
+        value: section?.masterSectionUuid
+    })) : "";
     const [formData, setFormData] = useState({
         username: '',
         fullName: '',
     });
     const [classInput, setclassInput] = useState("");
     const [selectedSections, setSelectedSections] = useState([]);
-    const sectionOptions = secList ? secList?.map(section => ({
-        label: section?.sectionName,
-        value: section?.masterSectionUuid
-    })) : "";
     const [userId, setUserId] = useState()
 
     useEffect(() => {
@@ -68,9 +70,16 @@ export default function StudentPage() {
         });
     };
 
+    const linkClassChangeHandler = (e) => {
+        setclassInput(e.target.value);
+        let selectedClass = linkList?.find(item => item.masterClassUuid === e.target.value);
+        setSectionOptions(selectedClass?.masterSection);
+
+    }
+
     const formSubmit = () => {
         let data = { "userType": "STUDENT", ...formData }
-        dispatch(createUser(data, SetIsModal));
+        dispatch(createUser(data, SetIsModal, toast));
     };
 
     const handleChange = (selected) => {
@@ -79,7 +88,7 @@ export default function StudentPage() {
 
     const formSubmitClassSec = () => {
         let data = { userId, className: classInput, sections: selectedSections?.value, userType: "STUDENT" };
-        dispatch(linkClassSection(data, SetIsModalLink));
+        dispatch(linkClassSection(data, SetIsModalLink, toast));
     }
 
     const openLinkModal = (data) => {
@@ -119,16 +128,6 @@ export default function StudentPage() {
                                         <th scope="col">Created At</th>
                                         <th scop="col">Action</th>
                                     </tr>
-                                    {/* <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col"><input type='text' name="fullName" onChange={(e) => filterHandler(e, "fullName")} placeholder='Full Name' className='form-control' /></th>
-                                    <th scope="col"><input type='text' name="username" onChange={(e) => filterHandler(e, "username")} placeholder='Email' className='form-control' /></th>
-                                    <th scope="col"><input type='text' onChange={(e) => filterHandler(e)} placeholder='Phone Number' className='form-control' disabled /></th>
-                                    <th scope="col"><input type='text' name="userType" onChange={(e) => filterHandler(e, "userType")} placeholder='User Type' className='form-control' /></th>
-                                    <th scope="col"></th>
-                                    <th scope="col"></th>
-                                    <th scop="col"></th>
-                                </tr> */}
                                 </thead>
                                 <tbody>
                                     {dataList?.map((data, index) =>
@@ -143,7 +142,9 @@ export default function StudentPage() {
                                             <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                             <td>
                                                 {userRole === SUPER_ADMIN ? <>
-                                                    <button className={data?.className ? "btn mr-r-4 cursor-not-allowed" : "btn btn-warning mr-r-4"} disabled={data?.className && data?.className} onClick={() => { openLinkModal(data) }}>Link</button>
+                                                    <button className={data?.className ? "btn mr-r-4 cursor-not-allowed" : "btn btn-warning mr-r-4"}
+                                                        disabled={data?.className && data?.className}
+                                                        onClick={() => { openLinkModal(data) }}>Link</button>
                                                     <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
                                                     <button disabled className="btn btn-success mr-r-4">Edit</button>
                                                     <button disabled className="btn btn-danger">Delete</button>
@@ -158,17 +159,9 @@ export default function StudentPage() {
                             </table>
                         </div>
                         :
-                        <div className="no-data-found">
-                            <div className="no-data-image">
-                                <img alt='logo' src={require('../assets/images/no-data-found.gif')} />
-                            </div>
-                            <p>no data found</p>
-                        </div> :
-                    <div className="loader-content">
-                        <div className="no-data-image">
-                            <img alt='logo' src={require('../assets/images/loader.gif')} />
-                        </div>
-                    </div>
+                        <NoDataFound />
+                    :
+                    <Loader />
                 }
             </div>
 
@@ -216,9 +209,9 @@ export default function StudentPage() {
                                 <div className="form-content">
                                     <div className="form-group">
                                         <label className="form-group-label">Class Name</label>
-                                        <select className="form-control" name="className" onChange={(e) => setclassInput(e.target.value)}>
+                                        <select className="form-control" name="className" onChange={(e) => linkClassChangeHandler(e)}>
                                             <option>Select</option>
-                                            {classList?.map((data, index) =>
+                                            {linkList?.map((data, index) =>
                                                 <option key={index} value={data.masterClassUuid}>{data.className}</option>
                                             )}
                                         </select>
@@ -227,7 +220,7 @@ export default function StudentPage() {
                                         <label className="form-group-label">Section Name</label>
                                         <Select
                                             name="sections"
-                                            options={sectionOptions}
+                                            options={sectionOptionsList}
                                             value={selectedSections}
                                             onChange={handleChange}
                                             className="basic-multi-select"

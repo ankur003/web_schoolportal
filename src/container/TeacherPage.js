@@ -4,6 +4,7 @@ import { getTeacherEntities, createUser, linkClassSection } from '../Redux/Actio
 import Select from 'react-select';
 import { getClasses } from '../Redux/Action/manageClassAction';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function TeacherPage() {
     const dispatch = useDispatch()
@@ -50,7 +51,7 @@ export default function TeacherPage() {
 
     const formSubmit = () => {
         let data = { "userType": "TEACHER", ...formData }
-        dispatch(createUser(data, SetIsModal)); 
+        dispatch(createUser(data, SetIsModal,toast)); 
     }
 
     const handleChange = (selected) => {
@@ -73,18 +74,6 @@ export default function TeacherPage() {
         navigate("/ProfileDetailsPage");
     }
 
-
-    // let inputFields = document.querySelectorAll('.form-control');
-
-    // const filterHandler = (e, param) => {
-    //     const values = {};
-    //     inputFields.forEach(input => {
-    //         values[input.name] = input.value;
-    //     });
-    //     console.log({ values })
-    //     let data = { page, limit, values, filter: true }
-    //     dispatch(getEntities(data))
-    // };
     return (
         <>
             <div className="header">
@@ -108,16 +97,6 @@ export default function TeacherPage() {
                                         <th scope="col">Section</th>
                                         <th scop="col">Action</th>
                                     </tr>
-                                    {/* <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col"><input type='text' name="fullName" onChange={(e) => filterHandler(e, "fullName")} placeholder='Full Name' className='form-control' /></th>
-                                    <th scope="col"><input type='text' name="username" onChange={(e) => filterHandler(e, "username")} placeholder='Email' className='form-control' /></th>
-                                    <th scope="col"><input type='text' onChange={(e) => filterHandler(e)} placeholder='Phone Number' className='form-control' disabled /></th>
-                                    <th scope="col"><input type='text' name="userType" onChange={(e) => filterHandler(e, "userType")} placeholder='User Type' className='form-control' /></th>
-                                    <th scope="col"></th>
-                                    <th scope="col"></th>
-                                    <th scop="col"></th>
-                                    </tr> */}
                                 </thead>
                                 <tbody>
                                     {dataList?.map((data, index) =>

@@ -45,6 +45,12 @@
             h1 {
                 margin: 0;
                 font-size: 16px;
+                background: $blue;
+                padding: 3px 10px 5px 12px;
+                color: $white;
+                border-radius: 5px;
+                margin-left: 17px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             }
 
             .header-right {
@@ -85,6 +91,7 @@
     top: 53px;
     width: 200px;
     z-index: 999;
+    padding-top: 15px;
 
     ul.mainSubClass {
         list-style: none;
