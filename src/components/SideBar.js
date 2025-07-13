@@ -61,6 +61,13 @@ function SideBar(props) {
             to: "/StudentPage",
             icon: "fa-solid fa-user",
         },
+        {
+            name: "Parents",
+            component: "ParentsPage",
+            transform: "Parents",
+            to: "/ParentsPage",
+            icon: "fa-solid fa-user",
+        },
         // {
         //     name: "Manage Entity",
         //     component: "EntityPage",
@@ -100,7 +107,7 @@ function SideBar(props) {
 
     ];
 
-    let TeackerRoutes = [
+    let TeacherRoutes = [
         {
             name: "Profile Details",
             component: "ProfileDetailsPage",
@@ -162,7 +169,17 @@ function SideBar(props) {
         },
     ];
 
-    let routes = role === "SUPER_ADMIN" ? [...superAdmin] : role === "TEACHER" ? [...TeackerRoutes] : [...StudentRoutes];
+    let parentRoute = [
+        {
+            name: "Parents",
+            component: "ParentsPage",
+            transform: "Parents",
+            to: "/ParentsPage",
+            icon: "fa-solid fa-user",
+        },
+    ];
+
+    let routes = role === "SUPER_ADMIN" ? [...superAdmin] : role === "TEACHER" ? [...TeacherRoutes] : role === "PARENT" ? [...parentRoute] : [...StudentRoutes];
 
     const findSubNavIndex = (superAdminArray, route) => {
         for (const [mainIndex, item] of superAdminArray.entries()) {

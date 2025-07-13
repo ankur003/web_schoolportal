@@ -13,8 +13,7 @@ export default function StudentPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { studentList, pageLimit, pageCount, loader } =
-        useSelector(state => state.entityReducer);
+    const { studentList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
     const { linkList } = useSelector(state => state.manageClassesReducer);
     const userRole = useSelector(state => state.loginReducer.role);
     const { classSectionList } = useSelector(state => state.entityReducer);
@@ -47,20 +46,6 @@ export default function StudentPage() {
         setPage(pageCount);
         setLimit(pageLimit);
     }, [studentList, pageCount, pageLimit]);
-
-    // let inputFields = document.querySelectorAll('.form-control');
-
-    // const filterHandler = (e, param) => {
-    //     const values = {};
-    //     inputFields.forEach(input => {
-    //         values[input.name] = input.value;
-    //     });
-    //     console.log({ values })
-    //     let data = { page, limit, values, filter: true }
-    //     dispatch(getEntities(data))
-    // };
-
-
 
     const handlerChange = (e) => {
         const { name, value } = e.target;

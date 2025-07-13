@@ -17,20 +17,16 @@ function ManageClasses(props) {
         className: "",
         sectionName: "",
         linkSectionName: []
-    })
-
-
+    });
 
     const options = secList ? secList?.map(section => ({
         label: section?.sectionName,
         value: section?.masterSectionUuid
     })) : "";
-
-
-
+    
     useEffect(() => {
         dispatch(getClasses());
-    }, [dispatch, loader]);
+    }, [dispatch]);
 
     const handlerChange = (e) => {
         setFormState(prevState => ({ ...prevState, [e.target.name]: e.target.value }))
@@ -41,7 +37,6 @@ function ManageClasses(props) {
         let data = { formState, sectionID };
         dispatch(createClassAndSection(data, type, toast))
         SetIsModal(false);
-
     };
 
     return (

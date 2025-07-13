@@ -18,6 +18,7 @@ import LeaveRequest from './container/LeaveRequest';
 import FeeModule from './container/FeeModule';
 import PaymentDetails from './container/PaymentDetails';
 import TimeTable from './container/TimeTable';
+import ParentsPage from './container/ParentsPage';
 
 const App = () => {
   // Assume you have a way to get the user's role, e.g., from localStorage or context
@@ -32,9 +33,11 @@ const App = () => {
 
   const RoleBasedRedirect = () => {
     const role = getUserRole();
+    console.log("User Role:", role);
     if (role === 'SUPER_ADMIN') return (<Navigate to="/ManageClasses" replace />);
     if (role === 'TEACHER') return <Navigate to="/ProfileDetailsPage" replace />;
     if (role === 'STUDENT') return <Navigate to="/ProfileDetailsPage" replace />;
+    if (role === 'PARENT') return <Navigate to="/ParentsPage" replace />;
     // Default fallback
     return <Navigate to="/ManageClasses" replace />;
   };
@@ -61,6 +64,7 @@ const App = () => {
             <Route element={<FeeModule />} path="/FeeModule" />
             <Route element={<PaymentDetails />} path="/PaymentDetails" />
             <Route element={<TimeTable />} path="/TimeTable" />
+            <Route element={<ParentsPage />} path="/ParentsPage" />
           </Route>
         </Routes>
       </Router>

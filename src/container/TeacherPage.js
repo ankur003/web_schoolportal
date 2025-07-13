@@ -5,6 +5,8 @@ import Select from 'react-select';
 import { getClasses } from '../Redux/Action/manageClassAction';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import NoDataFound from '../components/NoDataFound';
+import Loader from '../components/Loader';
 
 export default function TeacherPage() {
     const dispatch = useDispatch()
@@ -119,19 +121,9 @@ export default function TeacherPage() {
                             </table>
                         </div>
                         :
-                        <div className="no-data-found">
-                            <div className="no-data-image">
-                                <img alt='logo' src={require('../assets/images/no-data-found.gif')} />
-                            </div>
-                            <p>no data found</p>
-                        </div>
+                        <NoDataFound />
                     :
-                    <div className="loader-content">
-                        <div className="no-data-image">
-                            <img alt='logo' src={require('../assets/images/loader.gif')} />
-                        </div>
-                    </div>
-
+                   <Loader />
                 }
             </div >
 

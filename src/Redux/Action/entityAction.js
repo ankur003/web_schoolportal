@@ -36,6 +36,9 @@ export const getEntities = (data) => (dispatch) => {
     if (data?.filter) {
         url = `${basePathUrl}/sa/user?fullName=${data?.values?.fullName}&username=${data?.values?.username}&userType=${data?.values?.userType}&className=${data?.values?.className}&sectionName=${data?.values?.sectionName}&page=1&limit=100`;
     }
+    else if (data?.Studentfilter) {
+        url = `${basePathUrl}/sa/user?userType=${data?.userType}&className=${data?.values?.className}&sectionName=${data?.values?.sectionName}&page=1&limit=100`;
+    }
     else {
         url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}`;
     }
@@ -125,6 +128,55 @@ export const getStudentEntities = (data) => (dispatch) => {
         });
 }
 
+export const getParentEntities = (data) => (dispatch) => {
+    let url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&userType=${data?.userType}`;
+    axios.get(url)
+        .then(response => {
+            if (response.status === 200) {
+                console.log("getStudentEntities", response.data);
+                if (data?.isNotAdmin === true) {
+                    console.log("getStudentEntities", response.data);
+                    let parentList = response.data?.data?.filter((item) => {
+                        return item.userType === "PARENT";
+                    });
+                    console.log("parentList", parentList);
+                    dispatch({ type: Constants.GET_PARENT, payload: { data: parentList } });
+                }
+                else {
+                    dispatch({ type: Constants.GET_STUDENT, payload: { data: response.data?.data } });
+                }
+            }
+            else if (response.status === 204) {
+                dispatch({
+                    type: Constants.NO_DATA_FOUND,
+                    payload: response.data
+                })
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+export const getChildrenListByPar = (data) => async (dispatch) => {
+    let url = `${basePathUrl}/student-parent-link/by-parent/${data}`;
+    return axios.get(url)
+        .then(response => {
+            if (response.status === 200) {
+                dispatch({
+                    type: Constants.GET_CHILDS_LIST,
+                    payload: response.data, // return actual children data
+                });
+                return response.data; // return data to caller
+            }
+            return null;
+        })
+        .catch(error => {
+            console.log(error);
+            return null;
+        });
+}
+
 export const createUser = (data, SetIsModal, toast) => (dispatch) => {
     axios.post(`${basePathUrl}/sa/user`, data).then(response => {
         if (response.status === 201) {
@@ -139,6 +191,9 @@ export const createUser = (data, SetIsModal, toast) => (dispatch) => {
             }
             if (data.userType === "STUDENT") {
                 dispatch(getStudentEntities(param));
+            }
+            if (data.userType === "PARENT") {
+                dispatch(getParentEntities(param));
             }
             toast.success("User created successfully");
         }

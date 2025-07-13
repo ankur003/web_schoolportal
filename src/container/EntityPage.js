@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getEntities, getAllUserDetails } from '../Redux/Action/entityAction';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
+import NoDataFound from '../components/NoDataFound';
+import Loader from '../components/Loader';
 
 
 const EntityPage = () => {
@@ -138,18 +140,10 @@ const EntityPage = () => {
                                 </tbody>
                             </table>
                         </div>
-                        : <div className="no-data-found">
-                            <div className="no-data-image">
-                                <img alt='logo' src={require('../assets/images/no-data-found.gif')} />
-                            </div>
-                            <p>no data found</p>
-                        </div>
+                        :
+                        <NoDataFound />
                     :
-                    <div className="loader-content">
-                        <div className="no-data-image">
-                            <img alt='logo' src={require('../assets/images/loader.gif')} />
-                        </div>
-                    </div>
+                    <Loader />
                 }
             </div>
         </>

@@ -4,6 +4,8 @@ const initialState = {
     entityList: [],
     teacherList: [],
     studentList: [],
+    parentList: [],
+    childList: [],
     pageCount: "",
     pageLimit: "",
     loader: false,
@@ -34,10 +36,26 @@ export default function entityReducer(state = initialState, action) {
                 pageLimit: action.payload.count,
                 loader: true
             }
+        case Constants.GET_PARENT:
+            return {
+                ...state,
+                parentList: action.payload.data,
+                pageCount: action.payload.page,
+                pageLimit: action.payload.count,
+                loader: true
+            }
         case Constants.GET_TEACHER:
             return {
                 ...state,
                 teacherList: action.payload.data,
+                pageCount: action.payload.page,
+                pageLimit: action.payload.count,
+                loader: true
+            }
+        case Constants.GET_CHILDS_LIST:
+            return {
+                ...state,
+                childList: action.payload.data,
                 pageCount: action.payload.page,
                 pageLimit: action.payload.count,
                 loader: true
