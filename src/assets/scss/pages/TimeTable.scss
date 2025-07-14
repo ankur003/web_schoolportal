@@ -13,14 +13,14 @@
         display: flex;
         flex-wrap: wrap;
         gap: 15px;
-        padding: 30px;
+        padding: 20px;
         background: #f8f9fa;
         justify-content: center;
         border-bottom: 2px solid #e9ecef;
     }
 
     .class-btn {
-        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        background: $lightBlueGradient;
         color: white;
         border: none;
         padding: 12px 20px;
@@ -30,7 +30,7 @@
         font-weight: 600;
         transition: all 0.3s ease;
         min-width: 80px;
-        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        box-shadow: $lightBlueGradientShadow;
     }
 
     .class-btn:hover {

@@ -196,6 +196,22 @@ export const createUser = (data, SetIsModal, toast) => (dispatch) => {
     });
 }
 
+export const linkedStudent = (data, setIsModal, toast) => (dispatch) => {
+     dispatch({ type: Constants.RESET_STATE })
+    axios.put(`${basePathUrl}/student-parent-link/student/${data?.studentUuid}/parent/${data?.parentUuid}`).then(response => {
+        if (response.status === 200) {
+            setIsModal(false);
+            let param = { page: 1, limit: 100, userType: "PARENT" }
+            dispatch(getParentEntities(param));
+            toast.success("User Linked successfully");
+        }
+
+    }).catch(error => {
+        console.log(error);
+        toast.error("Something went wrong");
+    });
+}
+
 export const linkClassSection = (data, SetIsModal, toast) => (dispatch) => {
     let dataBody = {
         classUuid: data?.className,
@@ -224,7 +240,7 @@ export const linkClassSection = (data, SetIsModal, toast) => (dispatch) => {
     });
 }
 
-export const updateUserDetails = (data, setState,toast) => (dispatch) => {
+export const updateUserDetails = (data, setState, toast) => (dispatch) => {
     const payload = {
         address: {
             cBuildingName: data.cBuildingName,

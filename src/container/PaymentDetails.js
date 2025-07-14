@@ -150,85 +150,101 @@ function PaymentDetails() {
                             </div>
                             <div className="modal-body">
                                 <div className="form-content">
-                                    <div className="form-group">
-                                        <label className="form-group-label">Amount Paid</label>
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            name="amountPaid"
-                                            onChange={handlerChange}
-                                            value={formData.amountPaid}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Class</label>
-                                        <select className="form-control" name="masterFeesUuid" onChange={handlerChange} value={formData.masterClassUuid} required>
-                                            <option value="">Select Class</option>
-                                            {feeList.map((classItem, index) => (
-                                                <option key={index} value={classItem.masterClassUuid}>
-                                                    {classItem?.className}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Student</label>
-                                        <select className="form-control" name="userUuid" onChange={handlerChange} value={formData.userUuid} required>
-                                            <option value="">Select Student</option>
-                                            {students?.map((student, index) => (
-                                                <option key={index} value={student?.userUuid}>{student?.fullName}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Payment Date</label>
-                                        <input
-                                            type="date"
-                                            className="form-control"
-                                            name="paymentDate"
-                                            onChange={handlerChange}
-                                            value={formData.paymentDate}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Payment Mode</label>
-                                        <select
-                                            className="form-control"
-                                            name="paymentMode"
-                                            onChange={handlerChange}
-                                            value={formData.paymentMode}
-                                            required
-                                        >
-                                            <option value="">Select Payment Mode</option>
-                                            <option value="CASH">Cash</option>
-                                            <option value="CARD">Card</option>
-                                            <option value="ONLINE">Online</option>
-                                            <option value="CHEQUE">Cheque</option>
-                                        </select>
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Transaction ID</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            name="transactionId"
-                                            onChange={handlerChange}
-                                            value={formData.transactionId}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Remarks</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            name="remarks"
-                                            onChange={handlerChange}
-                                            value={formData.remarks || ""}
-                                            required
-                                        />
+                                    <div className="d-flex">
+                                        <div className="flex-50 pd-r-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Amount Paid</label>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    name="amountPaid"
+                                                    onChange={handlerChange}
+                                                    value={formData.amountPaid}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-l-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Class</label>
+                                                <select className="form-control" name="masterFeesUuid" onChange={handlerChange} value={formData.masterClassUuid} required>
+                                                    <option value="">Select Class</option>
+                                                    {feeList.map((classItem, index) => (
+                                                        <option key={index} value={classItem.masterClassUuid}>
+                                                            {classItem?.className}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-r-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Student</label>
+                                                <select className="form-control" name="userUuid" onChange={handlerChange} value={formData.userUuid} required>
+                                                    <option value="">Select Student</option>
+                                                    {students?.map((student, index) => (
+                                                        <option key={index} value={student?.userUuid}>{student?.fullName}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-l-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Payment Date</label>
+                                                <input
+                                                    type="date"
+                                                    className="form-control"
+                                                    name="paymentDate"
+                                                    onChange={handlerChange}
+                                                    value={formData.paymentDate}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-r-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Payment Mode</label>
+                                                <select
+                                                    className="form-control"
+                                                    name="paymentMode"
+                                                    onChange={handlerChange}
+                                                    value={formData.paymentMode}
+                                                    required
+                                                >
+                                                    <option value="">Select Payment Mode</option>
+                                                    <option value="CASH">Cash</option>
+                                                    <option value="CARD">Card</option>
+                                                    <option value="ONLINE">Online</option>
+                                                    <option value="CHEQUE">Cheque</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-l-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Transaction ID</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="transactionId"
+                                                    onChange={handlerChange}
+                                                    value={formData.transactionId}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex-100">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Remarks</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="remarks"
+                                                    onChange={handlerChange}
+                                                    value={formData.remarks || ""}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

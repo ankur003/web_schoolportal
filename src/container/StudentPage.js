@@ -31,6 +31,7 @@ export default function StudentPage() {
     const [formData, setFormData] = useState({
         username: '',
         fullName: '',
+        phoneNo: ''
     });
     const [classInput, setclassInput] = useState("");
     const [selectedSections, setSelectedSections] = useState([]);
@@ -63,7 +64,7 @@ export default function StudentPage() {
     }
 
     const formSubmit = () => {
-        let data = { "userType": "STUDENT", ...formData }
+        let data = { "userType": "STUDENT", ...formData, "phoneNo": formData.phoneNo ? `91${formData.phoneNo}` : "" };
         dispatch(createUser(data, SetIsModal, toast));
     };
 
@@ -162,13 +163,40 @@ export default function StudentPage() {
                             </div>
                             <div className="modal-body">
                                 <div className="form-content">
-                                    <div className="form-group">
-                                        <label className="form-group-label">User Name</label>
-                                        <input type="text" className="form-control" name="username" placeholder="Enter Email Id" onChange={(e) => handlerChange(e)} />
+                                    <div className="d-flex">
+                                        <div className="flex-50 pd-r-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">User Name</label>
+                                                <input type="text" className="form-control" name="username" placeholder="Enter Email Id" onChange={(e) => handlerChange(e)} />
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-l-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Full Name</label>
+                                                <input type="text" className="form-control" name="fullName" placeholder="Enter Full Name" onChange={(e) => handlerChange(e)} />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Full Name</label>
-                                        <input type="text" className="form-control" name="fullName" placeholder="Enter Full Name" onChange={(e) => handlerChange(e)} />
+                                    <div className="flex-100">
+                                        <div className="form-group">
+                                            <label className="form-group-label">Phone No</label>
+                                            <div className="input-group mb-3">
+                                                <span className="input-group-text">+91</span>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="phoneNo"
+                                                    placeholder="Enter Phone No"
+                                                    pattern="[0-9]{10}"
+                                                    maxLength={10}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value.replace(/[^0-9]/g, '');
+                                                        e.target.value = value;
+                                                        handlerChange({ target: { name: 'phoneNo', value } });
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

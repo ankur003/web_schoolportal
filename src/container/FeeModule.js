@@ -129,55 +129,91 @@ const FeeModule = () => {
                             </div>
                             <div className="modal-body">
                                 <div className="form-content">
-                                    <div className="form-group">
-                                        <label className="form-group-label">Fee Type</label>
-                                        <select
-                                            className="form-control"
-                                            name="feeType"
-                                            onChange={handlerChange}
-                                            value={formData.feeType}
-                                            required
-                                        >
-                                            <option value="">Select Fee Type</option>
-                                            <option value="ANNUAL">Annual</option>
-                                            <option value="MONTHLY">Monthly</option>
-                                            <option value="QUARTERLY">Quarterly</option>
-                                        </select>
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Total Fee</label>
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            name="totalFee"
-                                            onChange={handlerChange}
-                                            value={formData.totalFee}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Academic Year</label>
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            name="academicYear"
-                                            min="1900"
-                                            max="2099"
-                                            step="1"
-                                            onChange={handlerChange}
-                                            value={formData.academicYear}
-                                            required
-                                            placeholder="e.g. 2024"
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-group-label">Master Class UUID</label>
-                                        <select className="form-control" name="masterClassUuid" onChange={handlerChange} value={formData.masterClassUuid}>
-                                            <option value="">Select Class</option>
-                                            {classList?.map((data, index) =>
-                                                <option key={index} value={data.masterClassUuid}>{data.className}</option>
-                                            )}
-                                        </select>
+                                    <div className="d-flex">
+                                        <div className="flex-50 pd-r-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Class Name</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="className"
+                                                    onChange={handlerChange}
+                                                    value={formData.className}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-l-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Class Teacher</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="classTeacher"
+                                                    onChange={handlerChange}
+                                                    value={formData.classTeacher}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-r-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Fee Type</label>
+                                                <select
+                                                    className="form-control"
+                                                    name="feeType"
+                                                    onChange={handlerChange}
+                                                    value={formData.feeType}
+                                                    required
+                                                >
+                                                    <option value="">Select Fee Type</option>
+                                                    <option value="ANNUAL">Annual</option>
+                                                    <option value="MONTHLY">Monthly</option>
+                                                    <option value="QUARTERLY">Quarterly</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-l-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Total Fee</label>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    name="totalFee"
+                                                    onChange={handlerChange}
+                                                    value={formData.totalFee}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-r-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Academic Year</label>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    name="academicYear"
+                                                    min="1900"
+                                                    max="2099"
+                                                    step="1"
+                                                    onChange={handlerChange}
+                                                    value={formData.academicYear}
+                                                    required
+                                                    placeholder="e.g. 2024"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex-50 pd-l-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Class Name</label>
+                                                <select className="form-control" name="masterClassUuid" onChange={handlerChange} value={formData.masterClassUuid}>
+                                                    <option value="">Select Class</option>
+                                                    {classList?.map((data, index) =>
+                                                        <option key={index} value={data.masterClassUuid}>{data.className}</option>
+                                                    )}
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

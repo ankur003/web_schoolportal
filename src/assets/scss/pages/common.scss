@@ -93,11 +93,16 @@ body {
 .modal {
     background: rgba(0, 0, 0, 0.5);
 
+    .modal-content {
+        box-shadow: $yellowGradientShadow;
+    }
+
     .close {
         background-color: transparent;
         border: 0;
         color: $white;
     }
+
     .modal-header {
         background: $blue;
         color: $white;
@@ -197,21 +202,21 @@ body {
     border: 0;
 
     .nav-link {
-        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        background: $lightBlueGradient;
         color: $white !important;
         border: none;
-        padding: 12px 20px;
+        padding: 5px 16px;
         border-radius: 25px;
         cursor: pointer;
-        font-size: 1em;
+        font-size: 15px;
         font-weight: 600;
         transition: all 0.3s ease;
         min-width: 80px;
-        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        box-shadow: $lightBlueGradientShadow;
 
         &.active {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            background: $redRadiant;
+            box-shadow: $redGradientShadow;
         }
     }
 }
@@ -223,7 +228,7 @@ body {
 }
 
 .btn-warning {
-     background: $yellowGradient;
+    background: $yellowGradient;
 }
 
 .btn-success {
@@ -240,6 +245,7 @@ body {
     background: $redRadiant;
     color: $white;
 }
+
 .btn-secondary {
     background: $grayGradient;
     color: $white;

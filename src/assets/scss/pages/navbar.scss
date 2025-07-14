@@ -63,13 +63,13 @@
                     color: $black;
                     border: none;
                     transition: box-shadow 0.2s;
-                    box-shadow: 0 2px 8px rgba(255, 207, 0, 0.15);
+                    box-shadow: $yellowGradientShadow;
 
                     &:hover,
                     &:focus {
-                        background: linear-gradient(90deg, #ffe066 0%, #ffcf00 100%);
+                        background: $yellowGradient;
                         color: $black;
-                        box-shadow: 0 4px 16px rgba(255, 207, 0, 0.25);
+                        box-shadow: $yellowGradientShadow;
                     }
                 }
             }

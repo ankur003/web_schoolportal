@@ -1,5 +1,3 @@
-
-
 // custom colors
 $cyan : #17a2b8;
 $white: #fff;
@@ -15,13 +13,20 @@ $blue: linear-gradient(135deg, #667eea, #764ba2);
 $redRadiant: linear-gradient(135deg, #ff6b6b, #ee5a24);
 $body-gradient: linear-gradient(135deg, #667eea 0%, #ff6b6b 100%);
 $yellowGradient: linear-gradient(90deg, #ffcf00 0%, #ffe066 100%);
-$greenGradient: linear-gradient(135deg,rgba(42, 123, 155, 1) 0%, rgba(9, 105, 36, 1) 50%);
+$greenGradient: linear-gradient(135deg, rgba(42, 123, 155, 1) 0%, rgba(9, 105, 36, 1) 50%);
 $grayGradient: linear-gradient(135deg, #7a8790 0%, #2c3e50 100%);
+$lightBlueGradient: linear-gradient(135deg, #4facfe, #00f2fe);
 
-$side-nav-text-color:rgb(233, 238, 240);
-$dark-theme:#cc2900;
+$side-nav-text-color: rgb(233, 238, 240);
+$dark-theme: #cc2900;
 $theme: #ac7339;
 
-$text-color:#273746;
-$content-color:#666;
-$border-color:#e1e1e1;
+$text-color: #273746;
+$content-color: #666;
+$border-color: #e1e1e1;
+
+$redGradientShadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+$lightBlueGradientShadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+$yellowGradientShadow: 0 2px 8px rgba(255, 207, 0, 0.15);
+$greenGradientShadow: 0 2px 8px rgba(42, 123, 155, 0.15);
+$whiteGradientShadow: 0 1px 3px 0 rgba(255, 255, 255, 0.1), 0 1px 2px 0 rgba(255, 255, 255, 0.06);  

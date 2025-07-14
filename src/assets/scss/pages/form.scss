@@ -1,6 +1,24 @@
 @import "../theme/variables";
 @import "../utils/mixin";
 
+.form-control,
+.select__single-value,
+.dropdown-heading-value span {
+    font-size: 14px;
+    border-radius: 3px;
+
+    &::placeholder {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: $black;
+    }
+}
+
+.input-group-text {
+    background: $blue;
+    color: $white;
+}
 
 .form-group {
     .form-group-label {
