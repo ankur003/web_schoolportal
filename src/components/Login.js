@@ -59,10 +59,10 @@ function Login(props) {
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			if (role === 'SUPER_ADMIN') return navigate('/ManageClasses');
-			if (role === 'TEACHER') return navigate('/ProfileDetailsPage');
-			if (role === 'STUDENT') return navigate('/ProfileDetailsPage');
-			if (role === 'PARENT') return navigate('/ParentsPage');
+			if (role === 'SUPER_ADMIN') return navigate('/Dashboard');
+			if (role === 'TEACHER') return navigate('/Dashboard');
+			if (role === 'STUDENT') return navigate('/Dashboard');
+			if (role === 'PARENT') return navigate('/Dashboard');
 		}
 		else {
 			navigate('/');

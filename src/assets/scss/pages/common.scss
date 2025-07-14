@@ -182,8 +182,10 @@ body {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
     .card-header {
-        background-color: $white;
-        border-bottom-color: $border-color;
+        background: $blue;
+        color: $white;
+        border: 0;
+        border-radius: 0;
 
         h6 {
             margin: 0;
@@ -219,6 +221,37 @@ body {
             box-shadow: $redGradientShadow;
         }
     }
+}
+
+.counter-card {
+    background: $body-gradient;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 100%;
+    max-width: 200px;
+    flex: '1 1 auto';
+
+    h4 {
+        font-size: 18px;
+        color: $white;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: $white;
+        margin: 0;
+    }
+
+}
+
+.counter-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .bg-custom {

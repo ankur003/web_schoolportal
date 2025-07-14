@@ -13,6 +13,13 @@ function SideBar(props) {
     let userId = sessionStorage.getItem("userId");
     let superAdmin = [
         {
+            name: "Dashboard",
+            component: "Dashboard",
+            transform: "Dashboard",
+            to: "/Dashboard",
+            icon: "fa-solid fa-gauge"
+        },
+        {
             name: "Manage classroom",
             component: "ManageClasses",
             transform: "manageClassroom",
@@ -109,6 +116,13 @@ function SideBar(props) {
 
     let TeacherRoutes = [
         {
+            name: "Dashboard",
+            component: "Dashboard",
+            transform: "Dashboard",
+            to: "/Dashboard",
+            icon: "fa-solid fa-gauge"
+        },
+        {
             name: "Profile Details",
             component: "ProfileDetailsPage",
             transform: "Teacher Profile",
@@ -147,6 +161,13 @@ function SideBar(props) {
 
     let StudentRoutes = [
         {
+            name: "Dashboard",
+            component: "Dashboard",
+            transform: "Dashboard",
+            to: "/Dashboard",
+            icon: "fa-solid fa-gauge"
+        },
+        {
             name: "Profile Details",
             component: "ProfileDetailsPage",
             transform: "Student Profile",
@@ -170,6 +191,13 @@ function SideBar(props) {
     ];
 
     let parentRoute = [
+        {
+            name: "Dashboard",
+            component: "Dashboard",
+            transform: "Dashboard",
+            to: "/Dashboard",
+            icon: "fa-solid fa-gauge"
+        },
         {
             name: "Parents",
             component: "ParentsPage",
