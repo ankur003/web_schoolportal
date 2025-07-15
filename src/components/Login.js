@@ -8,11 +8,8 @@ import { toast } from 'react-toastify';
 
 
 function Login(props) {
-
 	const basePathUrl = process.env.REACT_APP_BASE_PATH;
-
 	const { role } = useSelector((state) => state.loginReducer);
-
 	let navigate = useNavigate();
 	const [userName, setUserName] = useState("");
 	const [password, setPassword] = useState("");
@@ -20,7 +17,6 @@ function Login(props) {
 	const [isError, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isShowPassword, setIsShowPassword] = useState(false);
-
 	const dispatch = useDispatch();
 
 	const isAuthenticated = sessionStorage.getItem("token");

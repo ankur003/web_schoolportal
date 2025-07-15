@@ -8,12 +8,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getClasses } from '../Redux/Action/manageClassAction';
 import { createUser, getChildrenListByPar, getEntities, getParentEntities, linkedStudent } from '../Redux/Action/entityAction';
 import { toast } from 'react-toastify';
+import { SUPER_ADMIN } from '../Redux/Constants';
 
 export default function ParentsPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const { entityList, parentList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
+    const { role } = useSelector((state) => state.loginReducer);
     const { linkList } = useSelector(state => state.manageClassesReducer);
 
     const [childrenMap, setChildrenMap] = useState({});
@@ -120,7 +122,7 @@ export default function ParentsPage() {
         setSelectedClass([]);
         setSelectedSections([]);
         setSelected([]);
-        
+
     }
 
     const formSubmit = () => {
@@ -143,7 +145,7 @@ export default function ParentsPage() {
                 setIsModal(false);
                 setIsLinked(false);
                 dispatch(getParentEntities({ page, limit, userType: "PARENT", isNotAdmin: true }, toast));
-                window.location.reload(true); 
+                window.location.reload(true);
             }, toast));
         }
         else {
@@ -203,10 +205,14 @@ export default function ParentsPage() {
                                                 )}
                                             </td>
                                             <td>
-                                                <button type='button' className="btn btn-warning mr-r-4" onClick={() => linkHandler(data)}>Link</button>
+                                                {role === SUPER_ADMIN && <button type='button' className="btn btn-warning mr-r-4" onClick={() => linkHandler(data)}>Link</button>}
                                                 <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
-                                                <button className="btn btn-success mr-r-4">Edit</button>
-                                                <button className="btn btn-danger">Delete</button>
+                                                {role === SUPER_ADMIN &&
+                                                    <>
+                                                        <button className="btn btn-success mr-r-4">Edit</button>
+                                                        <button className="btn btn-danger">Delete</button>
+                                                    </>
+                                                }
                                             </td>
                                         </tr>
                                     )}

@@ -51,7 +51,7 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: transparent;
+    background: $body-gradient;
 }
 
 /* Handle */
