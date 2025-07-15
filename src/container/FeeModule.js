@@ -65,7 +65,7 @@ const FeeModule = () => {
             <div className="header">
                 <h1>Fee Management</h1>
                 {role === SUPER_ADMIN && <div className="header-right">
-                    <button type="button" className="btn btn-outline-primary" onClick={() => setShowModal(true)}>Create New Fee</button>
+                    <button type="button" className="btn btn-outline-light" onClick={() => setShowModal(true)}>Create New Fee</button>
                 </div>}
             </div>
             <div className="content-body">

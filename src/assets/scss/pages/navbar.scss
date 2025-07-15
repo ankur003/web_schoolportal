@@ -45,7 +45,7 @@
             h1 {
                 margin: 0;
                 font-size: 16px;
-                background: $blue;
+                background: $body-gradient;
                 padding: 3px 10px 5px 12px;
                 color: $white;
                 border-radius: 5px;
@@ -58,18 +58,13 @@
                     font-size: 14px !important;
                 }
 
-                .btn-outline-primary {
-                    background: $yellowGradient;
-                    color: $black;
-                    border: none;
-                    transition: box-shadow 0.2s;
-                    box-shadow: $yellowGradientShadow;
-
+                .btn-outline-light {
+                    font-weight: 600;
                     &:hover,
                     &:focus {
-                        background: $yellowGradient;
-                        color: $black;
-                        box-shadow: $yellowGradientShadow;
+                        background: $body-gradient;
+                        color: $white;
+                        box-shadow: $redRadiant;
                     }
                 }
             }

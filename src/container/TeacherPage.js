@@ -82,7 +82,7 @@ export default function TeacherPage() {
             <div className="header">
                 <h1>Teachers</h1>
                 <div className="header-right">
-                    <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Teacher</button>
+                    <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Create Teacher</button>
                 </div>
             </div>
             <div className="content-body">

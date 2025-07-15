@@ -182,7 +182,7 @@ body {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
     .card-header {
-        background: $blue;
+        background: $body-gradient;
         color: $white;
         border: 0;
         border-radius: 0;
@@ -202,6 +202,25 @@ body {
     flex-wrap: wrap;
     gap: 15px;
     border: 0;
+    position: relative;
+
+    .create-button {
+        @include position-top-right;
+        .btn-outline-light {
+            font-size: 14px !important;
+            padding: 5px 20px;
+            border-radius: 25px;
+            box-shadow: $lightBlueGradientShadow;
+            transition: all 0.3s ease;
+
+            &:hover,
+            &:focus {
+                background: $lightBlueGradient;
+                color: $white;
+                box-shadow: $redRadiant;
+            }
+        }
+    }
 
     .nav-link {
         background: $lightBlueGradient;

@@ -187,7 +187,7 @@ function TimeTable() {
             <div className="header">
                 <h1>Time Tables</h1>
                 <div className="header-right">
-                    <button type="button" className="btn btn-outline-primary">Add Time Table</button>
+                    <button type="button" className="btn btn-outline-light">Add Time Table</button>
                 </div>
             </div>
             <div className="content-body">

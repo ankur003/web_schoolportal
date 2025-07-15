@@ -97,7 +97,7 @@ export default function AttendanceBigCalendar() {
       <div className="header">
         <h1>Students</h1>
         <div className="header-right">
-          <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Apply Attendance</button>
+          <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Apply Attendance</button>
         </div>
       </div>
       <div className="content-body">

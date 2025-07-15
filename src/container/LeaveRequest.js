@@ -53,7 +53,7 @@ const LeaveRequest = () => {
             <div className="header">
                 <h1>Leave Requests</h1>
                 {role !== SUPER_ADMIN && <div className="header-right">
-                    <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Apply Leave</button>
+                    <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Apply Leave</button>
                 </div>}
             </div>
             <div className="content-body">

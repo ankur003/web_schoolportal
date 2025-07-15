@@ -94,7 +94,7 @@ export default function StudentPage() {
             <div className="header">
                 <h1>Students</h1>
                 {userRole === SUPER_ADMIN && <div className="header-right">
-                    <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Student</button>
+                    <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Create Student</button>
                 </div>}
             </div>
             <div className="content-body">

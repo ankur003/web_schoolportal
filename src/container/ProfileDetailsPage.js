@@ -44,7 +44,7 @@ export default function ProfileDetailsPage() {
             <div className="header">
                 <h1>User Details</h1>
                 {role === SUPER_ADMIN && <div className="header-right">
-                    <button type="button" className="btn btn-outline-primary" onClick={() => navigate("/EntityPage")}>Back</button>
+                    <button type="button" className="btn btn-outline-light" onClick={() => navigate("/EntityPage")}>Back</button>
                 </div>}
             </div>
             <div className="content-body">

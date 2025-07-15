@@ -129,7 +129,7 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-                    <div className='flex-50 pd-l-20 mr-b-20'>
+                    <div className='flex-50 mr-b-20'>
                         <div className="card">
                             <div className="card-header">
                                 <h6>Attendance Trend (Weekly)</h6>
@@ -193,7 +193,7 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-                    <div className='flex-50 pd-l-20 mr-b-20'>
+                    <div className='flex-50 mr-b-20'>
                         <div className="card" style={{ height: 300 }}>
                             <div className="card-header">
                                 <h6>Attendance Calendar (June 2024)</h6>

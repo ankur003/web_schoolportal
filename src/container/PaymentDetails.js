@@ -78,7 +78,7 @@ function PaymentDetails() {
             <div className="header">
                 <h1>Manage Payment</h1>
                 {role === SUPER_ADMIN && <div className="header-right">
-                    <button type="button" className="btn btn-outline-primary" onClick={() => setShowModal(true)}>Add Payment</button>
+                    <button type="button" className="btn btn-outline-light" onClick={() => setShowModal(true)}>Add Payment</button>
                 </div>}
             </div>
             <div className="content-body">

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getClasses, createClassAndSection } from '../Redux/Action/manageClassAction';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import Loader from '../components/Loader';
 
 function ManageClasses(props) {
     const { t, i18n } = useTranslation();
@@ -13,6 +14,7 @@ function ManageClasses(props) {
     const [active, setActive] = useState("home-tab");
     const [isModal, SetIsModal] = useState(false);
     const [selected, setSelected] = useState([]);
+    const [classUuid, setClassUuid] = useState("");
     const [formState, setFormState] = useState({
         className: "",
         sectionName: "",
@@ -34,7 +36,7 @@ function ManageClasses(props) {
 
     const formSubmit = (type) => {
         let sectionID = selected?.map(item => (item?.value));
-        let data = { formState, sectionID };
+        let data = { classUuid: classUuid, sectionUuids: [...sectionID] };
         dispatch(createClassAndSection(data, type, toast))
         SetIsModal(false);
     };
@@ -44,9 +46,7 @@ function ManageClasses(props) {
             <div className="header">
                 <h1>{t('manageClasses')}</h1>
                 <div className="header-right">
-                    {active === "home-tab" ?
-                        <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Class Name</button> :
-                        active === "profile-tab" && <button type="button" className="btn btn-outline-primary" onClick={() => SetIsModal(true)}>Create Section</button>}
+
                 </div>
             </div>
             <div className="content-body">
@@ -60,6 +60,14 @@ function ManageClasses(props) {
                     <li className="nav-item" role="presentation">
                         <button className="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false" onClick={() => setActive("contact-tab")}>Link Class & Section</button>
                     </li>
+                    {active === "home-tab" ?
+                        <div className="create-button">
+                            <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Create Class Name</button>
+                        </div> :
+                        active === "profile-tab" && <div className="create-button">
+                            <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Create Section</button>
+                        </div>
+                    }
                 </ul>
                 <div className="tab-content" id="myTabContent">
                     <div className="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -90,7 +98,8 @@ function ManageClasses(props) {
                                         )}
                                     </tbody>
                                 </table>
-                                : "loading"}
+                                : <Loader />
+                            }
                         </div>
                     </div>
                     <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -122,7 +131,8 @@ function ManageClasses(props) {
                                         )}
                                     </tbody>
                                 </table>
-                                : "loading"}
+                                : <Loader />
+                            }
                         </div>
                     </div>
                     <div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
@@ -148,7 +158,7 @@ function ManageClasses(props) {
                                                 <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                                 <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                                 <td>
-                                                    <button type="button" className="btn btn-warning mr-r-4" onClick={() => { SetIsModal(true); setFormState({ ...formState, className: data?.className }) }}>Link</button>
+                                                    <button type="button" className="btn btn-warning mr-r-4" onClick={() => { SetIsModal(true); setFormState({ ...formState, className: data?.className }); setClassUuid(data?.masterClassUuid) }}>Link</button>
                                                     <button className="btn btn-success mr-r-4">Edit</button>
                                                     <button className="btn btn-danger">Delete</button>
                                                 </td>
@@ -156,7 +166,9 @@ function ManageClasses(props) {
                                         )}
                                     </tbody>
                                 </table>
-                                : "loading"}
+                                :
+                                <Loader />
+                            }
                         </div>
                     </div>
                 </div>

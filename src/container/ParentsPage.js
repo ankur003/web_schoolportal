@@ -143,6 +143,7 @@ export default function ParentsPage() {
                 setIsModal(false);
                 setIsLinked(false);
                 dispatch(getParentEntities({ page, limit, userType: "PARENT", isNotAdmin: true }, toast));
+                window.location.reload(true); 
             }, toast));
         }
         else {
@@ -158,7 +159,7 @@ export default function ParentsPage() {
             <div className="header">
                 <h1>Parents</h1>
                 <div className="header-right">
-                    <button type="button" className="btn btn-outline-primary" onClick={() => { setIsModal(true); setIsLinked(false); }}>Create Parent</button>
+                    <button type="button" className="btn btn-outline-light" onClick={() => { setIsModal(true); setIsLinked(false); }}>Create Parent</button>
                 </div>
             </div>
             <div className="content-body">

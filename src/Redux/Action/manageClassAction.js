@@ -37,7 +37,7 @@ export const getClasses = () => (dispatch) => {
         });
 }
 
-export const createClassAndSection = (data, type,toaster) => (dispatch) => {
+export const createClassAndSection = (data, type, toaster) => (dispatch) => {
     let value = {};
     if (type === "CreateClass") {
         value = { className: data.formState.className };
@@ -46,15 +46,15 @@ export const createClassAndSection = (data, type,toaster) => (dispatch) => {
         value = { sectionName: data.formState.sectionName }
     }
     else {
-        value = { classUuid: data.formState.className, sectionUuids: data.sectionID };
+        value = { classUuid: data.classUuid, sectionUuids: data.sectionUuids };
     }
     axios.post(type === "CreateClass" ? `${basePathUrl}/sa/master-class` : type === "CreateSection" ? `${basePathUrl}/sa/master-section` : `${basePathUrl}/sa/class-section-link`, value)
         .then(response => {
-            console.log({response});
-            if(response.status == 201) {
+            console.log({ response });
+            if (response.status == 201) {
                 toaster.success("Created Successfully!")
             }
-            if(response.status == 304) {
+            if (response.status == 304) {
                 toaster.info("Nothing changed!")
             }
             dispatch(getClasses());
