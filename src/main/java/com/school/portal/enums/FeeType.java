@@ -1,8 +1,7 @@
 package com.school.portal.enums;
 
 public enum FeeType {
-    ANNUAL,
-    QUARTERLY,
+    ONE_TIME,
     MONTHLY,
-    DRESS
+    ADVANCE
 }

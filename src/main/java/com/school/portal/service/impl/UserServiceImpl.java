@@ -63,6 +63,7 @@ import com.school.portal.service.UserService;
 import com.school.portal.specification.AttendanceSpec;
 import com.school.portal.utils.FileService;
 import com.school.portal.utils.SchoolPortalUtils;
+import com.school.portal.utils.WhatsAppUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -168,11 +169,22 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 	linkageParentStudent(user, createUserModel);
                 }
                 sendPasswordOnMail (user, tempPassword);
+                sendWhatsAppNotification(user, tempPassword);
                 return user.getUserUuid ();
             }
         }
         return null;
     }
+
+	private void sendWhatsAppNotification(User user, String tempPassword) {
+		
+		if (user.getPhoneNo() != null) {
+			String msg = "Welcome to tech education world as " + user.getUserType().toUpperCase() +"."
+					+ "\n Your username is " + user.getUsername() 
+					+ "\n Your password is " + tempPassword + "\n";
+			WhatsAppUtil.sendWhatsAppMessage(String.valueOf(user.getPhoneNo()), msg);
+		}
+	}
 
 	private void linkageParentStudent(User user, CreateUserModel createUserModel) {
 		Long parentId = user.getUserId();

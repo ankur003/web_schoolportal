@@ -64,7 +64,8 @@ public class StudentParentLinkServiceImpl implements StudentParentLinkService {
 	public void linkParantToStudent(Long parentId, Long studentId) {
 
 		List<StudentParentLink> data = studentParentLinkRepository.findByStudentIdAndParentId(studentId, parentId);
-		if (CollectionUtils.isEmpty(data)) {
+		List<StudentParentLink> students = studentParentLinkRepository.findByStudentId(studentId);
+		if (CollectionUtils.isEmpty(data) && CollectionUtils.isEmpty(students)) {
 			StudentParentLink studentParentLink = new StudentParentLink();
 			studentParentLink.setStudentId(studentId);
 			studentParentLink.setParentId(parentId);

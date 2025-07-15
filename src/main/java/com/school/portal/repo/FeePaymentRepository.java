@@ -1,31 +1,61 @@
 package com.school.portal.repo;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.school.portal.domain.FeePayment;
-import com.school.portal.dto.FeePaymentDto;
+import com.school.portal.dto.FeeDto;
+import com.school.portal.dto.FeePaymentResponseDTO;
 
 public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
-    List<FeePayment> findByUserUuid(String userUuid);
+	
+	@Query("SELECT new com.school.portal.dto.FeePaymentResponseDTO(" +
+	           "u.rollNumber, u.fullName, u.userUuid, " +
+	           "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
+	           "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, mc.className, ms.sectionName) " +
+	           "FROM FeePayment fp " +
+	           "JOIN fp.user u " +
+	           "JOIN fp.masterFee mf " +
+	           "JOIN u.masterClass mc " +
+	           "JOIN u.masterSection ms " +
+	           "WHERE u.userUuid = :userUuid")
+	    List<FeePaymentResponseDTO> findAllPaymentsByUserUuid(@Param("userUuid") String userUuid);
+	
+	@Query("SELECT new com.school.portal.dto.FeePaymentResponseDTO(" +
+		       "u.rollNumber, u.fullName, u.userUuid, " +
+		       "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
+		       "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, " +
+		       "mc.className, ms.sectionName) " +
+		       "FROM FeePayment fp " +
+		       "JOIN fp.user u " +
+		       "JOIN fp.masterFee mf " +
+		       "JOIN u.masterClass mc " +
+		       "LEFT JOIN u.masterSection ms " +
+		       "WHERE mc.masterClassUuid = :classUuid " +
+		       "AND (:sectionUuid IS NULL OR ms.masterSectionUuid = :sectionUuid)")
+		List<FeePaymentResponseDTO> findAllPaymentsByClassUuidAndSectionUuid(@Param("classUuid") String classUuid,
+		                                                                    @Param("sectionUuid") String sectionUuid);
 
-    Optional<FeePayment> findByFeePaymentUuid(String feePaymentUuid);
-    
-    @Query("SELECT new com.school.portal.dto.FeePaymentDto(" +
-            "fp.userUuid, u.fullName, u.username, ui.fatherName, u.rollNumber, u.enrollmentNumber, " +
-            "fp.feePaymentUuid, mf.masterClassUuid, mc.className, " +
-            "fp.masterSectionUuid, ms.sectionName, " +
-            "fp.amountPaid, fp.paymentDate, fp.paymentMode, " +
-            "fp.transactionId, fp.remarks, fp.createdAt, fp.updatedAt) " +
-            "FROM FeePayment fp " +
-            "JOIN User u ON u.userUuid = fp.userUuid " +
-            "JOIN MasterFee mf ON mf = fp.masterFee " +
-            "JOIN MasterClass mc ON mc.masterClassUuid = mf.masterClassUuid " +
-            "LEFT JOIN UserInfo ui ON u.userId = ui.user " +
-            "JOIN MasterSection ms ON ms.masterSectionUuid = fp.masterSectionUuid")
-    List<FeePaymentDto> findAllFeePaymentsAsDto();
+	FeePayment findByFeePaymentUuid(String feePaymentUuid);
+
+	
+	
+	@Query("SELECT new com.school.portal.dto.FeePaymentResponseDTO(" +
+		       "u.rollNumber, u.fullName, u.userUuid, " +
+		       "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
+		       "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, " +
+		       "mc.className, ms.sectionName) " +
+		       "FROM FeePayment fp " +
+		       "JOIN fp.user u " +
+		       "JOIN fp.masterFee mf " +
+		       "JOIN u.masterClass mc " +
+		       "LEFT JOIN u.masterSection ms " +
+		       "WHERE fp.feePaymentUuid = :feePaymentUuid ")
+	FeePaymentResponseDTO getSinglePayment(@Param("feePaymentUuid") String feePaymentUuid);
+
+   
 }
 //

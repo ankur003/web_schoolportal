@@ -1,140 +1,134 @@
 package com.school.portal.service;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.school.portal.domain.FeePayment;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterFee;
-import com.school.portal.domain.MasterSection;
-import com.school.portal.dto.FeePaymentDto;
-import com.school.portal.dto.MasterFeeResponseDTO;
-import com.school.portal.enums.FeeType;
+import com.school.portal.domain.User;
+import com.school.portal.dto.FeeDto;
+import com.school.portal.dto.FeePaymentRequestDto;
+import com.school.portal.dto.FeePaymentResponseDTO;
+import com.school.portal.dto.FeePaymentUpdateDto;
+import com.school.portal.dto.MasterFeeRequestDTO;
+import com.school.portal.dto.UpdateMasterFeeRequestDTO;
 import com.school.portal.repo.FeePaymentRepository;
+import com.school.portal.repo.MasterClassRepo;
 import com.school.portal.repo.MasterFeeRepository;
+import com.school.portal.repo.UserRepo;
 import com.school.portal.utils.SchoolPortalUtils;
 
 @Service
 public class FeeService {
+	
+	@Autowired
+	FeePaymentRepository feePaymentRepository;
+	
+	@Autowired
+	MasterFeeRepository masterFeeRepository;
+	
+	@Autowired
+	MasterClassRepo masterClassRepository;
+	
+	@Autowired
+	UserRepo userRepo;
 
-    @Autowired
-    private MasterFeeRepository masterFeeRepository;
+	public List<FeePaymentResponseDTO> getPaymentsByUserUuid(String userUuid) {
+        return feePaymentRepository.findAllPaymentsByUserUuid(userUuid);
 
-    @Autowired
-    private FeePaymentRepository feePaymentRepository;
+	}
+	
+	public String createMasterFee(MasterFeeRequestDTO dto) {
+        MasterClass masterClass = masterClassRepository.findByMasterClassUuid(dto.getMasterClassUuid());
+        if (masterClass == null) {
+        	return null;
+        }
+        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeName(dto.getFeeType(), dto.getFeeName());
+        if (masterFee != null) {
+        	return null;
+        }
+        masterFee = new MasterFee();
+        masterFee.setMasterFeesUuid(SchoolPortalUtils.getUniqueUuid());
+        masterFee.setMasterClassId(masterClass.getMasterClassId());
+        masterFee.setFeeType(dto.getFeeType());
+        masterFee.setFeeName(dto.getFeeName());
+        masterFee.setTotalFee(dto.getTotalFee());
+        masterFee.setAcademicYear(dto.getAcademicYear());
 
-    // MASTER FEES
-    public MasterFee createMasterFee(MasterFee masterFee) {
-        masterFee.setMasterFeesUuid (SchoolPortalUtils.getUniqueUuid ());
-        return masterFeeRepository.save(masterFee);
+        return masterFeeRepository.save(masterFee).getMasterFeesUuid();
     }
 
-    @Transactional(readOnly = true)
-    public List<MasterFeeResponseDTO> getAllMasterFees() {
-        return masterFeeRepository.findAll().stream()
-                .map(fee -> {
-                    MasterClass masterClass = fee.getMasterClass();
+	public List<FeePaymentResponseDTO> getPaymentsByClassUuidAndSectionuuid(String classUuid, String sectionUuid) {
+		return feePaymentRepository.findAllPaymentsByClassUuidAndSectionUuid(classUuid, sectionUuid);
+	}
 
-                    Map<String, String> sectionMap = new HashMap<>();
-                    String className = null;
+	public void updateMasterFee(String masterFeeUuid, UpdateMasterFeeRequestDTO updateFeeDto) {
+		
+		MasterFee masterFee = masterFeeRepository.findByMasterFeesUuid(masterFeeUuid);
+		
+		if (masterFee != null) {
+			masterFee.setTotalFee(updateFeeDto.getTotalFee());
+			masterFeeRepository.save(masterFee);
+		}
+	}
 
-                    if (masterClass != null) {
-                        className = masterClass.getClassName();
+	public List<FeeDto> getAllMasterFees() {
+		return masterFeeRepository.findAllMasterFees();
+	}
 
-                        if (masterClass.getMasterSection() != null) {
-                            sectionMap = masterClass.getMasterSection().stream()
-                                    .filter(sec -> sec.getMasterSectionUuid() != null && sec.getSectionName() != null)
-                                    .collect(Collectors.toMap(
-                                            MasterSection::getSectionName,
-                                            MasterSection::getMasterSectionUuid
-                                    ));
-                        }
-                    }
+	public FeeDto getMasterFeesByMasteruuid(String masterFeeUuid) {
+		return masterFeeRepository.getMasterFeesByMasteruuid(masterFeeUuid);
+	}
+	
+	public String createPayment(FeePaymentRequestDto dto) {
+        User user = userRepo.findByUserUuidAndIsActive(dto.getUserUuid(), true);
+        
+        if (user == null) {
+        	return null;
+        }
 
-                    return MasterFeeResponseDTO.builder()
-                            .id(fee.getId())
-                            .masterClassUuid(fee.getMasterClassUuid())
-                            .className(className)
-                            .sections(sectionMap) // <-- set map here
-                            .masterFeesUuid(fee.getMasterFeesUuid())
-                            .feeType(fee.getFeeType())
-                            .totalFee(fee.getTotalFee())
-                            .academicYear(fee.getAcademicYear())
-                            .createdAt(fee.getCreatedAt())
-                            .build();
-                })
-                .collect(Collectors.toList());
+        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeName(dto.getFeeType(), dto.getFeeName());
+        
+        if (masterFee == null) {
+        	return null;
+        }
+
+        FeePayment payment = new FeePayment();
+        payment.setUser(user);
+        payment.setMasterFee(masterFee);
+        payment.setFeePaymentUuid(SchoolPortalUtils.getUniqueUuid());
+        payment.setAmountPaid(dto.getAmountPaid());
+        payment.setDiscountAmount(dto.getDiscountAmount());
+        payment.setPaymentDate(dto.getPaymentDate());
+        payment.setPaymentMode(dto.getPaymentMode());
+        payment.setTransactionId(dto.getTransactionId());
+        payment.setRemarks(dto.getRemarks());
+
+        return feePaymentRepository.save(payment).getFeePaymentUuid();
     }
 
+	public void updatePayment(String feePaymentUuid, FeePaymentUpdateDto updateDto) {
+		FeePayment feePayment = feePaymentRepository.findByFeePaymentUuid(feePaymentUuid);
+		if (feePayment == null) {
+			return;
+		}
+		feePayment.setAmountPaid(updateDto.getAmountPaid());
+		feePayment.setDiscountAmount(updateDto.getDiscountAmount());
+		feePayment.setPaymentDate(updateDto.getPaymentDate());
+		feePayment.setPaymentMode(updateDto.getPaymentMode());
+		feePayment.setRemarks(updateDto.getRemarks());
+		feePayment.setTransactionId(updateDto.getTransactionId());
+		feePaymentRepository.save(feePayment);
+		
+	}
 
+	public FeePaymentResponseDTO getSinglePayment(String feePaymentUuid) {
 
+		return feePaymentRepository.getSinglePayment(feePaymentUuid);
+	}
 
-    public List<MasterFee> findByMasterClassUuid(String classId) {
-        return masterFeeRepository.findByMasterClassUuid(classId);
-    }
-
-    public List<MasterFee> findByMasterClassUuidAndFeeType(String classId, FeeType feeType) {
-        return masterFeeRepository.findByMasterClassUuidAndFeeType(classId, feeType);
-    }
-
-    public Optional<MasterFee> getMasterFeeById(String masterFeesUuid) {
-        return masterFeeRepository.findByMasterFeesUuid(masterFeesUuid);
-    }
-
-    public MasterFee updateMasterFee(String masterFeesUuid, MasterFee updatedData) {
-        MasterFee existingFee = masterFeeRepository.findByMasterFeesUuid(masterFeesUuid)
-                .orElseThrow(() -> new RuntimeException("MasterFee not found"));
-
-        // Update allowed fields
-        existingFee.setFeeType(updatedData.getFeeType());
-        existingFee.setTotalFee(updatedData.getTotalFee());
-        //existingFee.setAcademicYear(updatedData.getAcademicYear());
-        existingFee.setUpdatedAt(LocalDateTime.now());
-
-        return masterFeeRepository.save(existingFee);
-    }
-
-
-    // FEE PAYMENT
-    public FeePayment addFeePayment(FeePayment feePayment) {
-        feePayment.setFeePaymentUuid (SchoolPortalUtils.getUniqueUuid ());
-        MasterFee masterFee = masterFeeRepository.findByMasterFeesUuid(feePayment.getMasterFee().getMasterFeesUuid())
-                .orElseThrow(() -> new RuntimeException("MasterFee not found"));
-        // Now set it in FeePayment
-        feePayment.setMasterFee(masterFee);
-        return feePaymentRepository.save(feePayment);
-    }
-
-    public List<FeePayment> getPaymentsByUserUuid(String userUuid) {
-        return feePaymentRepository.findByUserUuid(userUuid);
-    }
-
-    public List<FeePaymentDto> getAllPayments() {
-        return feePaymentRepository.findAllFeePaymentsAsDto();
-    }
-
-    public FeePayment updateFeePayment(String feePaymentUuid, FeePayment updatedPayment) {
-        FeePayment existing = feePaymentRepository.findByFeePaymentUuid(feePaymentUuid)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
-
-        existing.setAmountPaid(updatedPayment.getAmountPaid());
-        existing.setPaymentDate(updatedPayment.getPaymentDate());
-        existing.setPaymentMode(updatedPayment.getPaymentMode());
-        existing.setTransactionId(updatedPayment.getTransactionId());
-        existing.setRemarks(updatedPayment.getRemarks());
-        existing.setMasterSectionUuid(updatedPayment.getMasterSectionUuid());
-        //existing.setMasterFee(updatedPayment.getMasterFee()); // Optional
-        existing.setUpdatedAt(LocalDateTime.now());
-
-        return feePaymentRepository.save(existing);
-    }
-
+   
 }
