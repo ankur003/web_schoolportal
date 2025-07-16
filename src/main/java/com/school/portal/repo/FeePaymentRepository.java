@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.school.portal.domain.FeePayment;
-import com.school.portal.dto.FeeDto;
 import com.school.portal.dto.FeePaymentResponseDTO;
 
 public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
@@ -15,7 +14,7 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 	@Query("SELECT new com.school.portal.dto.FeePaymentResponseDTO(" +
 	           "u.rollNumber, u.fullName, u.userUuid, " +
 	           "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
-	           "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, mc.className, ms.sectionName) " +
+	           "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, mc.className, ms.sectionName, fp.month, fp.year) " +
 	           "FROM FeePayment fp " +
 	           "JOIN fp.user u " +
 	           "JOIN fp.masterFee mf " +
@@ -28,7 +27,7 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 		       "u.rollNumber, u.fullName, u.userUuid, " +
 		       "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
 		       "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, " +
-		       "mc.className, ms.sectionName) " +
+		       "mc.className, ms.sectionName, fp.month, fp.year) " +
 		       "FROM FeePayment fp " +
 		       "JOIN fp.user u " +
 		       "JOIN fp.masterFee mf " +
@@ -47,7 +46,7 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 		       "u.rollNumber, u.fullName, u.userUuid, " +
 		       "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
 		       "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, " +
-		       "mc.className, ms.sectionName) " +
+		       "mc.className, ms.sectionName, fp.month, fp.year) " +
 		       "FROM FeePayment fp " +
 		       "JOIN fp.user u " +
 		       "JOIN fp.masterFee mf " +
@@ -55,6 +54,19 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 		       "LEFT JOIN u.masterSection ms " +
 		       "WHERE fp.feePaymentUuid = :feePaymentUuid ")
 	FeePaymentResponseDTO getSinglePayment(@Param("feePaymentUuid") String feePaymentUuid);
+	
+	
+	@Query("SELECT new com.school.portal.dto.FeePaymentResponseDTO(" +
+		       "u.rollNumber, u.fullName, u.userUuid, " +
+		       "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
+		       "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, " +
+		       "mc.className, ms.sectionName, fp.month, fp.year) " +
+		       "FROM FeePayment fp " +
+		       "JOIN fp.user u " +
+		       "JOIN fp.masterFee mf " +
+		       "JOIN u.masterClass mc " +
+		       "LEFT JOIN u.masterSection ms ")
+	List<FeePaymentResponseDTO> getAllPayments();
 
    
 }

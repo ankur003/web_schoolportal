@@ -62,6 +62,12 @@ public class FeeController {
         return ResponseEntity.ok(fees);
     }
     
+    @GetMapping("/master-fee/class/{classUuid}/feeType/{feeType}")
+    public ResponseEntity<Object> getMasterFeesByClassUuidAndFeeType(@PathVariable String classUuid, @PathVariable FeeType feeType) {
+        List<FeeDto> fees = feeService.getMasterFeesByClassUuidAndFeeType(classUuid, feeType);
+        return ResponseEntity.ok(fees);
+    }
+    
     @PutMapping("/master-fee/{masterFeeUuid}")
     public ResponseEntity<Object> updateMasterFee(@PathVariable String masterFeeUuid, 
     		@RequestBody UpdateMasterFeeRequestDTO updateFeeDto) {
@@ -96,6 +102,16 @@ public class FeeController {
     		@RequestBody FeePaymentUpdateDto updateDto) {
     	feeService.updatePayment(feePaymentUuid, updateDto);
         return ResponseEntity.ok().build();
+    }
+    
+    
+    @GetMapping("/payments/all")
+    public ResponseEntity<Object> getAllPayments() {
+        List<FeePaymentResponseDTO> response = feeService.getAllPayments();
+        if (response.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(response);
     }
     
     @GetMapping("/payments/user")

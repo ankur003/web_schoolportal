@@ -2,9 +2,11 @@ package com.school.portal.dto;
 import java.time.LocalDate;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.school.portal.enums.FeeName;
 import com.school.portal.enums.FeeType;
+import com.school.portal.enums.Month;
 
 public class FeePaymentRequestDto {
 	
@@ -29,6 +31,12 @@ public class FeePaymentRequestDto {
     
     @NotBlank
     private FeeName feeName;
+    
+    @NotNull
+    private Month month;
+    
+    @NotNull
+    private String year;
 
 	/**
 	 * @return the userUuid
@@ -155,5 +163,33 @@ public class FeePaymentRequestDto {
 	public void setFeeName(FeeName feeName) {
 		this.feeName = feeName;
 	}
-    
+
+	/**
+	 * @return the month
+	 */
+	public Month getMonth() {
+		return month;
+	}
+
+	/**
+	 * @param month the month to set
+	 */
+	public void setMonth(Month month) {
+		this.month = month;
+	}
+
+	/**
+	 * @return the year
+	 */
+	public String getYear() {
+		return year;
+	}
+
+	/**
+	 * @param year the year to set
+	 */
+	public void setYear(String year) {
+		this.year = year;
+	}
+	
 }

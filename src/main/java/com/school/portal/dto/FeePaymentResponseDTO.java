@@ -2,8 +2,11 @@ package com.school.portal.dto;
 
 import java.time.LocalDate;
 
+import javax.validation.constraints.NotNull;
+
 import com.school.portal.enums.FeeName;
 import com.school.portal.enums.FeeType;
+import com.school.portal.enums.Month;
 
 public class FeePaymentResponseDTO {
 	private Long rollNumber;
@@ -27,6 +30,10 @@ public class FeePaymentResponseDTO {
 	private String className;
 	private String classSection;
 	
+    private String month;
+    
+    private String year;
+	
 	public FeePaymentResponseDTO() {
 		
 	}
@@ -36,7 +43,7 @@ public class FeePaymentResponseDTO {
                                  String feePaymentUuid, Double amountPaid, Double discountAmount,
                                  LocalDate paymentDate, String paymentMode, String transactionId, String remarks,
                                  String masterFeesUuid, String academicYear, Double totalFee,
-                                 FeeType feeType, FeeName feeName, String className, String classSection) {
+                                 FeeType feeType, FeeName feeName, String className, String classSection, Month month, String year) {
         this.rollNumber = rollNumber;
         this.fullName = fullName;
         this.userUuid = userUuid;
@@ -54,6 +61,8 @@ public class FeePaymentResponseDTO {
         this.feeName = feeName.name();
         this.className = className;
         this.classSection = classSection;
+        this.month = month.name();
+        this.year = year;
     }
     
     
@@ -295,5 +304,34 @@ public class FeePaymentResponseDTO {
 	public void setClassSection(String classSection) {
 		this.classSection = classSection;
 	}
+
+	/**
+	 * @return the month
+	 */
+	public String getMonth() {
+		return month;
+	}
+
+	/**
+	 * @param month the month to set
+	 */
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
+	/**
+	 * @return the year
+	 */
+	public String getYear() {
+		return year;
+	}
+
+	/**
+	 * @param year the year to set
+	 */
+	public void setYear(String year) {
+		this.year = year;
+	}
+	
 	
 }

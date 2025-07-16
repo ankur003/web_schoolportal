@@ -1,5 +1,6 @@
 package com.school.portal.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com.school.portal.dto.FeePaymentResponseDTO;
 import com.school.portal.dto.FeePaymentUpdateDto;
 import com.school.portal.dto.MasterFeeRequestDTO;
 import com.school.portal.dto.UpdateMasterFeeRequestDTO;
+import com.school.portal.enums.FeeType;
 import com.school.portal.repo.FeePaymentRepository;
 import com.school.portal.repo.MasterClassRepo;
 import com.school.portal.repo.MasterFeeRepository;
@@ -35,6 +37,10 @@ public class FeeService {
 	
 	@Autowired
 	UserRepo userRepo;
+	
+	@Autowired
+	MasterClassRepo masterClassRepo;
+
 
 	public List<FeePaymentResponseDTO> getPaymentsByUserUuid(String userUuid) {
         return feePaymentRepository.findAllPaymentsByUserUuid(userUuid);
@@ -46,7 +52,8 @@ public class FeeService {
         if (masterClass == null) {
         	return null;
         }
-        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeName(dto.getFeeType(), dto.getFeeName());
+        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassId(dto.getFeeType(), 
+        		dto.getFeeName(), masterClass.getMasterClassId());
         if (masterFee != null) {
         	return null;
         }
@@ -89,8 +96,11 @@ public class FeeService {
         if (user == null) {
         	return null;
         }
+        
+        Long masterClassId = user.getMasterClass().getMasterClassId();
 
-        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeName(dto.getFeeType(), dto.getFeeName());
+        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassId(dto.getFeeType(), dto.getFeeName(),
+        		masterClassId);
         
         if (masterFee == null) {
         	return null;
@@ -98,7 +108,9 @@ public class FeeService {
 
         FeePayment payment = new FeePayment();
         payment.setUser(user);
+        
         payment.setMasterFee(masterFee);
+        
         payment.setFeePaymentUuid(SchoolPortalUtils.getUniqueUuid());
         payment.setAmountPaid(dto.getAmountPaid());
         payment.setDiscountAmount(dto.getDiscountAmount());
@@ -106,6 +118,8 @@ public class FeeService {
         payment.setPaymentMode(dto.getPaymentMode());
         payment.setTransactionId(dto.getTransactionId());
         payment.setRemarks(dto.getRemarks());
+        payment.setMonth(dto.getMonth());
+        payment.setYear(dto.getYear());
 
         return feePaymentRepository.save(payment).getFeePaymentUuid();
     }
@@ -128,6 +142,28 @@ public class FeeService {
 	public FeePaymentResponseDTO getSinglePayment(String feePaymentUuid) {
 
 		return feePaymentRepository.getSinglePayment(feePaymentUuid);
+	}
+
+	public List<FeeDto> getMasterFeesByClassUuid(String classUuid) {
+		MasterClass masterClass = masterClassRepo.findByMasterClassUuid(classUuid);
+		if (masterClass == null) {
+			return Collections.emptyList();
+		}
+		return masterFeeRepository.findMasterFeesByClassId(masterClass.getMasterClassId());
+	}
+
+	public List<FeePaymentResponseDTO> getAllPayments() {
+		
+		return feePaymentRepository.getAllPayments();
+	}
+
+	public List<FeeDto> getMasterFeesByClassUuidAndFeeType(String classUuid, FeeType feeType) {
+		MasterClass masterClass = masterClassRepo.findByMasterClassUuid(classUuid);
+		if (masterClass == null) {
+			return Collections.emptyList();
+		}
+		return masterFeeRepository.findMasterFeesByClassIdAndFeeType(masterClass.getMasterClassId(), feeType);
+
 	}
 
    

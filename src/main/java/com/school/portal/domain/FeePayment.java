@@ -14,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import com.school.portal.enums.Month;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,6 +71,12 @@ public class FeePayment {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @NotNull
+    private Month month;
+    
+    @NotNull
+    private String year;
 
     @PrePersist
     protected void onCreate() {
