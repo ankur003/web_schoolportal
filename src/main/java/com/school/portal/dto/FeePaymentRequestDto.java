@@ -32,7 +32,6 @@ public class FeePaymentRequestDto {
     @NotBlank
     private FeeName feeName;
     
-    @NotNull
     private Month month;
     
     @NotNull

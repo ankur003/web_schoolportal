@@ -1,9 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +36,7 @@ public class FeeController {
     public ResponseEntity<Object> createMasterFee(@RequestBody List<MasterFeeRequestDTO> dtos) {
         try {
         	for (MasterFeeRequestDTO dto : dtos) {
+        		
         		if (!isValidFeeCombination(dto.getFeeType(), dto.getFeeName())) {
         			return ResponseEntity.badRequest().build();
         		}
@@ -69,11 +68,12 @@ public class FeeController {
         return ResponseEntity.ok(fees);
     }
     
-    @PutMapping("/master-fee/{masterFeeUuid}")
-    public ResponseEntity<Object> updateMasterFee(@PathVariable String masterFeeUuid, 
-    		@RequestBody UpdateMasterFeeRequestDTO updateFeeDto) {
+    @PutMapping("/master-fee")
+    public ResponseEntity<Object> updateMasterFee(@RequestBody List<UpdateMasterFeeRequestDTO> updateFeeDtos) {
         try {
-            feeService.updateMasterFee(masterFeeUuid, updateFeeDto);
+        	for (UpdateMasterFeeRequestDTO updateFeeDto : updateFeeDtos) {
+                feeService.updateMasterFee(updateFeeDto.getMasterFeeUuid(), updateFeeDto);
+        	}
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -84,6 +84,11 @@ public class FeeController {
     public ResponseEntity<Object> createPayment(@RequestBody List<FeePaymentRequestDto> dtos) {
     	
     	for (FeePaymentRequestDto dto : dtos) {
+    		
+    		if (dto.getFeeType().equals(FeeType.MONTHLY) && dto.getMonth() == null) {
+        			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    		}
+    		
     		if(!isValidFeeCombination(dto.getFeeType(), dto.getFeeName())) { 
     			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     		}
@@ -102,10 +107,12 @@ public class FeeController {
         return ResponseEntity.ok(feePaymentResponseDTO);
     }
     
-    @PutMapping("/payments/{feePaymentUuid}")
-    public ResponseEntity<Object> updatePayment(@PathVariable String feePaymentUuid, 
-    		@RequestBody FeePaymentUpdateDto updateDto) {
-    	feeService.updatePayment(feePaymentUuid, updateDto);
+    @PutMapping("/payments")
+    public ResponseEntity<Object> updatePayment(@RequestBody List<FeePaymentUpdateDto> updateDtos) {
+    	
+    	for(FeePaymentUpdateDto updateDto : updateDtos) {
+        	feeService.updatePayment(updateDto.getFeePaymentUuid(), updateDto);
+    	}
         return ResponseEntity.ok().build();
     }
     

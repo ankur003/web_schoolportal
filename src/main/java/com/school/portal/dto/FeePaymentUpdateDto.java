@@ -17,6 +17,9 @@ public class FeePaymentUpdateDto {
     private String transactionId;
     
     private String remarks;
+    
+    @NotBlank
+    private String feePaymentUuid;
 
 	/**
 	 * @return the amountPaid
@@ -101,5 +104,21 @@ public class FeePaymentUpdateDto {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
+
+	/**
+	 * @return the feePaymentUuid
+	 */
+	public String getFeePaymentUuid() {
+		return feePaymentUuid;
+	}
+
+	/**
+	 * @param feePaymentUuid the feePaymentUuid to set
+	 */
+	public void setFeePaymentUuid(String feePaymentUuid) {
+		this.feePaymentUuid = feePaymentUuid;
+	}
+	
+	
 
 }
