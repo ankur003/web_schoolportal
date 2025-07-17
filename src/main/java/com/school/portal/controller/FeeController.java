@@ -35,19 +35,20 @@ public class FeeController {
     private FeeService feeService;
     
     @PostMapping("/master-fee")
-    public ResponseEntity<Object> createMasterFee(@RequestBody MasterFeeRequestDTO dto) {
+    public ResponseEntity<Object> createMasterFee(@RequestBody List<MasterFeeRequestDTO> dtos) {
         try {
-        	if (isValidFeeCombination(dto.getFeeType(), dto.getFeeName())) {
-        		  String masterFeeUuid = feeService.createMasterFee(dto);
-                  Map<String, String> map = new HashMap<>();
-                  map.put("masterFeeUuid", masterFeeUuid);
-                  return ResponseEntity.ok(map);
+        	for (MasterFeeRequestDTO dto : dtos) {
+        		if (!isValidFeeCombination(dto.getFeeType(), dto.getFeeName())) {
+        			return ResponseEntity.badRequest().build();
+        		}
         	}
-          
+        	for (MasterFeeRequestDTO dto : dtos) { 
+        		feeService.createMasterFee(dto);
+        	}
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
     }
     
     @GetMapping("/master-fee/{masterFeeUuid}")
@@ -80,15 +81,19 @@ public class FeeController {
     }
     
     @PostMapping("/payments")
-    public ResponseEntity<Object> createPayment(@RequestBody FeePaymentRequestDto dto) {
-    	if(isValidFeeCombination(dto.getFeeType(), dto.getFeeName())) {
-    		String feePaymentUuid = feeService.createPayment(dto);
-    		  Map<String, String> map = new HashMap<>();
-              map.put("feePaymentUuid", feePaymentUuid);
-              return ResponseEntity.ok(map);
+    public ResponseEntity<Object> createPayment(@RequestBody List<FeePaymentRequestDto> dtos) {
+    	
+    	for (FeePaymentRequestDto dto : dtos) {
+    		if(!isValidFeeCombination(dto.getFeeType(), dto.getFeeName())) { 
+    			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    		}
     	}
-        
-        return ResponseEntity.badRequest().build();
+    	
+    	for (FeePaymentRequestDto dto : dtos) { 
+    		feeService.createPayment(dto);
+    	}
+    	
+        return ResponseEntity.ok().build();
     }
     
     @GetMapping("/payments/{feePaymentUuid}")
