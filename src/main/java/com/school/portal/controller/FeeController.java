@@ -68,6 +68,12 @@ public class FeeController {
         return ResponseEntity.ok(fees);
     }
     
+    @GetMapping("/master-fee/class/{classUuid}")
+    public ResponseEntity<Object> getMasterFeesByClassUuid(@PathVariable String classUuid) {
+        List<FeeDto> fees = feeService.getMasterFeesByClassUuid(classUuid);
+        return ResponseEntity.ok(fees);
+    }
+    
     @PutMapping("/master-fee")
     public ResponseEntity<Object> updateMasterFee(@RequestBody List<UpdateMasterFeeRequestDTO> updateFeeDtos) {
         try {

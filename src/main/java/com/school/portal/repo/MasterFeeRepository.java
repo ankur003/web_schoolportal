@@ -34,9 +34,11 @@ public interface MasterFeeRepository extends JpaRepository<MasterFee, Long> {
 	
 	
     @Query("SELECT new com.school.portal.dto.FeeDto(" +
-            "mf.masterFeesUuid, mc.masterClassUuid, mc.className, " +
-            "mf.feeType, mf.feeName, mf.totalFee, mf.academicYear, mf.createdAt, mf.updatedAt) " +
-            "FROM MasterFee mf JOIN MasterClass mc ON mf.masterClassId = :masterClassId")
+ 	       "mf.masterFeesUuid, mc.masterClassUuid, mc.className, " +
+ 	       "mf.feeType, mf.feeName, mf.totalFee, mf.academicYear, mf.createdAt, mf.updatedAt) " +
+ 	       "FROM MasterFee mf " +
+ 	       "JOIN MasterClass mc ON mf.masterClassId = mc.masterClassId " +
+ 	       "WHERE mf.masterClassId = :masterClassId ")
      List<FeeDto> findMasterFeesByClassId(@Param("masterClassId") Long masterClassId);
 
     
