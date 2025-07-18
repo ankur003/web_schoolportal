@@ -96,10 +96,20 @@ export default function FeeSetUpModule() {
         if (type === "Edit") {
             setIsEditMonthly(false);
             setShowMonthlyInput(false);
+            setMonthlyFormData({
+                tuitionFee: monthlyFeeObject?.TUITION?.totalFee || 0,
+                foodFee: monthlyFeeObject?.FOOD?.totalFee || 0,
+                transportFee: monthlyFeeObject?.TRANSPORT?.totalFee || 0
+            })
         }
         else {
             setAddMonthly(false);
             setShowMonthlyInput(false);
+            setMonthlyFormData({
+                tuitionFee: "",
+                foodFee: "",
+                transportFee: ""
+            })
         }
     }
 
@@ -107,10 +117,20 @@ export default function FeeSetUpModule() {
         if (type === "Edit") {
             setIsEditOneTime(false);
             setShowOneTimeInput(false);
+            setOneTimeFormData({
+                dressFee: oneTimeFeeObject?.DRESS?.totalFee || 0,
+                registrationFee: oneTimeFeeObject?.REGISTRATION?.totalFee || 0,
+                annualFee: oneTimeFeeObject?.ANNUAL?.totalFee || 0
+            });
         }
         else {
             setAddNewOneTime(false);
             setShowOneTimeInput(false);
+            setOneTimeFormData({
+                dressFee: "",
+                registrationFee: "",
+                annualFee: ""
+            });
         }
     }
 
@@ -123,10 +143,10 @@ export default function FeeSetUpModule() {
             totalFee: Number(oneTimeFormData?.[`${key.toLowerCase()}Fee`])
         }));
 
-        dispatch(createMasterFee(payload, linkList[0]?.masterClassUuid, toast));
+        dispatch(createMasterFee(payload, masterClassId, toast));
         setAddNewOneTime(true);
         setShowOneTimeInput(true);
-        setCurrentClass(1);
+        setCurrentClass(currentClass);
     }
 
     const UpdateOneTime = () => {
@@ -138,7 +158,7 @@ export default function FeeSetUpModule() {
         dispatch(UpdateFee(payload, masterClassId, toast));
         setIsEditOneTime(true);
         setShowOneTimeInput(true);
-        setCurrentClass(1);
+        setCurrentClass(currentClass);
     }
 
     const UpdateMonthly = () => {
@@ -150,7 +170,7 @@ export default function FeeSetUpModule() {
         dispatch(UpdateFee(payload, masterClassId, toast));
         setIsEditMonthly(true);
         setShowMonthlyInput(true);
-        setCurrentClass(1);
+        setCurrentClass(currentClass);
     }
 
     const onsubmitMonthly = () => {
@@ -161,10 +181,10 @@ export default function FeeSetUpModule() {
             masterClassUuid: masterClassId,
             totalFee: Number(monthlyFormData?.[`${key.toLowerCase()}Fee`])
         }));
-        dispatch(createMasterFee(payload, linkList[0]?.masterClassUuid, toast));
+        dispatch(createMasterFee(payload, masterClassId, toast));
         setAddMonthly(true);
         setShowMonthlyInput(true);
-        setCurrentClass(1);
+        setCurrentClass(currentClass);
     }
 
 
