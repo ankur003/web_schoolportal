@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.school.portal.domain.FeePayment;
+import com.school.portal.domain.User;
 import com.school.portal.dto.FeePaymentResponseDTO;
 
 public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
@@ -67,6 +68,8 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 		       "JOIN u.masterClass mc " +
 		       "LEFT JOIN u.masterSection ms ")
 	List<FeePaymentResponseDTO> getAllPayments();
+
+	List<FeePayment> findByUser(User user);
 
    
 }

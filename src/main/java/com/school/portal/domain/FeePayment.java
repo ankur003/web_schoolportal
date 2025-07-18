@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,7 +43,7 @@ public class FeePayment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "master_fee_id", nullable = false)
     private MasterFee masterFee;
 
@@ -72,7 +74,7 @@ public class FeePayment {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
-    @NotNull
+    @Enumerated(EnumType.STRING)
     private Month month;
     
     @NotNull

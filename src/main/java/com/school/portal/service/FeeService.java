@@ -105,7 +105,28 @@ public class FeeService {
         if (masterFee == null) {
         	return null;
         }
-
+        
+        List<FeePayment> userFeePayments =  feePaymentRepository.findByUser(user);
+        
+        for (FeePayment userFeePayment : userFeePayments) {
+        	
+        	MasterFee ms = userFeePayment.getMasterFee();
+        	
+        	if (dto.getFeeType().equals(FeeType.ONE_TIME)) {
+        		if (dto.getFeeType().equals(ms.getFeeType()) 
+        				&& dto.getFeeName().equals(ms.getFeeName())) {
+        			return null;
+        		}
+        	} else if (dto.getFeeType().equals(FeeType.MONTHLY)) {
+        		if (dto.getFeeType().equals(ms.getFeeType()) 
+        				&& dto.getFeeName().equals(ms.getFeeName()) 
+        				&& dto.getMonth().equals(userFeePayment.getMonth()) ) {
+        			return null;
+        		}
+        	}
+        }
+        
+        
         FeePayment payment = new FeePayment();
         payment.setUser(user);
         

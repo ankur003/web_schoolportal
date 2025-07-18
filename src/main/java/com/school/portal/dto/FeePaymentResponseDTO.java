@@ -61,7 +61,7 @@ public class FeePaymentResponseDTO {
         this.feeName = feeName.name();
         this.className = className;
         this.classSection = classSection;
-        this.month = month.name();
+        this.month = month == null ? null : month.name();
         this.year = year;
     }
     
