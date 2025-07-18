@@ -27,7 +27,7 @@ export default function FeeSetUpModule() {
         acc[item.feeName] = item;
         return acc;
     }, {});
-    
+
     const [oneTimeFormData, setOneTimeFormData] = useState({
         dressFee: "",
         registrationFee: "",
@@ -144,7 +144,7 @@ export default function FeeSetUpModule() {
     const UpdateMonthly = () => {
         const feeKeys = ["TUITION", "FOOD", "TRANSPORT"];
         const payload = feeKeys.map((key) => ({
-            masterFeeUuid: monthlyFormData?.[key]?.masterFeesUuid,
+            masterFeeUuid: monthlyFeeObject?.[key]?.masterFeesUuid,
             totalFee: Number(monthlyFormData?.[`${key.toLowerCase()}Fee`])
         }));
         dispatch(UpdateFee(payload, masterClassId, toast));
@@ -235,7 +235,7 @@ export default function FeeSetUpModule() {
                                                     {isShowOneTimeInput ?
                                                         <p><span><i className="fa-solid fa-indian-rupee-sign"></i></span>{oneTimeFeeObject?.ANNUAL?.totalFee ? oneTimeFeeObject?.ANNUAL?.totalFee : "0"}</p>
                                                         :
-                                                        <input type='text' className='form-control' name="annualFee" value={oneTimeFormData?.annualFee} onChange={(e) => onChangeHandler(e)} />
+                                                        <input type='text' className='form-control' name="annualFee" value={oneTimeFormData?.annualFee || ""} onChange={(e) => onChangeHandler(e)} />
                                                     }
                                                 </div>
                                             </div>
@@ -251,7 +251,7 @@ export default function FeeSetUpModule() {
                                                     {isShowOneTimeInput ?
                                                         <p><span><i className="fa-solid fa-indian-rupee-sign"></i></span>{oneTimeFeeObject?.REGISTRATION?.totalFee ? oneTimeFeeObject?.REGISTRATION?.totalFee : "0"}</p>
                                                         :
-                                                        <input type='text' className='form-control' name="registrationFee" value={oneTimeFormData?.registrationFee} onChange={(e) => onChangeHandler(e)} />
+                                                        <input type='text' className='form-control' name="registrationFee" value={oneTimeFormData?.registrationFee || ""} onChange={(e) => onChangeHandler(e)} />
                                                     }
                                                 </div>
                                             </div>
@@ -266,7 +266,7 @@ export default function FeeSetUpModule() {
                                                 <div className="fee-input">
                                                     {isShowOneTimeInput ?
                                                         <p><span><i className="fa-solid fa-indian-rupee-sign"></i></span>{oneTimeFeeObject?.DRESS?.totalFee ? oneTimeFeeObject?.DRESS?.totalFee : "0"}</p>
-                                                        : <input type='text' className='form-control' name="dressFee" value={oneTimeFormData?.dressFee} onChange={(e) => onChangeHandler(e)} />
+                                                        : <input type='text' className='form-control' name="dressFee" value={oneTimeFormData?.dressFee || ""} onChange={(e) => onChangeHandler(e)} />
                                                     }
                                                 </div>
                                             </div>
@@ -316,7 +316,7 @@ export default function FeeSetUpModule() {
                                                     {isShowMonthlyInput ?
                                                         <p><span><i className="fa-solid fa-indian-rupee-sign"></i></span>{monthlyFeeObject?.TUITION?.totalFee ? monthlyFeeObject?.TUITION?.totalFee : "0"}</p>
                                                         :
-                                                        <input type='text' className='form-control' name="tuitionFee" value={monthlyFormData?.tuitionFee} onChange={(e) => onChangeHandler(e)} />
+                                                        <input type='text' className='form-control' name="tuitionFee" value={monthlyFormData?.tuitionFee || ""} onChange={(e) => onChangeHandler(e)} />
                                                     }
                                                 </div>
                                             </div>
@@ -331,7 +331,7 @@ export default function FeeSetUpModule() {
                                                 <div className="fee-input">
                                                     {isShowMonthlyInput ?
                                                         <p><span><i className="fa-solid fa-indian-rupee-sign"></i></span>{monthlyFeeObject?.FOOD?.totalFee ? monthlyFeeObject?.FOOD?.totalFee : "0"}</p>
-                                                        : <input type='text' className='form-control' name="foodFee" value={monthlyFormData?.foodFee} onChange={(e) => onChangeHandler(e)} />
+                                                        : <input type='text' className='form-control' name="foodFee" value={monthlyFormData?.foodFee || ""} onChange={(e) => onChangeHandler(e)} />
                                                     }
                                                 </div>
                                             </div>
@@ -346,7 +346,7 @@ export default function FeeSetUpModule() {
                                                 <div className="fee-input">
                                                     {isShowMonthlyInput ?
                                                         <p><span><i className="fa-solid fa-indian-rupee-sign"></i></span>{monthlyFeeObject?.TRANSPORT?.totalFee ? monthlyFeeObject?.TRANSPORT?.totalFee : "0"}</p>
-                                                        : <input type='text' className='form-control' name="transportFee" value={monthlyFormData?.transportFee} onChange={(e) => onChangeHandler(e)} />
+                                                        : <input type='text' className='form-control' name="transportFee" value={monthlyFormData?.transportFee || ""} onChange={(e) => onChangeHandler(e)} />
                                                     }
                                                 </div>
                                             </div>
