@@ -36,7 +36,7 @@ function ManageClasses(props) {
 
     const formSubmit = (type) => {
         let sectionID = selected?.map(item => (item?.value));
-        let data = { classUuid: classUuid, sectionUuids: [...sectionID] };
+        let data = { classUuid: classUuid, sectionUuids: [...sectionID],className: formState?.className, sectionName: formState?.sectionName };
         dispatch(createClassAndSection(data, type, toast))
         SetIsModal(false);
     };

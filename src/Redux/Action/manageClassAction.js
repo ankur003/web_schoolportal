@@ -40,10 +40,10 @@ export const getClasses = () => (dispatch) => {
 export const createClassAndSection = (data, type, toaster) => (dispatch) => {
     let value = {};
     if (type === "CreateClass") {
-        value = { className: data.formState.className };
+        value = { className: data?.className };
     }
     else if (type === "CreateSection") {
-        value = { sectionName: data.formState.sectionName }
+        value = { sectionName: data?.sectionName }
     }
     else {
         value = { classUuid: data.classUuid, sectionUuids: data.sectionUuids };
