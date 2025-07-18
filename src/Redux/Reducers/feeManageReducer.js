@@ -2,7 +2,8 @@
 import * as Constants from '../Constants';
 
 const initialState = {
-    feeList: [],
+    oneTimeList: [],
+    monthlyList: [],
     paymentList: [],
     loader: false,
     noDataFound: false,
@@ -18,10 +19,24 @@ export default function feeManageReducer(state = initialState, action) {
                 loader: true,
                 noDataFound: false
             };
+        case Constants.GET_ONE_TIME_FEE:
+            return {
+                ...state,
+                oneTimeList: action.payload,
+                loader: true,
+                noDataFound: false
+            };
+        case Constants.GET_MONTHLY_FEE:
+            return {
+                ...state,
+                monthlyList: action.payload,
+                loader: true,
+                noDataFound: false
+            };
         case Constants.GET_ALL_PAYMENT:
             return {
                 ...state,
-                paymentList: action.payload,
+                allFeeList: action.payload,
                 loader: true,
                 noDataFound: false
             };

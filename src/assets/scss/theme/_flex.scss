@@ -1,6 +1,7 @@
 
 // flex basis
-.d-flex {
+.d-flex,
+.flex {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -126,3 +127,7 @@
     max-width: 100% !important;
 }
 // end flex basis
+
+.align-center {
+    align-items: center;
+}

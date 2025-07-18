@@ -37,7 +37,7 @@ function SideBar(props) {
             name: "Manage Fees",
             component: "FeeModule",
             transform: "Fee Management",
-            to: "/FeeModule",
+            to: "/FeeSetUpModule",
             icon: "fa-solid fa-money-bill"
         },
         {

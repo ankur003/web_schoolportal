@@ -15,7 +15,7 @@ import ChangePassword from './components/ChangePassword';
 import { Navigate, useLocation } from 'react-router-dom';
 import AttendanceCalendarPage from './container/EntityCalender';
 import LeaveRequest from './container/LeaveRequest';
-import FeeModule from './container/FeeModule';
+import FeeSetUpModule from './container/FeeManagementModule/FeeSetUpModule';
 import PaymentDetails from './container/PaymentDetails';
 import TimeTable from './container/TimeTable';
 import ParentsPage from './container/ParentsPage';
@@ -63,7 +63,7 @@ const App = () => {
             <Route element={<ProfileDetailsPage />} path="/ProfileDetailsPage" />
             <Route element={<AttendanceCalendarPage />} path="/AttendanceCalendarPage" />
             <Route element={<LeaveRequest />} path="/LeaveRequest" />
-            <Route element={<FeeModule />} path="/FeeModule" />
+            <Route element={<FeeSetUpModule />} path="/FeeSetUpModule" />
             <Route element={<PaymentDetails />} path="/PaymentDetails" />
             <Route element={<TimeTable />} path="/TimeTable" />
             <Route element={<ParentsPage />} path="/ParentsPage" />

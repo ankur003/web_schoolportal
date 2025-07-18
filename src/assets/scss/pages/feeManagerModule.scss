@@ -1,0 +1,132 @@
+@import "../theme/variables";
+@import "../utils/mixin";
+
+.mr-0 {
+    margin: 0 !important;
+}
+
+.fee-module {
+    box-shadow: none;
+    background-color: transparent;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+
+    .class-selector {
+        background: transparent;
+        margin-bottom: 20px;
+    }
+}
+
+.fee-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .fee-card {
+        padding: 20px 32px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        margin-bottom: 0;
+        height: 100%;
+
+        .fee-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0px;
+            position: relative;
+            margin-bottom: 16px;
+
+            h6 {
+                margin-bottom: 0px;
+
+                span {
+                    padding: 5px 10px;
+                    background: #fff;
+                    border-radius: 5px;
+                    margin-right: 15px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+                }
+            }
+
+            .btn-card-block {
+                @include position-top-right;
+                @include transform-top-center-align;
+            }
+        }
+
+        .fee-card-body {}
+
+        .fee-card-footer {
+            margin-top: 20px;
+
+            .fee-block-feild {
+                background: $light-gray;
+            }
+        }
+
+        .fee-block-feild {
+            padding: 15px;
+            background: $white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border-radius: 5px;
+
+            p {
+                margin-bottom: 0px;
+
+                span {
+                    margin-right: 10px;
+
+                    i {}
+                }
+            }
+
+            .fee-input {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+
+                p {
+                    margin-right: 10px;
+
+                    span {
+
+                        i {}
+                    }
+                }
+
+                .form-control {
+                    width: 150px;
+                }
+            }
+        }
+    }
+}
+
+.annual-fee-card {
+
+    .fee-block-feild {
+        .align-center {
+            flex-direction: column !important;
+
+            p {
+                margin-bottom: 5px;
+            }
+        }
+
+        h6 {
+            margin-bottom: 0;
+
+            i {
+                margin-right: 5px;
+            }
+        }
+    }
+
+    .annual-amount-feild {
+        background: $blue !important;
+        color: $white !important;
+    }
+}

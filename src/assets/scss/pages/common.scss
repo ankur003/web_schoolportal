@@ -302,3 +302,13 @@ body {
     background: $grayGradient;
     color: $white;
 }
+
+.alert-warning {
+   background: linear-gradient(to right, #fffde7, #fff9c4);
+}
+.alert-success {
+    background: linear-gradient(to right, #e8f5e9, #c8e6c9);
+}
+.alert-info {
+    background: linear-gradient(to right, #e3f2fd, #bbdefb);
+}
