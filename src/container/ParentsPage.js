@@ -190,10 +190,11 @@ export default function ParentsPage() {
                                                 {childrenMap[data?.userUuid] ? (
                                                     childrenMap[data?.userUuid].length > 0 ? (
                                                         childrenMap[data?.userUuid].map((child, idx) => {
+                                                            const lastIndex = childrenMap[data?.userUuid].length - 1;
                                                             return (
                                                                 <span key={idx}>
                                                                     <a href='#' onClick={() => getAllUserDetails(child?.userUuid)} >{child.fullName}</a>
-                                                                    {idx !== 0 ? ", " : " "}
+                                                                    {idx !== lastIndex ? " , " : " "}
                                                                 </span>
                                                             )
                                                         })
