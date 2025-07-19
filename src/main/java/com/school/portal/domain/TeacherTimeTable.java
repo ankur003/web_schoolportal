@@ -24,10 +24,10 @@ public class TeacherTimeTable {
     @Column(name = "teacher_timetable_uuid", nullable = false, length = 191)
     private String teacherTimetableUuid;
 
-    @Column(name = "master_class_uuid", nullable = false)
+    @Column(name = "master_class_uuid", nullable = false, length = 191)
     private String masterClassUuid;
 
-    @Column(name = "master_section_uuid", nullable = false)
+    @Column(name = "master_section_uuid", nullable = false, length = 191)
     private String masterSectionUuid;
 
     @Column(name = "subject_name", nullable = false)

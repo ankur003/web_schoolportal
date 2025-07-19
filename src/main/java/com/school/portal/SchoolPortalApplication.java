@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +76,8 @@ public class SchoolPortalApplication {
 		user.setIsActive(true);
 		user.setUserUuid(SchoolPortalUtils.getUniqueUuid());
 		userRepo.save(user);
-		
+
+
 	}
 	
 	@Bean
@@ -84,6 +87,13 @@ public class SchoolPortalApplication {
 		  .setFieldMatchingEnabled(true)
 		  .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
 		return modelMapper;
+	}
+
+	@Bean
+	public ObjectMapper objectMapper() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		return mapper;
 	}
 
 }

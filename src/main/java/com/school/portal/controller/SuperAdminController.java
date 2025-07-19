@@ -63,7 +63,7 @@ import com.school.portal.utils.ModelMapperUtil;
 import com.school.portal.utils.ResponseBuilder;
 import com.school.portal.utils.SchoolPortalUtils;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/sa")
 public class SuperAdminController extends AbstractController {

@@ -1,6 +1,7 @@
 package com.school.portal.repo;
 
 import com.school.portal.domain.TeacherTimeTable;
+import com.school.portal.dto.TeacherTimeTableDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,9 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTable, Long> {
-    List<TeacherTimeTable> findByTeacherUuid(String teacherUuid);
-  //  List<TeacherTimeTable> findByClassUuid(String classUuid);
-    List<TeacherTimeTable> findByDayOfWeek(String dayOfWeek);
 
     @Query("SELECT t FROM TeacherTimeTable t WHERE t.teacherUuid = :teacherUuid AND t.dayOfWeek = :dayOfWeek " +
             "AND ((:startTime BETWEEN t.startTime AND t.endTime) OR (:endTime BETWEEN t.startTime AND t.endTime) " +
@@ -26,9 +24,79 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
 
     void deleteByTeacherTimetableUuid(String teacherTimetableUuid);
 
-    Optional<TeacherTimeTable> findByTeacherTimetableUuid(String teacherTimetableUuid);
-
-    List<TeacherTimeTable> findByMasterClassUuid(String classUuid);
-
     List<TeacherTimeTable> findByMasterSectionUuid(String sectionUuid);
+
+  @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
+          "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
+          "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
+          "t.startTime, t.endTime, t.roomNo, " +
+          "u.fullName, mc.className, ms.sectionName) " +
+          "FROM TeacherTimeTable t " +
+          "JOIN User u ON t.teacherUuid = u.userUuid " +
+          "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
+          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid")
+  List<TeacherTimeTableDTO> findAllWithDetails();
+
+  @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
+          "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
+          "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
+          "t.startTime, t.endTime, t.roomNo, " +
+          "u.fullName, mc.className, ms.sectionName) " +
+          "FROM TeacherTimeTable t " +
+          "JOIN User u ON t.teacherUuid = u.userUuid " +
+          "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
+          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+          "WHERE t.teacherUuid = :teacherUuid")
+  List<TeacherTimeTableDTO> findByTeacherUuid(@Param("teacherUuid") String teacherUuid);
+
+  @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
+          "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
+          "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
+          "t.startTime, t.endTime, t.roomNo, " +
+          "u.fullName, mc.className, ms.sectionName) " +
+          "FROM TeacherTimeTable t " +
+          "JOIN User u ON t.teacherUuid = u.userUuid " +
+          "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
+          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+          "WHERE t.masterClassUuid = :classUuid")
+  List<TeacherTimeTableDTO> findByClassUuid(@Param("classUuid") String classUuid);
+
+  @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
+          "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
+          "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
+          "t.startTime, t.endTime, t.roomNo, " +
+          "u.fullName, mc.className, ms.sectionName) " +
+          "FROM TeacherTimeTable t " +
+          "JOIN User u ON t.teacherUuid = u.userUuid " +
+          "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
+          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+          "WHERE t.masterClassUuid = :classUuid AND t.masterSectionUuid = :sectionUuid")
+  List<TeacherTimeTableDTO> findByClassAndSectionUuid(@Param("classUuid") String classUuid,
+                                                      @Param("sectionUuid") String sectionUuid);
+
+  @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
+          "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
+          "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
+          "t.startTime, t.endTime, t.roomNo, " +
+          "u.fullName, mc.className, ms.sectionName) " +
+          "FROM TeacherTimeTable t " +
+          "JOIN User u ON t.teacherUuid = u.userUuid " +
+          "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
+          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+          "WHERE t.dayOfWeek = :dayOfWeek")
+  List<TeacherTimeTableDTO> findByDayOfWeek(@Param("dayOfWeek") String dayOfWeek);
+
+  @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
+          "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
+          "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
+          "t.startTime, t.endTime, t.roomNo, " +
+          "u.fullName, mc.className, ms.sectionName) " +
+          "FROM TeacherTimeTable t " +
+          "JOIN User u ON t.teacherUuid = u.userUuid " +
+          "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
+          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+          "WHERE t.teacherTimetableUuid = :uuid")
+  Optional<TeacherTimeTableDTO> findByTeacherTimeTableUuid(@Param("uuid") String uuid);
+
+
 }
