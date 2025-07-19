@@ -15,29 +15,34 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 	@Query("SELECT new com.school.portal.dto.FeePaymentResponseDTO(" +
 	           "u.rollNumber, u.fullName, u.userUuid, " +
 	           "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
-	           "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, mc.className, ms.sectionName, fp.month, fp.year) " +
+	           "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, mc.className, ms.sectionName, fp.month, fp.year, mc.masterClassUuid, ms.masterSectionUuid) " +
 	           "FROM FeePayment fp " +
 	           "JOIN fp.user u " +
 	           "JOIN fp.masterFee mf " +
 	           "JOIN u.masterClass mc " +
 	           "JOIN u.masterSection ms " +
 	           "WHERE u.userUuid = :userUuid")
-	    List<FeePaymentResponseDTO> findAllPaymentsByUserUuid(@Param("userUuid") String userUuid);
+	List<FeePaymentResponseDTO> findAllPaymentsByUserUuid(@Param("userUuid") String userUuid);
 	
 	@Query("SELECT new com.school.portal.dto.FeePaymentResponseDTO(" +
 		       "u.rollNumber, u.fullName, u.userUuid, " +
 		       "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
 		       "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, " +
-		       "mc.className, ms.sectionName, fp.month, fp.year) " +
+		       "mc.className, ms.sectionName, fp.month, fp.year, mc.masterClassUuid, ms.masterSectionUuid) " +
 		       "FROM FeePayment fp " +
 		       "JOIN fp.user u " +
 		       "JOIN fp.masterFee mf " +
 		       "JOIN u.masterClass mc " +
 		       "LEFT JOIN u.masterSection ms " +
-		       "WHERE mc.masterClassUuid = :classUuid " +
-		       "AND (:sectionUuid IS NULL OR ms.masterSectionUuid = :sectionUuid)")
-		List<FeePaymentResponseDTO> findAllPaymentsByClassUuidAndSectionUuid(@Param("classUuid") String classUuid,
-		                                                                    @Param("sectionUuid") String sectionUuid);
+		       "WHERE (:classUuid IS NULL OR mc.masterClassUuid = :classUuid) " +
+		       "AND (:sectionUuid IS NULL OR ms.masterSectionUuid = :sectionUuid) " +
+		       "AND (:userUuid IS NULL OR u.userUuid = :userUuid)")
+		List<FeePaymentResponseDTO> findAllPaymentsByClassUuidAndSectionUuidAndUserUuid(
+		    @Param("classUuid") String classUuid,
+		    @Param("sectionUuid") String sectionUuid,
+		    @Param("userUuid") String userUuid
+		);
+
 
 	FeePayment findByFeePaymentUuid(String feePaymentUuid);
 
@@ -47,7 +52,7 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 		       "u.rollNumber, u.fullName, u.userUuid, " +
 		       "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
 		       "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, " +
-		       "mc.className, ms.sectionName, fp.month, fp.year) " +
+		       "mc.className, ms.sectionName, fp.month, fp.year, mc.masterClassUuid, ms.masterSectionUuid) " +
 		       "FROM FeePayment fp " +
 		       "JOIN fp.user u " +
 		       "JOIN fp.masterFee mf " +
@@ -61,7 +66,7 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 		       "u.rollNumber, u.fullName, u.userUuid, " +
 		       "fp.feePaymentUuid, fp.amountPaid, fp.discountAmount, fp.paymentDate, fp.paymentMode, fp.transactionId, fp.remarks, " +
 		       "mf.masterFeesUuid, mf.academicYear, mf.totalFee, mf.feeType, mf.feeName, " +
-		       "mc.className, ms.sectionName, fp.month, fp.year) " +
+		       "mc.className, ms.sectionName, fp.month, fp.year, mc.masterClassUuid, ms.masterSectionUuid) " +
 		       "FROM FeePayment fp " +
 		       "JOIN fp.user u " +
 		       "JOIN fp.masterFee mf " +

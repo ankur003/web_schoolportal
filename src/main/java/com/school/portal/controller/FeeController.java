@@ -142,9 +142,9 @@ public class FeeController {
     }
     
     @GetMapping("/payments/class-section")
-    public ResponseEntity<Object> getPaymentsByClassUuidAndSectionuuid(@RequestParam String classUuid,
-    		@RequestParam(required = false) String sectionUuid) {
-        List<FeePaymentResponseDTO> response = feeService.getPaymentsByClassUuidAndSectionuuid(classUuid, sectionUuid);
+    public ResponseEntity<Object> getPaymentsByClassUuidAndSectionUuidAndUserUuid(@RequestParam(required = false) String classUuid,
+    		@RequestParam(required = false) String sectionUuid, @RequestParam(required = false) String userUuid) {
+        List<FeePaymentResponseDTO> response = feeService.getPaymentsByClassUuidAndSectionuuidAnduserUuid(classUuid, sectionUuid, userUuid);
         if (response.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

@@ -33,6 +33,9 @@ public class FeePaymentResponseDTO {
     private String month;
     
     private String year;
+    
+    private String masterClassUuid;
+    private String masterSectionUuid;
 	
 	public FeePaymentResponseDTO() {
 		
@@ -43,7 +46,8 @@ public class FeePaymentResponseDTO {
                                  String feePaymentUuid, Double amountPaid, Double discountAmount,
                                  LocalDate paymentDate, String paymentMode, String transactionId, String remarks,
                                  String masterFeesUuid, String academicYear, Double totalFee,
-                                 FeeType feeType, FeeName feeName, String className, String classSection, Month month, String year) {
+                                 FeeType feeType, FeeName feeName, String className, String classSection, Month month, String year,
+                                 String masterClassUuid, String masterSectionUuid) {
         this.rollNumber = rollNumber;
         this.fullName = fullName;
         this.userUuid = userUuid;
@@ -63,6 +67,8 @@ public class FeePaymentResponseDTO {
         this.classSection = classSection;
         this.month = month == null ? null : month.name();
         this.year = year;
+        this.masterClassUuid = masterClassUuid;
+        this.masterSectionUuid = masterSectionUuid;
     }
     
     
@@ -332,6 +338,33 @@ public class FeePaymentResponseDTO {
 	public void setYear(String year) {
 		this.year = year;
 	}
-	
+
+	/**
+	 * @return the masterClassUuid
+	 */
+	public String getMasterClassUuid() {
+		return masterClassUuid;
+	}
+
+	/**
+	 * @param masterClassUuid the masterClassUuid to set
+	 */
+	public void setMasterClassUuid(String masterClassUuid) {
+		this.masterClassUuid = masterClassUuid;
+	}
+
+	/**
+	 * @return the masterSectionUuid
+	 */
+	public String getMasterSectionUuid() {
+		return masterSectionUuid;
+	}
+
+	/**
+	 * @param masterSectionUuid the masterSectionUuid to set
+	 */
+	public void setMasterSectionUuid(String masterSectionUuid) {
+		this.masterSectionUuid = masterSectionUuid;
+	}
 	
 }

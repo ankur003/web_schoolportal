@@ -68,8 +68,8 @@ public class FeeService {
         return masterFeeRepository.save(masterFee).getMasterFeesUuid();
     }
 
-	public List<FeePaymentResponseDTO> getPaymentsByClassUuidAndSectionuuid(String classUuid, String sectionUuid) {
-		return feePaymentRepository.findAllPaymentsByClassUuidAndSectionUuid(classUuid, sectionUuid);
+	public List<FeePaymentResponseDTO> getPaymentsByClassUuidAndSectionuuidAnduserUuid(String classUuid, String sectionUuid, String userUuid) {
+		return feePaymentRepository.findAllPaymentsByClassUuidAndSectionUuidAndUserUuid(classUuid, sectionUuid, userUuid);
 	}
 
 	public void updateMasterFee(String masterFeeUuid, UpdateMasterFeeRequestDTO updateFeeDto) {
@@ -186,6 +186,5 @@ public class FeeService {
 		return masterFeeRepository.findMasterFeesByClassIdAndFeeType(masterClass.getMasterClassId(), feeType);
 
 	}
-
    
 }
