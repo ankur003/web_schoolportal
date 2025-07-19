@@ -137,7 +137,6 @@ export const getAllFees = (data) => (dispatch) => {
 }
 
 export const createMasterFee = (data, masterClassUuid, toast,) => (dispatch) => {
-    console.log("create", { data })
     const url = `${basePathUrl}/fees/master-fee`;
     const method = "post";
     axios({ method, url, data })
@@ -188,7 +187,7 @@ export const UpdateFee = (payload, classUuid, toast) => (dispatch) => {
 }
 
 export const getUserFeeListAction = (payload) => (dispatch) => {
-    dispatch({type:Constants.RESET_STATE});
+    dispatch({ type: Constants.RESET_STATE });
     let url = `${basePathUrl}/fees/payments/class-section`;
     if (payload) {
         const params = new URLSearchParams({
@@ -201,11 +200,8 @@ export const getUserFeeListAction = (payload) => (dispatch) => {
             url += `?${params.toString()}`;
         }
     }
-    
-    console.log({ url })
     axios.get(url)
         .then(response => {
-            console.log({ response });
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_ALL_PAYMENT,
@@ -221,5 +217,27 @@ export const getUserFeeListAction = (payload) => (dispatch) => {
         })
         .catch(error => {
             console.log(error);
+        });
+}
+
+
+export const addStudentFee = (data, setIsPaymentModal, toast) => (dispatch) => {
+    let url = `${basePathUrl}/fees/payments`;
+    const method = "post";
+    axios({
+        method,
+        url,
+        data
+    })
+        .then(response => {
+            if (response.status === 200 || response.status === 201) {
+                dispatch(getUserFeeListAction());
+                setIsPaymentModal(false);
+                toast.success("Student Fee's added Successfully")
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            toast.error("Something went wrong", error);
         });
 }

@@ -4,11 +4,12 @@ import { MultiSelect } from "react-multi-select-component";
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import { getEntities } from '../../Redux/Action/entityAction';
-import { getUserFeeListAction } from '../../Redux/Action/feeManageAction';
+import { addStudentFee, getAllFees, getUserFeeListAction } from '../../Redux/Action/feeManageAction';
 import Loader from '../../components/Loader';
 import NoDataFound from '../../components/NoDataFound';
 import CounterCard from '../../components/CounterCard';
 import { use } from 'react';
+import { toast } from 'react-toastify';
 
 export default function FeePaymentModule() {
     const dispatch = useDispatch();
@@ -18,6 +19,7 @@ export default function FeePaymentModule() {
     const { linkList } = useSelector(state => state.manageClassesReducer);
     const { entityList } = useSelector(state => state.entityReducer);
     const { userFeeList } = useSelector(state => state.feeManageReducer);
+    const { monthlyList, oneTimeList } = useSelector((state) => state.feeManageReducer);
 
     const totalStudents = new Set(userFeeList?.map(item => item.userUuid)).size;
     const totalPayments = userFeeList.length;
@@ -32,7 +34,8 @@ export default function FeePaymentModule() {
     const [limit, setLimit] = useState("100");
     const [isModal, setIsModal] = useState(false);
     const [ModalDataList, setModalData] = useState();
-    console.log({ ModalDataList });
+    const [isPaymentModal, setIsPaymentModal] = useState(false);
+
     const classOptionsList = linkList ? linkList?.map(section => ({
         label: section?.className,
         value: section?.masterClassUuid
@@ -47,6 +50,90 @@ export default function FeePaymentModule() {
         label: student?.fullName,
         value: student?.userUuid
     })) || [];
+
+    const [oneTimeFormData, setOneTimeFormData] = useState({
+        annualFee: "",
+        dressFee: "",
+        registrationFee: "",
+    });
+
+    const [monthlyFormData, setMonthlyFormData] = useState({
+        tuitionFee: "",
+        transportFee: "",
+        foodFee: "",
+    });
+
+    const oneTimeFeeObject = oneTimeList?.reduce((acc, item) => {
+        acc[item.feeName] = item;
+        return acc;
+    }, {});
+
+    const monthlyFeeObject = monthlyList?.reduce((acc, item) => {
+        acc[item.feeName] = item;
+        return acc;
+    }, {});
+
+    const onChangeHandler = (e) => {
+        const { name, value } = e.target;
+        if (name.startsWith("common_") || name.includes("ANNUAL_") || name.includes("DRESS_") || name.includes("REGISTRATION_")) {
+            setOneTimeFormData((prev) => ({ ...prev, [name]: value }));
+        } else if (name.includes("TUITION_") || name.includes("TRANSPORT_") || name.includes("FOOD_")) {
+            setMonthlyFormData((prev) => ({ ...prev, [name]: value }));
+        }
+    };
+
+    useEffect(() => {
+        if (selectedClass?.value) {
+            dispatch(getAllFees({ masterClassUuid: selectedClass.value, feeType: "ONE_TIME" }));
+            dispatch(getAllFees({ masterClassUuid: selectedClass.value, feeType: "MONTHLY" }));
+        }
+    }, [selectedClass, dispatch]);
+
+    const formSubmit = () => {
+        const commonFields = {
+            month: oneTimeFormData.common_month || "",
+            paymentDate: oneTimeFormData.common_paymentDate || "",
+            paymentMode: oneTimeFormData.common_paymentMode || "",
+            remarks: oneTimeFormData.common_remarks || "",
+            transactionId: oneTimeFormData.common_transactionId || "",
+            userUuid: selectedUser?.value || "",
+            year: oneTimeFormData.common_year || ""
+        };
+
+        const oneTimePayments = [];
+        const monthlyPayments = [];
+
+        // Process One-Time Fees
+        ["ANNUAL", "DRESS", "REGISTRATION"].forEach(feeName => {
+            if (oneTimeFormData[`${feeName}_amountPaid`]) {
+                oneTimePayments.push({
+                    ...commonFields,
+                    amountPaid: parseInt(oneTimeFormData[`${feeName}_amountPaid`]) || 0,
+                    feeName: feeName,
+                    feeType: "ONE_TIME"
+                });
+            }
+        });
+
+        // Process Monthly Fees
+        ["TUITION", "TRANSPORT", "FOOD"].forEach(feeName => {
+            if (monthlyFormData[`${feeName}_amountPaid`]) {
+                monthlyPayments.push({
+                    ...commonFields,
+                    amountPaid: parseInt(monthlyFormData[`${feeName}_amountPaid`]) || 0,
+                    feeName: feeName,
+                    feeType: "MONTHLY"
+                });
+            }
+        });
+
+        const finalPayload = [...oneTimePayments, ...monthlyPayments];
+
+        dispatch(addStudentFee(finalPayload, setIsPaymentModal, toast));
+    };
+
+
+
 
     const handleChangeSections = (selected) => {
         setSelectedSections(selected);
@@ -92,6 +179,9 @@ export default function FeePaymentModule() {
         <>
             <div className="header">
                 <h1>Manage Student Fee's</h1>
+                <div className="header-right">
+                    <button type="button" className="btn btn-outline-light" onClick={() => { setIsPaymentModal(true); }}>Add Student Fee's</button>
+                </div>
             </div>
             <div className="content-body">
                 <div className='counter-wrapper' >
@@ -299,6 +389,255 @@ export default function FeePaymentModule() {
                         </div>
                     </div>
                 </div>}
+
+            {isPaymentModal &&
+                <div className="modal d-block">
+                    <div className="modal-dialog modal-lg modal-dialog-centered" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Add Student Fee's</h5>
+                                <button
+                                    type="button"
+                                    className="close"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                    onClick={() => setIsPaymentModal(false)}
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div className="modal-body">
+                                <div className="form-content">
+                                    {/* ✅ Student Selection */}
+                                    <div className="d-flex">
+                                        <div className="flex-33 pd-r-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Class Name</label>
+                                                <Select
+                                                    name="sections"
+                                                    options={classOptionsList}
+                                                    value={selectedClass}
+                                                    onChange={handleChange}
+                                                    className="basic-multi-select"
+                                                    classNamePrefix="select"
+                                                    placeholder="Select Class"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-33 pd-l-5 pd-r-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Section Name</label>
+                                                <Select
+                                                    name="sections"
+                                                    options={sectionOptionsList}
+                                                    value={selectedSections}
+                                                    onChange={handleChangeSections}
+                                                    className="basic-multi-select"
+                                                    classNamePrefix="select"
+                                                    placeholder="Select Sections"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-33 pd-l-5">
+                                            <div className="form-group">
+                                                <label className="form-group-label">Student Name</label>
+                                                <Select
+                                                    name="students"
+                                                    options={userOptions}
+                                                    value={selectedUser}
+                                                    onChange={setSelectedUser}
+                                                    labelledBy="Select"
+                                                    hasSelectAll={false}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* ✅ Common Payment Details */}
+                                    <div className="common-details p-3 border rounded bg-light">
+                                        <h6 className="mb-3">Common Payment Details</h6>
+                                        <div className="row">
+                                            <div className="col-md-4">
+                                                <div className="form-group">
+                                                    <label className="form-group-label">Month</label>
+                                                    <select
+                                                        className="form-control"
+                                                        name="common_month"
+                                                        value={oneTimeFormData?.common_month || ""}
+                                                        onChange={onChangeHandler}
+                                                    >
+                                                        <option value="">Select Month</option>
+                                                        <option value="JANUARY">January</option>
+                                                        <option value="FEBRUARY">February</option>
+                                                        <option value="MARCH">March</option>
+                                                        <option value="APRIL">April</option>
+                                                        <option value="MAY">May</option>
+                                                        <option value="JUNE">June</option>
+                                                        <option value="JULY">July</option>
+                                                        <option value="AUGUST">August</option>
+                                                        <option value="SEPTEMBER">September</option>
+                                                        <option value="OCTOBER">October</option>
+                                                        <option value="NOVEMBER">November</option>
+                                                        <option value="DECEMBER">December</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <div className="form-group">
+                                                    <label className="form-group-label">Payment Date</label>
+                                                    <input
+                                                        type="date"
+                                                        className="form-control"
+                                                        name="common_paymentDate"
+                                                        value={oneTimeFormData?.common_paymentDate || ""}
+                                                        onChange={onChangeHandler}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <div className="form-group">
+                                                    <label className="form-group-label">Year</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="common_year"
+                                                        value={oneTimeFormData?.common_year || ""}
+                                                        onChange={onChangeHandler}
+                                                        placeholder="Enter year (e.g., 2025)"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <div className="form-group">
+                                                    <label className="form-group-label">Payment Mode</label>
+                                                    <select
+                                                        className="form-control"
+                                                        name="common_paymentMode"
+                                                        value={oneTimeFormData?.common_paymentMode || ""}
+                                                        onChange={onChangeHandler}
+                                                    >
+                                                        <option value="">Select Mode</option>
+                                                        <option value="Cash">Cash</option>
+                                                        <option value="ONLINE">Online</option>
+                                                        <option value="UPI">UPI</option>
+                                                        <option value="CARD">Card</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <div className="form-group">
+                                                    <label className="form-group-label">ransaction ID</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="common_transactionId"
+                                                        value={oneTimeFormData?.common_transactionId || ""}
+                                                        onChange={onChangeHandler}
+                                                        placeholder="Enter transaction ID"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <div className="form-group">
+                                                    <label className="form-group-label">Remarks</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="common_remarks"
+                                                        value={oneTimeFormData?.common_remarks || ""}
+                                                        onChange={onChangeHandler}
+                                                        placeholder="Enter remarks"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* ✅ Fee Amounts */}
+                                    <div className="d-flex">
+                                        <div className="flex-50 pd-r-5">
+                                            {/* ✅ One-Time Fees (Single Card) */}
+                                            <h6 className="mt-3">One-Time Fees</h6>
+                                            <div className="fee-card one-time-fee">
+                                                <div className="fee-card-header">One-Time Fees</div>
+                                                <div className="fee-card-body">
+                                                    {["ANNUAL", "DRESS", "REGISTRATION"].map((feeName, index) => (
+                                                        <div key={index} className="fee-row">
+                                                            <div className="fee-info">
+                                                                <span className="fee-label">
+                                                                    {feeName.charAt(0) + feeName.slice(1).toLowerCase()} Fee
+                                                                </span>
+                                                                <span className="fee-total">
+                                                                    Total: ₹{oneTimeFeeObject?.[feeName]?.totalFee || 0}
+                                                                </span>
+                                                            </div>
+                                                            <input
+                                                                type="number"
+                                                                className="form-control fee-input"
+                                                                name={`${feeName}_amountPaid`}
+                                                                value={oneTimeFormData?.[`${feeName}_amountPaid`] || ""}
+                                                                onChange={onChangeHandler}
+                                                                placeholder={`Enter ${feeName} Fee`}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-50 pd-l-5">
+                                            {/* ✅ Monthly Fees (Single Card) */}
+                                            <h6 className="mt-3">Monthly Fees</h6>
+                                            <div className="fee-card monthly-fee">
+                                                <div className="fee-card-header">Monthly Fees</div>
+                                                <div className="fee-card-body">
+                                                    {["TUITION", "TRANSPORT", "FOOD"].map((feeName, index) => (
+                                                        <div key={index} className="fee-row">
+                                                            <div className="fee-info">
+                                                                <span className="fee-label">
+                                                                    {feeName.charAt(0) + feeName.slice(1).toLowerCase()} Fee
+                                                                </span>
+                                                                <span className="fee-total">
+                                                                    Total: ₹{monthlyFeeObject?.[feeName]?.totalFee || 0}
+                                                                </span>
+                                                            </div>
+                                                            <input
+                                                                type="number"
+                                                                className="form-control fee-input"
+                                                                name={`${feeName}_amountPaid`}
+                                                                value={monthlyFormData?.[`${feeName}_amountPaid`] || ""}
+                                                                onChange={onChangeHandler}
+                                                                placeholder={`Enter ${feeName} Fee`}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="modal-footer">
+                                <button
+                                    className="btn btn-secondary"
+                                    data-dismiss="modal"
+                                    onClick={() => setIsPaymentModal(false)}
+                                >
+                                    Close
+                                </button>
+                                <button className="btn btn-primary" onClick={formSubmit}>
+                                    Save changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
         </>
     )
 }
