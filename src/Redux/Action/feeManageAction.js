@@ -186,3 +186,40 @@ export const UpdateFee = (payload, classUuid, toast) => (dispatch) => {
         });
 
 }
+
+export const getUserFeeListAction = (payload) => (dispatch) => {
+    dispatch({type:Constants.RESET_STATE});
+    let url = `${basePathUrl}/fees/payments/class-section`;
+    if (payload) {
+        const params = new URLSearchParams({
+            ...(payload.masterClassUuid && { classUuid: payload.masterClassUuid }),
+            ...(payload.masterSectionUuid && { sectionUuid: payload.masterSectionUuid }),
+            ...(payload.userUuid && { userUuid: payload.userUuid }),
+        });
+
+        if ([...params].length > 0) {
+            url += `?${params.toString()}`;
+        }
+    }
+    
+    console.log({ url })
+    axios.get(url)
+        .then(response => {
+            console.log({ response });
+            if (response.status === 200) {
+                dispatch({
+                    type: Constants.GET_ALL_PAYMENT,
+                    payload: response.data
+                })
+            }
+            else if (response.status === 204) {
+                dispatch({
+                    type: Constants.NO_DATA_FOUND,
+                    payload: response.data
+                })
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}

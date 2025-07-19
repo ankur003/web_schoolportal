@@ -20,6 +20,7 @@ import PaymentDetails from './container/PaymentDetails';
 import TimeTable from './container/TimeTable';
 import ParentsPage from './container/ParentsPage';
 import Dashboard from './container/Dashboard';
+import FeePaymentModule from './container/FeeManagementModule/FeePaymentModule';
 
 const App = () => {
   // Assume you have a way to get the user's role, e.g., from localStorage or context
@@ -64,7 +65,7 @@ const App = () => {
             <Route element={<AttendanceCalendarPage />} path="/AttendanceCalendarPage" />
             <Route element={<LeaveRequest />} path="/LeaveRequest" />
             <Route element={<FeeSetUpModule />} path="/FeeSetUpModule" />
-            <Route element={<PaymentDetails />} path="/PaymentDetails" />
+            <Route element={<FeePaymentModule />} path="/FeePaymentModule" />
             <Route element={<TimeTable />} path="/TimeTable" />
             <Route element={<ParentsPage />} path="/ParentsPage" />
           </Route>

@@ -40,12 +40,12 @@ function SideBar(props) {
             to: "/FeeSetUpModule",
             icon: "fa-solid fa-money-bill"
         },
-        {
-            name: "Manage Payment",
-            component: "PaymentDetails",
-            transform: "Manage Payment",
-            to: "/PaymentDetails",
-            icon: "fa-solid fa-money-bill"
+       {
+            name: "Manage Student Fee's",
+            component: "FeePaymentModule",
+            transform: "Manage Student Fee's",
+            to: "/FeePaymentModule",
+            icon: "fa-solid fa-money-bill-wave",
         },
         {
             name: "All Entity",
@@ -75,6 +75,7 @@ function SideBar(props) {
             to: "/ParentsPage",
             icon: "fa-solid fa-user",
         },
+        
         // {
         //     name: "Manage Entity",
         //     component: "EntityPage",

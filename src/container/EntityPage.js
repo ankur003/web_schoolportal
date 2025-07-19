@@ -12,7 +12,6 @@ const EntityPage = () => {
     const dispatch = useDispatch();
     const userRole = sessionStorage.getItem("role");
 
-
     const { entityList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
     const { classList, secList } = useSelector(state => state.manageClassesReducer);
     const [dataList, setDataList] = useState([]);
@@ -23,9 +22,9 @@ const EntityPage = () => {
         className: "",
         sectionName: ""
     });
+
     const [page, setPage] = useState("1");
     const [limit, setLimit] = useState("100");
-
 
     useEffect(() => {
         let data = { page, limit }
