@@ -8,6 +8,7 @@ import { getUserFeeListAction } from '../../Redux/Action/feeManageAction';
 import Loader from '../../components/Loader';
 import NoDataFound from '../../components/NoDataFound';
 import CounterCard from '../../components/CounterCard';
+import { use } from 'react';
 
 export default function FeePaymentModule() {
     const dispatch = useDispatch();
@@ -29,7 +30,9 @@ export default function FeePaymentModule() {
     const [sectionList, setSectionList] = useState([]);
     const [page, setPage] = useState("1");
     const [limit, setLimit] = useState("100");
-
+    const [isModal, setIsModal] = useState(false);
+    const [ModalDataList, setModalData] = useState();
+    console.log({ ModalDataList });
     const classOptionsList = linkList ? linkList?.map(section => ({
         label: section?.className,
         value: section?.masterClassUuid
@@ -75,6 +78,11 @@ export default function FeePaymentModule() {
         id,
         data: values.map((y, i) => ({ x: `Day ${i + 1}`, y })),
     }];
+
+    const showPaymentDetails = (data) => {
+        setIsModal(true);
+        setModalData(data)
+    }
 
     useEffect(() => {
         getUserFeesList();
@@ -161,7 +169,7 @@ export default function FeePaymentModule() {
                         <div className="flex-25 pd-l-5">
                             <div className="form-group">
                                 <button className="btn btn-block btn-success" onClick={() => filterHandler()}>Search</button>
-                                 {/* <button className="btn btn-block btn-success" onClick={() => getUserFeesList()}>Clear</button> */}
+                                {/* <button className="btn btn-block btn-success" onClick={() => getUserFeesList()}>Clear</button> */}
                             </div>
                         </div>
                     </div>
@@ -197,8 +205,8 @@ export default function FeePaymentModule() {
                                                     <td>{data?.paymentDate.length > 0 ? `${data?.paymentDate[0]} - ${data?.paymentDate[1]} - ${data?.paymentDate[2]}` : "N/A"}</td>
                                                     <td>{data?.amountPaid ? data?.amountPaid : "N/A"}</td>
                                                     <td>
-                                                        <button type='button' className="btn btn-primary mr-r-10" onClick={() => " "}>View</button>
-                                                        <button type='button' className="btn btn-success" onClick={() => " "}>Make Payment</button>
+                                                        <button type='button' className="btn btn-primary mr-r-10" onClick={() => showPaymentDetails(data)}>View</button>
+                                                        {/* <button type='button' className="btn btn-success" onClick={() => " "}>Make Payment</button> */}
                                                     </td>
                                                 </tr>
                                             )}
@@ -210,9 +218,87 @@ export default function FeePaymentModule() {
                             <NoDataFound />
                     }
                 </div>
-
-                    
             </div>
+            {isModal &&
+                <div className="modal d-block">
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                        <div className="modal-content payment-modal-content">
+                            <div className="card-container">
+                                <div className="card-header">
+                                    <button className="close-btn" onClick={() => setIsModal(false)} title="Close">×</button>
+                                    <div className="payment-status">✓ PAID</div>
+                                    <h2 className="fee-title">{ModalDataList?.feeName}</h2>
+                                    <p className="fee-type">{ModalDataList?.feeType} Payment</p>
+                                </div>
+
+                                <div className="card-body">
+                                    <div className="info-grid">
+                                        <div className="info-item">
+                                            <span className="info-label">Student Name</span>
+                                            <span className="info-value">{ModalDataList?.fullName ? ModalDataList?.fullName : "N/A"}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <span className="info-label">Class & Section</span>
+                                            <span className="info-value">{ModalDataList?.className ? ModalDataList?.className : "N/A"} {ModalDataList?.classSection ? `Sec - ${ModalDataList?.classSection}` : "N/A"}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <span className="info-label">Roll Number</span>
+                                            <span className="info-value">{ModalDataList?.rollNumber ? ModalDataList?.rollNumber : "N/A"}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <span className="info-label">Fee Month</span>
+                                            <span className="info-value">{ModalDataList?.month ? ModalDataList?.month : "N/A"}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <span className="info-label">Payment Date</span>
+                                            <span className="info-value">{ModalDataList?.paymentDate.length > 0 ? `${ModalDataList?.paymentDate[0]} - ${ModalDataList?.paymentDate[1]} - ${ModalDataList?.paymentDate[2]}` : "N/A"}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <span className="info-label">Academic Year</span>
+                                            <span className="info-value">{ModalDataList?.academicYear ? ModalDataList?.academicYear : "N/A"}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="amount-section">
+                                        <div className="amount-grid">
+                                            <div className="amount-item">
+                                                <span className="amount-label">Total Fee</span>
+                                                <span className="amount-value total">{ModalDataList?.totalFee ? ModalDataList?.totalFee : "N/A"}</span>
+                                            </div>
+                                            <div className="amount-item">
+                                                <span className="amount-label">Discount</span>
+                                                <span className="amount-value discount">{ModalDataList?.discountAmount ? ModalDataList?.discountAmount : "N/A"}</span>
+                                            </div>
+                                            <div className="amount-item">
+                                                <span className="amount-label">Amount Paid</span>
+                                                <span className="amount-value paid">{ModalDataList?.amountPaid ? ModalDataList?.amountPaid : "N/A"}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="transaction-details">
+                                        <div className="transaction-row">
+                                            <span className="transaction-label">Payment Mode:</span>
+                                            <span className="transaction-value">{ModalDataList?.paymentMode ? ModalDataList?.paymentMode : "N/A"}</span>
+                                        </div>
+                                        <div className="transaction-row">
+                                            <span className="transaction-label">Transaction ID:</span>
+                                            <span className="transaction-value transaction-id">{ModalDataList?.transactionId ? ModalDataList?.transactionId : "N/A"}</span>
+                                        </div>
+                                        <div className="transaction-row">
+                                            <span className="transaction-label">Payment UUID:</span>
+                                            <span className="transaction-value transaction-id">80d2f368-728a-46da-b7ec...</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="remarks">
+                                        <p className="remarks-text">{ModalDataList?.remarks ? ModalDataList?.remarks : "N/A"}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>}
         </>
     )
 }
