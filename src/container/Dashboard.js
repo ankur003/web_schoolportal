@@ -81,32 +81,44 @@ export default function Dashboard() {
                 <h1>School Portal Analytics</h1>
             </div>
             <div className="content-body">
-                <div className='counter-wrapper' >
-                    <CounterCard
-                        title="Total Students"
-                        value="1,245"
-                        chartData={createChartData('students', [1120, 1180, 1190, 1210, 1245])}
-                    />
-                    <CounterCard
-                        title="Attendance Rate"
-                        value="92%"
-                        chartData={createChartData('attendance', [88, 90, 91, 92, 92])}
-                    />
-                    <CounterCard
-                        title="Total Teachers"
-                        value="55"
-                        chartData={createChartData('teachers', [45, 48, 50, 52, 55])}
-                    />
-                    <CounterCard
-                        title="Total Classes"
-                        value="35"
-                        chartData={createChartData('classes', [30, 32, 33, 34, 35])}
-                    />
-                    <CounterCard
-                        title="Fees Collected"
-                        value="₹12L"
-                        chartData={createChartData('fees', [8, 9, 10, 11, 12])}
-                    />
+                <div className='counter-wrapper'>
+                    <div className="d-flex w-100">
+                        <div className="flex-20 pd-r-10">
+                            <CounterCard
+                                title="Total Students"
+                                value="1,245"
+                                chartData={createChartData('students', [1120, 1180, 1190, 1210, 1245])}
+                            />
+                        </div>
+                        <div className="flex-20 pd-r-10 pd-l-10">
+                            <CounterCard
+                                title="Attendance Rate"
+                                value="92%"
+                                chartData={createChartData('attendance', [88, 90, 91, 92, 92])}
+                            />
+                        </div>
+                        <div className="flex-20 pd-r-10 pd-l-10">
+                            <CounterCard
+                                title="Total Teachers"
+                                value="55"
+                                chartData={createChartData('teachers', [45, 48, 50, 52, 55])}
+                            />
+                        </div>
+                        <div className="flex-20 pd-r-10 pd-l-10">
+                            <CounterCard
+                                title="Total Classes"
+                                value="35"
+                                chartData={createChartData('classes', [30, 32, 33, 34, 35])}
+                            />
+                        </div>
+                        <div className="flex-20 pd-l-10">
+                            <CounterCard
+                                title="Fees Collected"
+                                value="₹12L"
+                                chartData={createChartData('fees', [8, 9, 10, 11, 12])}
+                            />
+                        </div>
+                    </div>
                 </div>
                 <div className="d-flex">
                     <div className='flex-50 pd-r-20 mr-b-20'>

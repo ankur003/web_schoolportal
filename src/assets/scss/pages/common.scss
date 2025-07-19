@@ -248,7 +248,6 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 20px;
     width: 100%;
-    max-width: 200px;
     flex: '1 1 auto';
 
     h4 {
@@ -303,12 +302,17 @@ body {
     color: $white;
 }
 
-.alert-warning {
+
+
+.alert-warning,
+.badge-warning {
    background: linear-gradient(to right, #fffde7, #fff9c4);
 }
-.alert-success {
+.alert-success,
+.badge-success {
     background: linear-gradient(to right, #e8f5e9, #c8e6c9);
 }
-.alert-info {
+.alert-info,
+.badge-info {
     background: linear-gradient(to right, #e3f2fd, #bbdefb);
 }
