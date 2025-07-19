@@ -393,7 +393,7 @@ export default function FeePaymentModule() {
             {isPaymentModal &&
                 <div className="modal d-block">
                     <div className="modal-dialog modal-lg modal-dialog-centered" role="document">
-                        <div className="modal-content">
+                        <div className="modal-content fee-add-modal">
                             <div className="modal-header">
                                 <h5 className="modal-title">Add Student Fee's</h5>
                                 <button
@@ -458,7 +458,6 @@ export default function FeePaymentModule() {
 
                                     {/* ✅ Common Payment Details */}
                                     <div className="common-details p-3 border rounded bg-light">
-                                        <h6 className="mb-3">Common Payment Details</h6>
                                         <div className="row">
                                             <div className="col-md-4">
                                                 <div className="form-group">
@@ -529,7 +528,7 @@ export default function FeePaymentModule() {
                                             </div>
                                             <div className="col-md-4">
                                                 <div className="form-group">
-                                                    <label className="form-group-label">ransaction ID</label>
+                                                    <label className="form-group-label">Transaction ID</label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
@@ -557,10 +556,8 @@ export default function FeePaymentModule() {
                                     </div>
 
                                     {/* ✅ Fee Amounts */}
-                                    <div className="d-flex">
+                                    <div className="d-flex mr-t-15">
                                         <div className="flex-50 pd-r-5">
-                                            {/* ✅ One-Time Fees (Single Card) */}
-                                            <h6 className="mt-3">One-Time Fees</h6>
                                             <div className="fee-card one-time-fee">
                                                 <div className="fee-card-header">One-Time Fees</div>
                                                 <div className="fee-card-body">
@@ -589,8 +586,6 @@ export default function FeePaymentModule() {
                                         </div>
 
                                         <div className="flex-50 pd-l-5">
-                                            {/* ✅ Monthly Fees (Single Card) */}
-                                            <h6 className="mt-3">Monthly Fees</h6>
                                             <div className="fee-card monthly-fee">
                                                 <div className="fee-card-header">Monthly Fees</div>
                                                 <div className="fee-card-body">
