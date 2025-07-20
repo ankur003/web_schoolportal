@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudentEntities, createUser, linkClassSection, getAllUserDetails } from '../Redux/Action/entityAction';
-import { getClasses } from '../Redux/Action/manageClassAction';
+import { getStudentEntities, createUser, linkClassSection, getAllUserDetails } from '../../Redux/Action/entityAction';
+import { getClasses } from '../../Redux/Action/manageClassAction';
 import Select from 'react-select';
-import { STUDENT, SUPER_ADMIN } from '../Redux/Constants';
+import { STUDENT, SUPER_ADMIN } from '../../Redux/Constants';
 import { useNavigate } from 'react-router-dom';
-import Loader from '../components/Loader';
-import NoDataFound from '../components/NoDataFound';
+import Loader from '../../components/Loader';
+import NoDataFound from '../../components/NoDataFound';
 import { toast } from 'react-toastify';
 
 export default function StudentPage() {

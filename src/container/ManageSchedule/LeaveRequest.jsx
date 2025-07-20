@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { SUPER_ADMIN } from "../Redux/Constants";
-import { getLeaveRequestDetails, leaveRequestAction, leaveRequestApply } from "../Redux/Action/LeaveAndAttandanceAction";
+import { SUPER_ADMIN } from "../../Redux/Constants";
+import { getLeaveRequestDetails, leaveRequestAction, leaveRequestApply } from "../../Redux/Action/LeaveAndAttandanceAction";
+import NoDataFound from "../../components/NoDataFound";
+import Loader from "../../components/Loader";
 
 const LeaveRequest = () => {
     const dispatch = useDispatch();
@@ -118,17 +120,9 @@ const LeaveRequest = () => {
                             </table>
                         </div>
                     ) :
-                        <div className="no-data-found">
-                            <div className="no-data-image">
-                                <img alt='logo' src={require('../assets/images/no-data-found.gif')} />
-                            </div>
-                            <p>no data found</p>
-                        </div> :
-                    <div className="loader-content">
-                        <div className="no-data-image">
-                            <img alt='logo' src={require('../assets/images/loader.gif')} />
-                        </div>
-                    </div>
+                        <NoDataFound />
+                    :
+                    <Loader />
                 }
             </div>
 

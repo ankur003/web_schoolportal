@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTeacherEntities, createUser, linkClassSection } from '../Redux/Action/entityAction';
+import { getTeacherEntities, createUser, linkClassSection } from '../../Redux/Action/entityAction';
 import Select from 'react-select';
-import { getClasses } from '../Redux/Action/manageClassAction';
+import { getClasses } from '../../Redux/Action/manageClassAction';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import NoDataFound from '../components/NoDataFound';
-import Loader from '../components/Loader';
+import NoDataFound from '../../components/NoDataFound';
+import Loader from '../../components/Loader';
 
 export default function TeacherPage() {
     const dispatch = useDispatch()

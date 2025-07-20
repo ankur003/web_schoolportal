@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { MultiSelect } from "react-multi-select-component";
 import { useDispatch, useSelector } from 'react-redux';
-import { getClasses, createClassAndSection } from '../Redux/Action/manageClassAction';
+import { getClasses, createClassAndSection } from '../../Redux/Action/manageClassAction';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import Loader from '../components/Loader';
+import Loader from '../../components/Loader';
 
 function ManageClasses(props) {
     const { t, i18n } = useTranslation();

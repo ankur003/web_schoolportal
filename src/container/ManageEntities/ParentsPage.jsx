@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { MultiSelect } from "react-multi-select-component";
 import Select from 'react-select';
-import Loader from '../components/Loader'
-import NoDataFound from '../components/NoDataFound'
+import Loader from '../../components/Loader'
+import NoDataFound from '../../components/NoDataFound'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getClasses } from '../Redux/Action/manageClassAction';
-import { createUser, getChildrenListByPar, getEntities, getParentEntities, linkedStudent } from '../Redux/Action/entityAction';
+import { getClasses } from '../../Redux/Action/manageClassAction';
+import { createUser, getChildrenListByPar, getEntities, getParentEntities, linkedStudent } from '../../Redux/Action/entityAction';
 import { toast } from 'react-toastify';
-import { SUPER_ADMIN } from '../Redux/Constants';
+import { SUPER_ADMIN } from '../../Redux/Constants';
 
 export default function ParentsPage() {
     const dispatch = useDispatch();

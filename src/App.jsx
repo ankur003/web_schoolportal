@@ -5,22 +5,21 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Bounce, ToastContainer } from 'react-toastify';
 import ProtectedRoute from './container/ProtectedRoute';
 import Login from './components/Login';
-import ManageClasses from './container/ManageClasses';
-import EntityPage from './container/EntityPage';
-import StudentPage from './container/StudentPage';
-import TeacherPage from './container/TeacherPage';
+import ManageClasses from './container/ManageClassSecSubject/ManageClasses';
 import ProfileDetailsPage from './container/ProfileDetailsPage';
 import ForgetPassword from './components/ForgetPassword';
 import ChangePassword from './components/ChangePassword';
 import { Navigate, useLocation } from 'react-router-dom';
-import AttendanceCalendarPage from './container/EntityCalender';
-import LeaveRequest from './container/LeaveRequest';
+import AttendanceCalendarPage from './container/ManageSchedule/EntityCalender';
+import LeaveRequest from './container/ManageSchedule/LeaveRequest';
 import FeeSetUpModule from './container/FeeManagementModule/FeeSetUpModule';
-import PaymentDetails from './container/PaymentDetails';
-import TimeTable from './container/TimeTable';
-import ParentsPage from './container/ParentsPage';
+import TimeTable from './container/ManageSchedule/TimeTable';
+import ParentsPage from './container/ManageEntities/ParentsPage';
 import Dashboard from './container/Dashboard';
 import FeePaymentModule from './container/FeeManagementModule/FeePaymentModule';
+import EntityPage from './container/ManageEntities/EntityPage';
+import StudentPage from './container/ManageEntities/StudentPage';
+import TeacherPage from './container/ManageEntities/TeacherPage';
 
 const App = () => {
   // Assume you have a way to get the user's role, e.g., from localStorage or context

@@ -3,7 +3,7 @@ import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAttandance, getLeaveRequestDetails, leaveRequestApply } from '../Redux/Action/LeaveAndAttandanceAction';
+import { getAttandance, getLeaveRequestDetails, leaveRequestApply } from '../../Redux/Action/LeaveAndAttandanceAction';
 
 export default function AttendanceBigCalendar() {
   const dispatch = useDispatch();
