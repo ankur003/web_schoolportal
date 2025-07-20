@@ -21,9 +21,9 @@ export default function FeePaymentModule() {
     const { userFeeList } = useSelector(state => state.feeManageReducer);
     const { monthlyList, oneTimeList } = useSelector((state) => state.feeManageReducer);
 
-    const totalStudents = new Set(userFeeList?.map(item => item.userUuid)).size;
-    const totalPayments = userFeeList.length;
-    const totalPaymentAmount = userFeeList.reduce((sum, item) => sum + (item.amountPaid || 0), 0);
+    const totalStudents = new Set(userFeeList?.map(item => item?.userUuid)).size;
+    const totalPayments = userFeeList?.length;
+    const totalPaymentAmount = userFeeList?.reduce((sum, item) => sum + (item?.amountPaid || 0), 0);
     const averagePaymentAmount = totalPayments > 0 ? totalPaymentAmount / totalPayments : 0;
 
     const [selectedSections, setSelectedSections] = useState([]);
@@ -418,6 +418,7 @@ export default function FeePaymentModule() {
                                                     name="sections"
                                                     options={classOptionsList}
                                                     value={selectedClass}
+                                                    isClearable
                                                     onChange={handleChange}
                                                     className="basic-multi-select"
                                                     classNamePrefix="select"
@@ -433,6 +434,7 @@ export default function FeePaymentModule() {
                                                     name="sections"
                                                     options={sectionOptionsList}
                                                     value={selectedSections}
+                                                    isClearable
                                                     onChange={handleChangeSections}
                                                     className="basic-multi-select"
                                                     classNamePrefix="select"
@@ -449,6 +451,7 @@ export default function FeePaymentModule() {
                                                     options={userOptions}
                                                     value={selectedUser}
                                                     onChange={setSelectedUser}
+                                                    isClearable
                                                     labelledBy="Select"
                                                     hasSelectAll={false}
                                                 />

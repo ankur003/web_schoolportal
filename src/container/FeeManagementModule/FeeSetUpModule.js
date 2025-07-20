@@ -249,7 +249,7 @@ export default function FeeSetUpModule() {
                                             <span><i className="fa-solid fa-dollar-sign"></i></span> One Time Fee
                                         </h6>
                                         <div className="btn-card-block">
-                                            <button className="btn btn-warning mr-r-5" onClick={() => addOneTime(oneTimeFeeObject.hasOwnProperty("ANNUAL") ? "Edit" : "ADD NEW")}> {oneTimeFeeObject.hasOwnProperty("ANNUAL") ? <i className="fa-solid fa-pen-to-square mr-0"></i> : <i className="fa-solid fa-plus mr-0"></i>}</button>
+                                            <button className="btn btn-warning mr-r-5" onClick={() => addOneTime(oneTimeFeeObject?.hasOwnProperty("ANNUAL") ? "Edit" : "ADD NEW")}> {oneTimeFeeObject?.hasOwnProperty("ANNUAL") ? <i className="fa-solid fa-pen-to-square mr-0"></i> : <i className="fa-solid fa-plus mr-0"></i>}</button>
                                             {!isShowOneTimeInput && <button className="btn btn-secondary" onClick={() => cancelAddOrEdit("OneTime")}><i className="fa-solid fa-xmark mr-0"></i> </button>}
                                         </div>
                                     </div>
@@ -329,7 +329,7 @@ export default function FeeSetUpModule() {
                                             <span><i className="fa-solid fa-dollar-sign"></i></span>Monthly Fees
                                         </h6>
                                         <div className="btn-card-block">
-                                            <button className="btn btn-success mr-r-5" onClick={() => addMontly(monthlyFeeObject.hasOwnProperty("TUITION") ? "Edit" : "ADD NEW")}> {monthlyFeeObject.hasOwnProperty("TUITION") ? <i className="fa-solid fa-pen-to-square mr-0"></i> : <i className="fa-solid fa-plus mr-0"></i>}</button>
+                                            <button className="btn btn-success mr-r-5" onClick={() => addMontly(monthlyFeeObject?.hasOwnProperty("TUITION") ? "Edit" : "ADD NEW")}> {monthlyFeeObject?.hasOwnProperty("TUITION") ? <i className="fa-solid fa-pen-to-square mr-0"></i> : <i className="fa-solid fa-plus mr-0"></i>}</button>
                                             {!isShowMonthlyInput && <button className="btn btn-secondary" onClick={() => cancelAddOrEdit("Monthly")}><i className="fa-solid fa-xmark mr-0"></i> </button>}
                                         </div>
 
