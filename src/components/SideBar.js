@@ -28,7 +28,7 @@ function SideBar(props) {
         },
         {
             name: "Manage Time Table",
-            component: "TimeTable",
+            component: "TimetableSystem",
             transform: "TimeTable",
             to: "/TimeTable",
             icon: "fa-solid fa-table"
@@ -40,7 +40,7 @@ function SideBar(props) {
             to: "/FeeSetUpModule",
             icon: "fa-solid fa-money-bill"
         },
-       {
+        {
             name: "Manage Student Fee's",
             component: "FeePaymentModule",
             transform: "Manage Student Fee's",
@@ -75,7 +75,7 @@ function SideBar(props) {
             to: "/ParentsPage",
             icon: "fa-solid fa-user",
         },
-        
+
         // {
         //     name: "Manage Entity",
         //     component: "EntityPage",
@@ -132,7 +132,7 @@ function SideBar(props) {
         },
         {
             name: "Manage Time Table",
-            component: "TimeTable",
+            component: "TimetableSystem",
             transform: "TimeTable",
             to: "/TimeTable",
             icon: "fa-solid fa-table"
@@ -177,7 +177,7 @@ function SideBar(props) {
         },
         {
             name: "Manage Time Table",
-            component: "TimeTable",
+            component: "TimetableSystem",
             transform: "TimeTable",
             to: "/TimeTable",
             icon: "fa-solid fa-table"
@@ -205,6 +205,13 @@ function SideBar(props) {
             transform: "Parents",
             to: "/ParentsPage",
             icon: "fa-solid fa-user",
+        },
+        {
+            name: "Manage Time Table",
+            component: "TimetableSystem",
+            transform: "TimeTable",
+            to: "/TimeTable",
+            icon: "fa-solid fa-table"
         },
     ];
 

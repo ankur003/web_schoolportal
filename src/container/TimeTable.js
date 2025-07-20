@@ -1,275 +1,485 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, User, BookOpen, Edit3, Trash2, Plus, Eye, Filter, Search, Save, X } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
-const timetableData = {
-    1: {
-        periods: 5,
-        times: ["9:00-9:40", "9:40-10:20", "10:20-10:40", "10:40-11:20", "11:20-12:00"],
-        schedule: {
-            Monday: ["English", "Math", "Break", "Art", "Games"],
-            Tuesday: ["Math", "English", "Break", "Drawing", "Story Time"],
-            Wednesday: ["Hindi", "Math", "Break", "Music", "Play Time"],
-            Thursday: ["English", "EVS", "Break", "Craft", "Games"],
-            Friday: ["Math", "Hindi", "Break", "Dance", "Fun Time"],
-            Saturday: ["English", "Math", "Break", "Art", "Games"],
-        },
-    },
-    2: {
-        periods: 5,
-        times: ["9:00-9:40", "9:40-10:20", "10:20-10:40", "10:40-11:20", "11:20-12:00"],
-        schedule: {
-            Monday: ["English", "Math", "Break", "EVS", "Games"],
-            Tuesday: ["Math", "Hindi", "Break", "Art", "Computer"],
-            Wednesday: ["Hindi", "English", "Break", "Music", "PE"],
-            Thursday: ["Math", "EVS", "Break", "Craft", "Library"],
-            Friday: ["English", "Math", "Break", "Dance", "Games"],
-            Saturday: ["Hindi", "Art", "Break", "Story", "Play"],
-        },
-    },
-    3: {
-        periods: 6,
-        times: ["9:00-9:40", "9:40-10:20", "10:20-11:00", "11:00-11:20", "11:20-12:00", "12:00-12:40"],
-        schedule: {
-            Monday: ["English", "Math", "Science", "Break", "Social", "Games"],
-            Tuesday: ["Math", "Hindi", "English", "Break", "Art", "Computer"],
-            Wednesday: ["Hindi", "Science", "Math", "Break", "Music", "PE"],
-            Thursday: ["English", "Social", "Hindi", "Break", "Craft", "Library"],
-            Friday: ["Math", "Science", "English", "Break", "Dance", "Games"],
-            Saturday: ["Hindi", "Math", "Art", "Break", "Story", "Play"],
-        },
-    },
-    4: {
-        periods: 6,
-        times: ["9:00-9:40", "9:40-10:20", "10:20-11:00", "11:00-11:20", "11:20-12:00", "12:00-12:40"],
-        schedule: {
-            Monday: ["English", "Math", "Science", "Break", "Social", "Games"],
-            Tuesday: ["Math", "Hindi", "English", "Break", "Art", "Computer"],
-            Wednesday: ["Hindi", "Science", "Math", "Break", "Music", "PE"],
-            Thursday: ["English", "Social", "Hindi", "Break", "Craft", "Library"],
-            Friday: ["Math", "Science", "English", "Break", "GK", "Games"],
-            Saturday: ["Hindi", "Math", "Art", "Break", "Moral Sci", "Play"],
-        },
-    },
-    5: {
-        periods: 7,
-        times: [
-            "9:00-9:40",
-            "9:40-10:20",
-            "10:20-11:00",
-            "11:00-11:20",
-            "11:20-12:00",
-            "12:00-12:40",
-            "12:40-1:20",
-        ],
-        schedule: {
-            Monday: ["English", "Math", "Science", "Break", "Social", "Hindi", "Games"],
-            Tuesday: ["Math", "Hindi", "English", "Break", "Art", "Computer", "Music"],
-            Wednesday: ["Hindi", "Science", "Math", "Break", "Social", "PE", "Library"],
-            Thursday: ["English", "Social", "Hindi", "Break", "Science", "Craft", "Games"],
-            Friday: ["Math", "Science", "English", "Break", "GK", "Dance", "Assembly"],
-            Saturday: ["Hindi", "Math", "Art", "Break", "Moral Sci", "Games", "Story"],
-        },
-    },
-    6: {
-        periods: 7,
-        times: [
-            "9:00-9:40",
-            "9:40-10:20",
-            "10:20-11:00",
-            "11:00-11:20",
-            "11:20-12:00",
-            "12:00-12:40",
-            "12:40-1:20",
-        ],
-        schedule: {
-            Monday: ["English", "Math", "Science", "Break", "Social", "Hindi", "Games"],
-            Tuesday: ["Math", "Hindi", "English", "Break", "Art", "Computer", "Music"],
-            Wednesday: ["Hindi", "Science", "Math", "Break", "Social", "PE", "Library"],
-            Thursday: ["English", "Geography", "Hindi", "Break", "Science", "Craft", "Games"],
-            Friday: ["Math", "History", "English", "Break", "Sanskrit", "Dance", "Assembly"],
-            Saturday: ["Hindi", "Math", "Art", "Break", "Moral Sci", "Games", "Activity"],
-        },
-    },
-    7: {
-        periods: 7,
-        times: [
-            "9:00-9:40",
-            "9:40-10:20",
-            "10:20-11:00",
-            "11:00-11:20",
-            "11:20-12:00",
-            "12:00-12:40",
-            "12:40-1:20",
-        ],
-        schedule: {
-            Monday: ["English", "Math", "Science", "Break", "Social", "Hindi", "Games"],
-            Tuesday: ["Math", "Hindi", "Physics", "Break", "Geography", "Computer", "Music"],
-            Wednesday: ["Hindi", "Chemistry", "Math", "Break", "History", "PE", "Library"],
-            Thursday: ["English", "Biology", "Hindi", "Break", "Physics", "Art", "Games"],
-            Friday: ["Math", "History", "English", "Break", "Sanskrit", "Dance", "Assembly"],
-            Saturday: ["Hindi", "Math", "Geography", "Break", "Moral Sci", "Games", "Activity"],
-        },
-    },
-    8: {
-        periods: 7,
-        times: [
-            "9:00-9:40",
-            "9:40-10:20",
-            "10:20-11:00",
-            "11:00-11:20",
-            "11:20-12:00",
-            "12:00-12:40",
-            "12:40-1:20",
-        ],
-        schedule: {
-            Monday: ["English", "Math", "Science", "Break", "Social", "Hindi", "Games"],
-            Tuesday: ["Math", "Hindi", "Physics", "Break", "Geography", "Computer", "Music"],
-            Wednesday: ["Hindi", "Chemistry", "Math", "Break", "History", "PE", "Library"],
-            Thursday: ["English", "Biology", "Hindi", "Break", "Physics", "Art", "Games"],
-            Friday: ["Math", "History", "English", "Break", "Sanskrit", "Dance", "Assembly"],
-            Saturday: ["Hindi", "Math", "Geography", "Break", "Civics", "Games", "Activity"],
-        },
-    },
-    9: {
-        periods: 7,
-        times: [
-            "9:00-9:40",
-            "9:40-10:20",
-            "10:20-11:00",
-            "11:00-11:20",
-            "11:20-12:00",
-            "12:00-12:40",
-            "12:40-1:20",
-        ],
-        schedule: {
-            Monday: ["English", "Math", "Physics", "Break", "Chemistry", "Hindi", "Games"],
-            Tuesday: ["Math", "Hindi", "Biology", "Break", "History", "Computer", "Music"],
-            Wednesday: ["Hindi", "Physics", "Math", "Break", "Geography", "PE", "Library"],
-            Thursday: ["English", "Chemistry", "Hindi", "Break", "Biology", "Art", "Games"],
-            Friday: ["Math", "History", "English", "Break", "Sanskrit", "Economics", "Assembly"],
-            Saturday: ["Hindi", "Math", "Geography", "Break", "Civics", "Games", "Activity"],
-        },
-    },
-    10: {
-        periods: 7,
-        times: [
-            "9:00-9:40",
-            "9:40-10:20",
-            "10:20-11:00",
-            "11:00-11:20",
-            "11:20-12:00",
-            "12:00-12:40",
-            "12:40-1:20",
-        ],
-        schedule: {
-            Monday: ["English", "Math", "Physics", "Break", "Chemistry", "Hindi", "Games"],
-            Tuesday: ["Math", "Hindi", "Biology", "Break", "History", "Computer", "Music"],
-            Wednesday: ["Hindi", "Physics", "Math", "Break", "Geography", "PE", "Library"],
-            Thursday: ["English", "Chemistry", "Hindi", "Break", "Biology", "Art", "Games"],
-            Friday: ["Math", "History", "English", "Break", "Sanskrit", "Economics", "Assembly"],
-            Saturday: ["Hindi", "Math", "Geography", "Break", "Civics", "Games", "Activity"],
-        },
-    },
-};
+const TimetableSystem = () => {
+    const userRole = useSelector(state => state.loginReducer.role);
+    console.log({ userRole })
+    const [timetables, setTimetables] = useState([]);
+    const [classes, setClasses] = useState(['Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5']);
+    const [teachers, setTeachers] = useState(['Mr. Smith', 'Ms. Johnson', 'Dr. Brown', 'Mrs. Davis', 'Prof. Wilson']);
+    const [subjects, setSubjects] = useState(['Mathematics', 'English', 'Science', 'History', 'Geography', 'Art', 'PE']);
+    const [rooms, setRooms] = useState(['Room 101', 'Room 102', 'Room 201', 'Room 202', 'Lab 1', 'Lab 2', 'Gym', 'Art Room']);
+    // const [userRole, setUserRole] = useState('SUPER_ADMIN'); // 'SUPER_ADMIN', 'teacher', 'student'
+    const [selectedClass, setSelectedClass] = useState('Class 1');
+    const [selectedTeacher, setSelectedTeacher] = useState('Mr. Smith');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingEntry, setEditingEntry] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
-const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const timeSlots = [
+        '08:00 - 08:45',
+        '08:45 - 09:30',
+        '09:30 - 10:15',
+        '10:15 - 10:30',
+        '10:30 - 11:15',// Break
+        '11:15 - 12:00',
+        '12:00 - 12:45',
+        '12:45 - 13:30',
+        '13:30 - 14:15'
+    ];
 
-function TimeTable() {
-    const [currentClass, setCurrentClass] = useState(1);
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
-    const handleClassChange = (classNumber) => {
-        setCurrentClass(classNumber);
+    // Sample initial data
+    useEffect(() => {
+        const sampleData = [
+            {
+                id: 1,
+                class: 'Class 1',
+                day: 'Monday',
+                timeSlot: '08:00 - 08:45',
+                subject: 'Mathematics',
+                teacher: 'Mr. Smith',
+                room: 'Room 101'
+            },
+            {
+                id: 2,
+                class: 'Class 1',
+                day: 'Monday',
+                timeSlot: '08:45 - 09:30',
+                subject: 'English',
+                teacher: 'Ms. Johnson',
+                room: 'Room 102'
+            },
+            {
+                id: 3,
+                class: 'Class 1',
+                day: 'Tuesday',
+                timeSlot: '08:00 - 08:45',
+                subject: 'Science',
+                teacher: 'Dr. Brown',
+                room: 'Lab 1'
+            },
+            {
+                id: 4,
+                class: 'Class 1',
+                day: 'Wednesday',
+                timeSlot: '09:30 - 10:15',
+                subject: 'History',
+                teacher: 'Mrs. Davis',
+                room: 'Room 201'
+            },
+            {
+                id: 5,
+                class: 'Class 2',
+                day: 'Tuesday',
+                timeSlot: '08:00 - 08:45',
+                subject: 'Science',
+                teacher: 'Dr. Brown',
+                room: 'Lab 1'
+            }
+        ];
+        setTimetables(sampleData);
+    }, []);
+
+    const [formData, setFormData] = useState({
+        class: '',
+        day: '',
+        timeSlot: '',
+        subject: '',
+        teacher: '',
+        room: ''
+    });
+
+    const handleInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
     };
 
-    const data = timetableData[currentClass];
+    const handleSubmit = () => {
+        // Basic validation
+        if (!formData.class || !formData.day || !formData.timeSlot || !formData.subject || !formData.teacher || !formData.room) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        if (editingEntry) {
+            setTimetables(timetables.map(item =>
+                item.id === editingEntry.id ? { ...formData, id: editingEntry.id } : item
+            ));
+        } else {
+            const newEntry = {
+                ...formData,
+                id: Date.now()
+            };
+            setTimetables([...timetables, newEntry]);
+        }
+        resetForm();
+    };
+
+    const handleEdit = (entry) => {
+        setEditingEntry(entry);
+        setFormData(entry);
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = (id) => {
+        if (window.confirm('Are you sure you want to delete this entry?')) {
+            setTimetables(timetables.filter(item => item.id !== id));
+        }
+    };
+
+    const handleAddToSlot = (day, timeSlot) => {
+        setFormData({
+            class: selectedClass,
+            day: day,
+            timeSlot: timeSlot,
+            subject: '',
+            teacher: '',
+            room: ''
+        });
+        setEditingEntry(null);
+        setIsModalOpen(true);
+    };
+
+    const resetForm = () => {
+        setFormData({
+            class: '',
+            day: '',
+            timeSlot: '',
+            subject: '',
+            teacher: '',
+            room: ''
+        });
+        setEditingEntry(null);
+        setIsModalOpen(false);
+    };
+
+    const getClassTimetable = (className) => {
+        return timetables.filter(item => item.class === className);
+    };
+
+    const getTeacherTimetable = (teacherName) => {
+        return timetables.filter(item => item.teacher === teacherName);
+    };
+
+    const getSubjectColor = (subject) => {
+        const colors = {
+            'Mathematics': 'subject-math',
+            'English': 'subject-english',
+            'Science': 'subject-science',
+            'History': 'subject-history',
+            'Geography': 'subject-geography',
+            'Art': 'subject-art',
+            'PE': 'subject-pe'
+        };
+        return colors[subject] || 'subject-default';
+    };
+
+    const renderTimetableGrid = (data, title, showAddButtons = false) => {
+        const grid = {};
+
+        // Initialize grid
+        days.forEach(day => {
+            grid[day] = {};
+            timeSlots.forEach(slot => {
+                grid[day][slot] = null;
+            });
+        });
+
+        // Fill grid with data
+        data.forEach(item => {
+            if (grid[item.day]) {
+                grid[item.day][item.timeSlot] = item;
+            }
+        });
+
+        return (
+            <div className="timetable-container">
+                <h3 className="timetable-title">{title}</h3>
+                <div className="timetable-overflow">
+                    <div className="timetable-grid">
+                        {/* Header */}
+                        <div className="timetable-header-cell">
+                            Time
+                        </div>
+                        {days.map(day => (
+                            <div key={day} className="timetable-header-cell">
+                                {day}
+                            </div>
+                        ))}
+
+                        {/* Time slots */}
+                        {timeSlots.map(slot => (
+                            <React.Fragment key={slot}>
+                                <div className="timetable-time-cell">
+                                    {slot}
+                                </div>
+                                {days.map(day => {
+                                    const entry = grid[day][slot];
+                                    const isBreak = slot === '10:30 - 11:15'
+                                        // || slot === '12:45 - 13:30'
+                                        ;
+
+                                    return (
+                                        <div key={`${day}-${slot}`} className="timetable-slot">
+                                            {isBreak ? (
+                                                <div className="break-cell">
+                                                    {slot === '10:30 - 11:15' ? 'Lunch' : 'Beak'}
+                                                </div>
+                                            ) : entry ? (
+                                                <div className={`subject-cell ${getSubjectColor(entry.subject)} ${showAddButtons ? 'editable' : ''}`}>
+                                                    <div className="subject-name">{entry.subject}</div>
+                                                    <div className="teacher-name">{entry.teacher}</div>
+                                                    <div className="room-name">{entry.room}</div>
+                                                    {showAddButtons && (
+                                                        <div className="action-buttons">
+                                                            <button
+                                                                onClick={() => handleEdit(entry)}
+                                                                className="edit-btn"
+                                                            >
+                                                                <Edit3 size={12} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDelete(entry.id)}
+                                                                className="delete-btn"
+                                                            >
+                                                                <Trash2 size={12} />
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div className="empty-cell">
+                                                    {showAddButtons ? (
+                                                        <button
+                                                            onClick={() => handleAddToSlot(day, slot)}
+                                                            className="add-slot-btn"
+                                                        >
+                                                            <Plus size={16} className="add-icon" />
+                                                            <span className="add-text">Add Class</span>
+                                                        </button>
+                                                    ) : (
+                                                        <span className="free-text">Free</span>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const getCurrentViewData = () => {
+        switch (userRole) {
+            case 'SUPER_ADMIN':
+                return getClassTimetable(selectedClass);
+            case 'teacher':
+                return getTeacherTimetable(selectedTeacher);
+            case 'student':
+                return getClassTimetable(selectedClass);
+            default:
+                return [];
+        }
+    };
+
+    const getCurrentTitle = () => {
+        switch (userRole) {
+            case 'SUPER_ADMIN':
+                return `${selectedClass}`;
+            case 'teacher':
+                return `${selectedTeacher}`;
+            case 'student':
+                return `${selectedClass}`;
+            default:
+                return 'Timetable';
+        }
+    };
 
     return (
         <>
             <div className="header">
-                <h1>Time Tables</h1>
-                <div className="header-right">
-                    <button type="button" className="btn btn-outline-light">Add Time Table</button>
-                </div>
+                <h1>Timetable Management</h1>
             </div>
             <div className="content-body">
-                <div className="timeTablecontainer">
-                    <div className="class-selector">
-                        {[...Array(10)].map((_, idx) => (
-                            <button
-                                key={idx + 1}
-                                className={`class-btn${currentClass === idx + 1 ? " active" : ""}`}
-                                onClick={() => handleClassChange(idx + 1)}
-                            >
-                                Class {idx + 1}
-                            </button>
-                        ))}
-                    </div>
+                <div className="content-filter">
+                    <div className='d-flex'>
+                        {userRole === 'SUPER_ADMIN' && (
+                            <div className="flex-25 pd-l-5 pd-r-5">
+                                <div className="form-group">
 
-                    <div className="timetable-container">
-                        {/* <h2 className="class-title">Class {currentClass} - Timetable</h2> */}
-                        <div className="timetable">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Day</th>
-                                        {data.times.map((time, idx) => (
-                                            <th key={idx}>
-                                                Period {idx + 1}
-                                                <br />
-                                                <span className="period-time">{time}</span>
-                                            </th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {days.map((day) => (
-                                        <tr key={day}>
-                                            <td className="day-cell">{day}</td>
-                                            {data.schedule[day].map((subject, idx) => {
-                                                if (subject === "Break") {
-                                                    return (
-                                                        <td className="break-cell" key={idx}>
-                                                            🍽️ {subject}
-                                                        </td>
-                                                    );
-                                                } else if (subject === "Free" || subject === "") {
-                                                    return (
-                                                        <td className="empty-cell" key={idx}>
-                                                            Free Period
-                                                        </td>
-                                                    );
-                                                } else {
-                                                    return (
-                                                        <td className="subject-cell" key={idx}>
-                                                            {subject}
-                                                        </td>
-                                                    );
-                                                }
-                                            })}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    <>
+                                        <select
+                                            className="form-control"
+                                            value={selectedClass}
+                                            onChange={(e) => setSelectedClass(e.target.value)}
+                                        >
+                                            {classes.map(cls => (
+                                                <option key={cls} value={cls}>{cls}</option>
+                                            ))}
+                                        </select>
+                                    </>
 
-                        <div className="legend">
-                            <div className="legend-item">
-                                <div className="legend-color legend-subject"></div>
-                                <span>Subject</span>
+                                </div>
                             </div>
-                            <div className="legend-item">
-                                <div className="legend-color legend-break"></div>
-                                <span>Break</span>
-                            </div>
-                            <div className="legend-item">
-                                <div className="legend-color legend-empty"></div>
-                                <span>Free Period</span>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
+                <div className="timetable-system">
+                    <>
+                        {/* Main Timetable View */}
+                        {renderTimetableGrid(
+                            getCurrentViewData(),
+                            getCurrentTitle(),
+                            userRole === 'SUPER_ADMIN'
+                        )}
+
+                        {/* Modal */}
+                        {isModalOpen && userRole === 'SUPER_ADMIN' && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h3 className="modal-title">
+                                            {editingEntry ? 'Edit Timetable Entry' : 'Add Timetable Entry'}
+                                        </h3>
+                                        <button
+                                            onClick={resetForm}
+                                            className="close-button"
+                                        >
+                                            <X size={24} />
+                                        </button>
+                                    </div>
+
+                                    <div className="modal-body">
+                                        <div className="form-group">
+                                            <label className="form-label">Class</label>
+                                            <select
+                                                name="class"
+                                                value={formData.class}
+                                                onChange={handleInputChange}
+                                                className="form-select"
+                                                required
+                                            >
+                                                <option value="">Select Class</option>
+                                                {classes.map(cls => (
+                                                    <option key={cls} value={cls}>{cls}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">Day</label>
+                                            <select
+                                                name="day"
+                                                value={formData.day}
+                                                onChange={handleInputChange}
+                                                className="form-select"
+                                                required
+                                            >
+                                                <option value="">Select Day</option>
+                                                {days.map(day => (
+                                                    <option key={day} value={day}>{day}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">Time Slot</label>
+                                            <select
+                                                name="timeSlot"
+                                                value={formData.timeSlot}
+                                                onChange={handleInputChange}
+                                                className="form-select"
+                                                required
+                                            >
+                                                <option value="">Select Time Slot</option>
+                                                {timeSlots.filter(slot => slot !== '10:15 - 10:30' && slot !== '12:45 - 13:30').map(slot => (
+                                                    <option key={slot} value={slot}>{slot}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">Subject</label>
+                                            <select
+                                                name="subject"
+                                                value={formData.subject}
+                                                onChange={handleInputChange}
+                                                className="form-select"
+                                                required
+                                            >
+                                                <option value="">Select Subject</option>
+                                                {subjects.map(subject => (
+                                                    <option key={subject} value={subject}>{subject}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">Teacher</label>
+                                            <select
+                                                name="teacher"
+                                                value={formData.teacher}
+                                                onChange={handleInputChange}
+                                                className="form-select"
+                                                required
+                                            >
+                                                <option value="">Select Teacher</option>
+                                                {teachers.map(teacher => (
+                                                    <option key={teacher} value={teacher}>{teacher}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">Room</label>
+                                            <select
+                                                name="room"
+                                                value={formData.room}
+                                                onChange={handleInputChange}
+                                                className="form-select"
+                                                required
+                                            >
+                                                <option value="">Select Room</option>
+                                                {rooms.map(room => (
+                                                    <option key={room} value={room}>{room}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="modal-footer">
+                                            <button
+                                                onClick={handleSubmit}
+                                                className="submit-button"
+                                            >
+                                                <Save size={16} />
+                                                {editingEntry ? 'Update' : 'Add'} Entry
+                                            </button>
+                                            <button
+                                                onClick={resetForm}
+                                                className="cancel-button"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                </div>
             </div>
+
         </>
     );
-}
+};
 
-export default TimeTable;
+export default TimetableSystem;
