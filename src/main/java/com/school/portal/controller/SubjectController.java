@@ -1,28 +1,28 @@
 package com.school.portal.controller;
+
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.school.portal.dto.SubjectDTO;
-import com.school.portal.service.impl.SubjectService;
+import com.school.portal.dto.SubjectFilterDto;
+import com.school.portal.dto.SubjectRequestDto;
+import com.school.portal.dto.SubjectResponseDto;
+import com.school.portal.dto.UniqueSubjectDto;
+import com.school.portal.requests.ClassSubjectLinkRequestDto;
+import com.school.portal.service.SubjectService;
 
 @RestController
 @RequestMapping("/api/v1/subjects")
@@ -32,70 +32,106 @@ public class SubjectController {
     @Autowired
     private SubjectService subjectService;
     
-    // GET /api/subjects - Get all active subjects
+    /**
+     * Create a new subject
+     */
+    @PutMapping
+    public ResponseEntity<Object> createOrUpdateSubject(
+            @Valid @RequestBody SubjectRequestDto requestDto) {
+        
+        subjectService.createOrUpdateSubject(requestDto);
+       
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/link")
+    public ResponseEntity<Object> createOrUpdateClassSubjectLinkage(
+            @Valid @RequestBody ClassSubjectLinkRequestDto classSubjectLinkRequestDto) {
+        
+    	subjectService.createOrUpdateClassSubjectLinkage(classSubjectLinkRequestDto);
+    	
+    	subjectService.deLinkClassSubject(classSubjectLinkRequestDto);
+       
+        return ResponseEntity.ok().build();
+    }
+    
+    /**
+     * Get subjects with optional filters
+     */
     @GetMapping
-    public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
-        List<SubjectDTO> subjects = subjectService.getAllActiveSubjects();
-        return ResponseEntity.ok(subjects);
-    }
-    
-    // GET /api/subjects/paginated - Get subjects with pagination
-    @GetMapping("/")
-    public ResponseEntity<Page<SubjectDTO>> getAllSubjectsPaginated(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "subjectId") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
+    public ResponseEntity<ApiResponse<List<SubjectResponseDto>>> getSubjects(
+            @RequestParam(required = false) String classUuid,
+            @RequestParam(required = false) String sectionUuid,
+            @RequestParam(required = false) Integer subjectId) {
         
-        Sort sort = sortDir.equalsIgnoreCase("desc") ? 
-            Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        SubjectFilterDto filterDto = new SubjectFilterDto(classUuid, sectionUuid, subjectId);
+        List<SubjectResponseDto> subjects = subjectService.getSubjectsWithFilters(filterDto);
         
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<SubjectDTO> subjects = subjectService.getAllActiveSubjects(pageable);
-        return ResponseEntity.ok(subjects);
+        ApiResponse<List<SubjectResponseDto>> response = new ApiResponse<>(
+                true,
+                "Subjects retrieved successfully",
+                subjects
+        );
+        
+        return ResponseEntity.ok(response);
     }
     
-    // GET /api/subjects/{id} - Get subject by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<SubjectDTO> getSubjectById(@PathVariable Integer id) {
-        SubjectDTO subject = subjectService.getSubjectById(id);
-        return ResponseEntity.ok(subject);
+    @GetMapping("/list")
+    public ResponseEntity<Object> getSubjectsAsList() {
+        
+    	List<UniqueSubjectDto> dtos = subjectService.getSubjectsAsList();
+        
+        
+        return ResponseEntity.ok(dtos);
     }
     
-    // POST /api/subjects - Create new subject
-    @PostMapping("/")
-    public ResponseEntity<SubjectDTO> createSubject(@Valid @RequestBody SubjectDTO subjectDTO) {
-        SubjectDTO createdSubject = subjectService.createSubject(subjectDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdSubject);
+    /**
+     * Delete subject (soft delete)
+     */
+    @DeleteMapping("/{subjectId}")
+    public ResponseEntity<ApiResponse<String>> deleteSubject(@PathVariable Integer subjectId) {
+        
+        subjectService.deleteSubject(subjectId);
+        
+        ApiResponse<String> response = new ApiResponse<>(
+                true,
+                "Subject deleted successfully",
+                null
+        );
+        
+        return ResponseEntity.ok(response);
+    }
+}
+
+// API Response wrapper class
+
+class ApiResponse<T> {
+    private boolean success;
+    private String message;
+    private T data;
+    private long timestamp;
+    
+    public ApiResponse() {
+        this.timestamp = System.currentTimeMillis();
     }
     
-    // PUT /api/subjects/{id} - Update subject
-    @PutMapping("/{id}")
-    public ResponseEntity<SubjectDTO> updateSubject(
-            @PathVariable Integer id, 
-            @Valid @RequestBody SubjectDTO subjectDTO) {
-        SubjectDTO updatedSubject = subjectService.updateSubject(id, subjectDTO);
-        return ResponseEntity.ok(updatedSubject);
+    public ApiResponse(boolean success, String message, T data) {
+        this();
+        this.success = success;
+        this.message = message;
+        this.data = data;
     }
     
-    // DELETE /api/subjects/{id} - Soft delete subject
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSubject(@PathVariable Integer id) {
-        subjectService.deleteSubject(id);
-        return ResponseEntity.noContent().build();
-    }
+    // Getters and Setters
+    public boolean isSuccess() { return success; }
+    public void setSuccess(boolean success) { this.success = success; }
     
-    // PUT /api/subjects/{id}/restore - Restore soft deleted subject
-    @PutMapping("/{id}/restore")
-    public ResponseEntity<SubjectDTO> restoreSubject(@PathVariable Integer id) {
-        SubjectDTO restoredSubject = subjectService.restoreSubject(id);
-        return ResponseEntity.ok(restoredSubject);
-    }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
     
-    // GET /api/subjects/search - Search subjects by name
-    @GetMapping("/search")
-    public ResponseEntity<List<SubjectDTO>> searchSubjects(@RequestParam String name) {
-        List<SubjectDTO> subjects = subjectService.searchSubjectsByName(name);
-        return ResponseEntity.ok(subjects);
-    }
+    public T getData() { return data; }
+    public void setData(T data) { this.data = data; }
+    
+    public long getTimestamp() { return timestamp; }
+    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ import com.school.portal.service.FeeService;
 
 @RestController
 @RequestMapping("/api/v1/fees")
+@CrossOrigin("*")
 public class FeeController {
 
     @Autowired
@@ -94,6 +96,9 @@ public class FeeController {
     		if (dto.getFeeType().equals(FeeType.MONTHLY) && dto.getMonth() == null) {
         			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     		}
+    		if (!dto.getFeeType().equals(FeeType.MONTHLY) && dto.getMonth() != null) {
+    			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    		}
     		
     		if(!isValidFeeCombination(dto.getFeeType(), dto.getFeeName())) { 
     			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -101,7 +106,10 @@ public class FeeController {
     	}
     	
     	for (FeePaymentRequestDto dto : dtos) { 
-    		feeService.createPayment(dto);
+    		String res = feeService.createPayment(dto);
+    		if (res == null) {
+    			return ResponseEntity.badRequest().build();
+    		}
     	}
     	
         return ResponseEntity.ok().build();

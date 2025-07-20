@@ -1,16 +1,11 @@
 package com.school.portal.domain;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -27,8 +22,16 @@ public class Subject {
     @Column(name = "subject_name", nullable = false, length = 191)
     private String subjectName;
     
-    @Column(name = "subject_code", unique = true, length = 20)
+    private String description;
+    
+    @Column(name = "subject_code", nullable = false, length = 20)
     private String subjectCode;
+    
+    @Column(name = "master_class_id")
+    private Long masterClassId;
+    
+    @Column(name = "master_section_id")
+    private Long masterSectionId;
     
     @Column(name = "max_marks")
     private Integer maxMarks = 100;
@@ -41,12 +44,6 @@ public class Subject {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ClassSubject> classSubjects = new HashSet<>();
-    
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Marks> marks = new HashSet<>();
     
     @Column(name = "is_active")
     private Boolean isActive = true;
@@ -92,11 +89,19 @@ public class Subject {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     
-    public Set<ClassSubject> getClassSubjects() { return classSubjects; }
-    public void setClassSubjects(Set<ClassSubject> classSubjects) { this.classSubjects = classSubjects; }
-    
-    public Set<Marks> getMarks() { return marks; }
-    public void setMarks(Set<Marks> marks) { this.marks = marks; }
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	/**
 	 * @return the isActive
@@ -111,6 +116,34 @@ public class Subject {
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
-    
+
+	/**
+	 * @return the masterClassId
+	 */
+	public Long getMasterClassId() {
+		return masterClassId;
+	}
+
+	/**
+	 * @param masterClassId the masterClassId to set
+	 */
+	public void setMasterClassId(Long masterClassId) {
+		this.masterClassId = masterClassId;
+	}
+
+	/**
+	 * @return the masterSectionId
+	 */
+	public Long getMasterSectionId() {
+		return masterSectionId;
+	}
+
+	/**
+	 * @param masterSectionId the masterSectionId to set
+	 */
+	public void setMasterSectionId(Long masterSectionId) {
+		this.masterSectionId = masterSectionId;
+	}
+
     
 }

@@ -3,53 +3,53 @@ package com.school.portal.repo;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.school.portal.domain.Subject;
 
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
+	
+	List<Subject> findBySubjectNameAndIsActive(String subjectName, Boolean isActive); 
     
-    // Find active subjects
+    // Filter subjects with optional parameters
+    @Query("SELECT s FROM Subject s " +
+           "LEFT JOIN MasterClass mc ON s.masterClassId = mc.masterClassId " +
+           "LEFT JOIN MasterSection ms ON s.masterSectionId = ms.masterSectionId " +
+           "WHERE (:classUuid IS NULL OR mc.masterClassUuid = :classUuid) " +
+           "AND (:sectionUuid IS NULL OR ms.masterSectionUuid = :sectionUuid) " +
+           "AND (:subjectId IS NULL OR s.subjectId = :subjectId) " +
+           "AND s.isActive = true " +
+           "ORDER BY s.subjectName")
+    List<Subject> findSubjectsWithFilters(
+            @Param("classUuid") String classUuid,
+            @Param("sectionUuid") String sectionUuid,
+            @Param("subjectId") Integer subjectId);
+    
+    // Find active subjects only
     List<Subject> findByIsActiveTrue();
     
-    // Find active subjects with pagination
-    Page<Subject> findByIsActiveTrue(Pageable pageable);
-    
-    // Find by subject code (active only)
-    Optional<Subject> findBySubjectCodeAndIsActiveTrue(String subjectCode);
-    
-    // Find by subject name containing (active only)
-    List<Subject> findBySubjectNameContainingIgnoreCaseAndIsActiveTrue(String subjectName);
-    
-    // Find by id and active
+    // Find subject by ID and active status
     Optional<Subject> findBySubjectIdAndIsActiveTrue(Integer subjectId);
-    
-    // Check if subject code exists (excluding current subject)
-    @Query("SELECT COUNT(s) > 0 FROM Subject s WHERE s.subjectCode = :subjectCode AND s.subjectId != :subjectId AND s.isActive = true")
-    boolean existsBySubjectCodeAndSubjectIdNotAndIsActiveTrue(
-        @Param("subjectCode") String subjectCode, 
-        @Param("subjectId") Integer subjectId
-    );
-    
-    // Soft delete subject
-    @Modifying
-    @Transactional
-    @Query("UPDATE Subject s SET s.isActive = false, s.updatedAt = CURRENT_TIMESTAMP WHERE s.subjectId = :subjectId")
-    int softDeleteById(@Param("subjectId") Integer subjectId);
-    
-    // Restore subject
-    @Modifying
-    @Transactional
-    @Query("UPDATE Subject s SET s.isActive = true, s.updatedAt = CURRENT_TIMESTAMP WHERE s.subjectId = :subjectId")
-    int restoreById(@Param("subjectId") Integer subjectId);
-}
 
-// SubjectDTO.java
+	Subject findBySubjectIdAndIsActive(Integer subjectId, Boolean  isTrue);
+
+	Optional<Subject> findBySubjectNameAndMasterClassIdAndMasterSectionIdAndIsActiveTrue(String subjectName, Long masterClassId,
+			Long masterSectionId);
+
+	Optional<Subject> findBySubjectNameAndMasterClassIdAndIsActiveTrue(String subjectName, Long masterClassId);
+
+	List<Subject> findBySubjectNameAndIsActiveTrue(String subjectName);
+
+	List<Subject>  findByMasterClassIdAndIsActiveTrue(Long mcId);
+
+	List<Subject> findByMasterClassIdAndMasterSectionIdAndIsActiveTrue(Long mcId, Long msId);
+
+	
+    
+}
+    
+    
