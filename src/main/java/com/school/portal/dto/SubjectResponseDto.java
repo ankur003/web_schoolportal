@@ -2,6 +2,8 @@ package com.school.portal.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class SubjectResponseDto {
     
     private Integer subjectId;
@@ -13,7 +15,9 @@ public class SubjectResponseDto {
     private String sectionName;
     private Integer maxMarks;
     private Integer passMarks;
+   // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+   // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
     private Boolean isActive;
     
