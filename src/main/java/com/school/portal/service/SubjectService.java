@@ -4,6 +4,7 @@ package com.school.portal.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -295,7 +296,7 @@ public class SubjectService {
 			for (Subject subject : subjects) {
 				if (uniqueSubjectNames.contains(subject.getSubjectName())) {
 					subject.setIsActive(false);
-					subjectRepository.save(subject);
+					subjectRepository.delete(subject);
 				}
 			}
 		}
@@ -330,7 +331,7 @@ public class SubjectService {
 	
 	@Transactional(readOnly = true)
 	public List<ClassWithSubjectsResponseDto> getSubjectsGroupedByClass(SubjectFilterDto filterDto) {
-	    List<Subject> subjects = subjectRepository.findSubjectsWithFilters(
+	   List<Subject> subjects = subjectRepository.findSubjectsWithFilters(
 	        filterDto.getClassUuid(),
 	        filterDto.getSectionUuid(),
 	        filterDto.getSubjectId()
@@ -339,6 +340,12 @@ public class SubjectService {
 	    if (CollectionUtils.isEmpty(subjects)) {
 	        return Collections.emptyList();
 	    }
+	    
+	    
+	    for (Subject subject : subjects) {
+			
+		}
+	    
 
 	    // Map each subject to SubjectResponseDto
 	    List<SubjectResponseDto> subjectDtos = subjects.stream()

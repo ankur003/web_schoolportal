@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class SubjectResponseDto {
     
-    private Integer subjectId;
+	private Integer subjectId;
     private String subjectName;
     private String subjectCode;
     private String masterClassUuid;

@@ -1,6 +1,9 @@
 package com.school.portal.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -16,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.school.portal.dto.ClassSectionSubjectDto;
 import com.school.portal.dto.ClassWithSubjectsResponseDto;
+import com.school.portal.dto.SectionSubjectDto;
+import com.school.portal.dto.SubjectDto;
 import com.school.portal.dto.SubjectFilterDto;
 import com.school.portal.dto.SubjectRequestDto;
 import com.school.portal.dto.SubjectResponseDto;
@@ -59,7 +65,7 @@ public class SubjectController {
      * Get subjects with optional filters
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<SubjectResponseDto>>> getSubjects(
+    public ResponseEntity<Object> getSubjects(
             @RequestParam(required = false) String classUuid,
             @RequestParam(required = false) String sectionUuid,
             @RequestParam(required = false) Integer subjectId) {
@@ -67,23 +73,7 @@ public class SubjectController {
         SubjectFilterDto filterDto = new SubjectFilterDto(classUuid, sectionUuid, subjectId);
         List<SubjectResponseDto> subjects = subjectService.getSubjectsWithFilters(filterDto);
         
-        ApiResponse<List<SubjectResponseDto>> response = new ApiResponse<>(
-                true,
-                "Subjects retrieved successfully",
-                subjects
-        );
-        
-        return ResponseEntity.ok(response);
-    }
-    
-    @GetMapping("/subjects/grouped")
-    public ResponseEntity<ApiResponse<List<ClassWithSubjectsResponseDto>>> getSubjectsGrouped(
-            @RequestParam(required = false) String classUuid,
-            @RequestParam(required = false) String sectionUuid,
-            @RequestParam(required = false) Integer subjectId) {
-    	SubjectFilterDto filterDto= new SubjectFilterDto(classUuid,sectionUuid,subjectId);
-        List<ClassWithSubjectsResponseDto> data = subjectService.getSubjectsGroupedByClass(filterDto);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Subjects grouped by class retrieved successfully", data));
+        return ResponseEntity.ok(convertToClassSectionSubjectDto(subjects));
     }
     
     @GetMapping("/list")
@@ -111,6 +101,77 @@ public class SubjectController {
         
         return ResponseEntity.ok(response);
     }
+    
+    
+    public List<ClassSectionSubjectDto> convertToClassSectionSubjectDto(List<SubjectResponseDto> subjectResponseDtos) {
+        // Group by masterClassUuid
+        Map<String, List<SubjectResponseDto>> classGroup = subjectResponseDtos.stream()
+                .collect(Collectors.groupingBy(SubjectResponseDto::getMasterClassUuid));
+
+        List<ClassSectionSubjectDto> result = new ArrayList<>();
+
+        for (Map.Entry<String, List<SubjectResponseDto>> entry : classGroup.entrySet()) {
+            String classUuid = entry.getKey();
+            List<SubjectResponseDto> classSubjects = entry.getValue();
+
+            ClassSectionSubjectDto classDto = new ClassSectionSubjectDto();
+            classDto.setMasterClassUuid(classUuid);
+            classDto.setClassName(classSubjects.get(0).getClassName());
+
+            // Subjects without section (i.e., masterSectionUuid is null)
+            List<SubjectDto> generalSubjects = classSubjects.stream()
+                    .filter(s -> s.getMasterSectionUuid() == null)
+                    .map(this::mapToSubjectDto)
+                    .collect(Collectors.toList());
+            classDto.setSubjects(generalSubjects);
+
+            // Subjects with section (i.e., masterSectionUuid is not null)
+            Map<String, List<SubjectResponseDto>> sectionGroup = classSubjects.stream()
+                    .filter(s -> s.getMasterSectionUuid() != null)
+                    .collect(Collectors.groupingBy(SubjectResponseDto::getMasterSectionUuid));
+
+            List<SectionSubjectDto> sectionSubjectDtos = new ArrayList<>();
+
+            for (Map.Entry<String, List<SubjectResponseDto>> sectionEntry : sectionGroup.entrySet()) {
+                String sectionUuid = sectionEntry.getKey();
+                List<SubjectResponseDto> sectionSubjects = sectionEntry.getValue();
+
+                SectionSubjectDto sectionDto = new SectionSubjectDto();
+                sectionDto.setMasterSectionUuid(sectionUuid);
+                sectionDto.setSectionName(sectionSubjects.get(0).getSectionName());
+
+                List<SubjectDto> subjectDtoList = sectionSubjects.stream()
+                        .map(this::mapToSubjectDto)
+                        .collect(Collectors.toList());
+                sectionDto.setSubjects(subjectDtoList);
+
+                sectionSubjectDtos.add(sectionDto);
+            }
+
+            classDto.setSectionSubjects(sectionSubjectDtos);
+            result.add(classDto);
+        }
+
+        return result;
+    }
+
+
+    // Mapper from SubjectResponseDto to SubjectDto
+    private SubjectDto mapToSubjectDto(SubjectResponseDto s) {
+        SubjectDto dto = new SubjectDto();
+        dto.setSubjectId(s.getSubjectId());
+        dto.setSubjectName(s.getSubjectName());
+        dto.setSubjectCode(s.getSubjectCode());
+        dto.setMaxMarks(s.getMaxMarks());
+        dto.setPassMarks(s.getPassMarks());
+        dto.setCreatedAt(s.getCreatedAt());
+        dto.setUpdatedAt(s.getUpdatedAt());
+        dto.setIsActive(s.getIsActive());
+        return dto;
+    }
+
+    
+    
 }
 
 // API Response wrapper class
