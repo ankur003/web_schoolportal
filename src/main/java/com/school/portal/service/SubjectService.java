@@ -2,6 +2,7 @@ package com.school.portal.service;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.Subject;
+import com.school.portal.dto.ClassWithSubjectsResponseDto;
 import com.school.portal.dto.SubjectFilterDto;
 import com.school.portal.dto.SubjectRequestDto;
 import com.school.portal.dto.SubjectResponseDto;
@@ -324,4 +326,48 @@ public class SubjectService {
 			    .map(s -> new UniqueSubjectDto(s.getSubjectName(), s.getDescription()))
 			    .collect(Collectors.toList());
 	}
+	
+	
+	@Transactional(readOnly = true)
+	public List<ClassWithSubjectsResponseDto> getSubjectsGroupedByClass(SubjectFilterDto filterDto) {
+	    List<Subject> subjects = subjectRepository.findSubjectsWithFilters(
+	        filterDto.getClassUuid(),
+	        filterDto.getSectionUuid(),
+	        filterDto.getSubjectId()
+	    );
+
+	    if (CollectionUtils.isEmpty(subjects)) {
+	        return Collections.emptyList();
+	    }
+
+	    // Map each subject to SubjectResponseDto
+	    List<SubjectResponseDto> subjectDtos = subjects.stream()
+	            .map(this::mapEntityToResponseWithClassSection)
+	            .collect(Collectors.toList());
+
+	    // Group by className + classUuid
+	    Map<String, List<SubjectResponseDto>> groupedMap = subjectDtos.stream()
+	        .collect(Collectors.groupingBy(dto -> dto.getClassName() + "::" + dto.getMasterClassUuid()));
+
+	    // Convert to nested structure
+	    List<ClassWithSubjectsResponseDto> result = new ArrayList<>();
+	    for (Map.Entry<String, List<SubjectResponseDto>> entry : groupedMap.entrySet()) {
+	        List<SubjectResponseDto> subjectList = entry.getValue();
+	        if (!subjectList.isEmpty()) {
+	            SubjectResponseDto first = subjectList.get(0);
+
+	            ClassWithSubjectsResponseDto dto = new ClassWithSubjectsResponseDto();
+	            dto.setClassName(first.getClassName());
+	            dto.setMasterClassUuid(first.getMasterClassUuid());
+	            dto.setSubjects(subjectList);
+
+	            result.add(dto);
+	        }
+	    }
+
+	    return result;
+	}
+
+	
+	
 }

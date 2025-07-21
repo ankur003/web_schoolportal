@@ -1,7 +1,6 @@
 package com.school.portal.controller;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.school.portal.dto.ClassWithSubjectsResponseDto;
 import com.school.portal.dto.SubjectFilterDto;
 import com.school.portal.dto.SubjectRequestDto;
 import com.school.portal.dto.SubjectResponseDto;
@@ -74,6 +74,16 @@ public class SubjectController {
         );
         
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/subjects/grouped")
+    public ResponseEntity<ApiResponse<List<ClassWithSubjectsResponseDto>>> getSubjectsGrouped(
+            @RequestParam(required = false) String classUuid,
+            @RequestParam(required = false) String sectionUuid,
+            @RequestParam(required = false) Integer subjectId) {
+    	SubjectFilterDto filterDto= new SubjectFilterDto(classUuid,sectionUuid,subjectId);
+        List<ClassWithSubjectsResponseDto> data = subjectService.getSubjectsGroupedByClass(filterDto);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Subjects grouped by class retrieved successfully", data));
     }
     
     @GetMapping("/list")
