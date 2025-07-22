@@ -79,7 +79,7 @@ const EntityPage = () => {
                             <div className="form-group">
                                 <select className="form-control" name="className" placeholder="Select Class" onChange={(e) => setInputFields({ ...inputFields, className: e.target.value })}>
                                     <option>Select Class</option>
-                                    {classList?.map((data, index) =>
+                                    {classList && classList?.map((data, index) =>
                                         <option key={index} value={data?.className}>{data.className}</option>
                                     )}
                                 </select>
@@ -89,7 +89,7 @@ const EntityPage = () => {
                             <div className="form-group">
                                 <select className="form-control" placeholder="Select Section" onChange={(e) => setInputFields({ ...inputFields, sectionName: e.target.value })}>
                                     <option value="">Select Section</option>
-                                    {secList?.map((data, index) =>
+                                    {secList && secList?.map((data, index) =>
                                         <option key={index} value={data?.sectionName}>{data.sectionName}</option>
                                     )}
                                 </select>
