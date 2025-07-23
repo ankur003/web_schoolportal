@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/timetable")
+@CrossOrigin("*")
 public class TeacherTimeTableController {
 
     @Autowired
