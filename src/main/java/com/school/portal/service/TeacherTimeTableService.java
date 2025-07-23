@@ -37,8 +37,9 @@ public class TeacherTimeTableService {
     }
 
     public List<TeacherTimeTableDTO> getByClassAndSection(String classUuid, String sectionUuid) {
-        return timetableRepo.findByClassAndSectionUuid(classUuid, sectionUuid);
+        return timetableRepo.findByClassAndOptionalSection(classUuid, sectionUuid);
     }
+
 
 //    public List<TeacherTimeTable> getBySection(String sectionUuid) {
 //        return timetableRepo.findByMasterSectionUuid(sectionUuid);

@@ -59,13 +59,14 @@ public class TeacherTimeTableController {
         return timetableService.getByTeacher(teacherUuid);
     }
 
-    @GetMapping("/class/{classUuid}")
-    public List<TeacherTimeTableDTO> getByClass(@PathVariable String classUuid) {
-        return timetableService.getByClass(classUuid);
-    }
+//    @GetMapping("/class/{classUuid}")
+//    public List<TeacherTimeTableDTO> getByClass(@PathVariable String classUuid) {
+//        return timetableService.getByClass(classUuid);
+//    }
 
-    @GetMapping("/class/{classUuid}/section/{sectionUuid}")
-    public List<TeacherTimeTableDTO> getByClassAndSection(@PathVariable String classUuid, @PathVariable String sectionUuid) {
+    @GetMapping("/class/{classUuid}")
+    public List<TeacherTimeTableDTO> getByClassAndSection(@PathVariable String classUuid,
+                                                @RequestParam(required = false) String sectionUuid) {
         return timetableService.getByClassAndSection(classUuid, sectionUuid);
     }
 //    @GetMapping("/class/section/{sectionUuid}")

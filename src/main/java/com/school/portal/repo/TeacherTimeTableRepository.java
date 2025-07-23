@@ -61,18 +61,20 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "WHERE t.masterClassUuid = :classUuid")
   List<TeacherTimeTableDTO> findByClassUuid(@Param("classUuid") String classUuid);
 
-  @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
-          "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
-          "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
-          "t.startTime, t.endTime, t.roomNo, " +
-          "u.fullName, mc.className, ms.sectionName) " +
-          "FROM TeacherTimeTable t " +
-          "JOIN User u ON t.teacherUuid = u.userUuid " +
-          "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
-          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
-          "WHERE t.masterClassUuid = :classUuid AND t.masterSectionUuid = :sectionUuid")
-  List<TeacherTimeTableDTO> findByClassAndSectionUuid(@Param("classUuid") String classUuid,
-                                                      @Param("sectionUuid") String sectionUuid);
+    @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
+            "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
+            "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
+            "t.startTime, t.endTime, t.roomNo, " +
+            "u.fullName, mc.className, ms.sectionName) " +
+            "FROM TeacherTimeTable t " +
+            "JOIN User u ON t.teacherUuid = u.userUuid " +
+            "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
+            "LEFT JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+            "WHERE t.masterClassUuid = :classUuid " +
+            "AND (:sectionUuid IS NULL OR t.masterSectionUuid = :sectionUuid)")
+    List<TeacherTimeTableDTO> findByClassAndOptionalSection(@Param("classUuid") String classUuid,
+                                                            @Param("sectionUuid") String sectionUuid);
+
 
   @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
           "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
