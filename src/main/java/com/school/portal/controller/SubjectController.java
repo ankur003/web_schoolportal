@@ -3,6 +3,7 @@ package com.school.portal.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.dto.ClassSectionSubjectDto;
-import com.school.portal.dto.ClassWithSubjectsResponseDto;
 import com.school.portal.dto.SectionSubjectDto;
 import com.school.portal.dto.SubjectDto;
 import com.school.portal.dto.SubjectFilterDto;
@@ -73,7 +73,12 @@ public class SubjectController {
         SubjectFilterDto filterDto = new SubjectFilterDto(classUuid, sectionUuid, subjectId);
         List<SubjectResponseDto> subjects = subjectService.getSubjectsWithFilters(filterDto);
         
-        return ResponseEntity.ok(convertToClassSectionSubjectDto(subjects));
+        List<SubjectResponseDto> validSubjects = subjects.stream()
+                .filter(Objects::nonNull) // remove null objects
+                .filter(s -> s.getMasterClassUuid() != null) // optional: remove entries with null class UUID
+                .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(convertToClassSectionSubjectDto(validSubjects));
     }
     
     @GetMapping("/list")
