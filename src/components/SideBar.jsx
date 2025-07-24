@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+
 function SideBar(props) {
     const [isActive, setIsActive] = useState("Manage classroom");
     const [isSubActive, setSubIsActive] = useState(0);
@@ -11,6 +12,7 @@ function SideBar(props) {
     let { pathname } = useLocation();
     let role = sessionStorage.getItem("role");
     let userId = sessionStorage.getItem("userId");
+    
     let superAdmin = [
         {
             name: "Dashboard",
@@ -75,36 +77,6 @@ function SideBar(props) {
             to: "/ParentsPage",
             icon: "fa-solid fa-user",
         },
-
-        // {
-        //     name: "Manage Entity",
-        //     component: "EntityPage",
-        //     transform: "manageEntity",
-        //     icon: "fa-solid fa-user",
-        //     subNav: [
-        //         {
-        //             name: "All Entity",
-        //             component: "EntityPage",
-        //             transform: "allEntity",
-        //             to: "/EntityPage",
-        //             // icon: "fa-solid fa-user",
-        //         },
-        //         {
-        //             name: "Teachers",
-        //             component: "TeacherPage",
-        //             transform: "teachers",
-        //             to: "/TeacherPage",
-        //             // icon: "fa-solid fa-user",
-        //         },
-        //         {
-        //             name: "Student",
-        //             component: "StudentPage",
-        //             transform: "student",
-        //             to: "/StudentPage",
-        //             // icon: "fa-solid fa-user",
-        //         },
-        //     ]
-        // },
         {
             name: "Leave Requests",
             component: "LeaveRequest",
@@ -112,7 +84,6 @@ function SideBar(props) {
             to: "/LeaveRequest",
             icon: "fa-solid fa-calendar-check",
         }
-
     ];
 
     let TeacherRoutes = [
@@ -144,13 +115,6 @@ function SideBar(props) {
             to: "/StudentPage",
             icon: "fa-solid fa-user",
         },
-        // {
-        //     name: "Attendance",
-        //     component: "AttendancePage",
-        //     transform: "Attendance",
-        //     to: "/AttendanceCalendarPage",
-        //     icon: "fa-solid fa-calendar-check",
-        // },
         {
             name: "Leave Requests",
             component: "LeaveRequest",
@@ -182,13 +146,6 @@ function SideBar(props) {
             to: "/TimeTable",
             icon: "fa-solid fa-table"
         },
-        // {
-        //     name: "Attendance",
-        //     component: "AttendancePage",
-        //     transform: "Attendance",
-        //     to: "/AttendanceCalendarPage",
-        //     icon: "fa-solid fa-user",
-        // },
     ];
 
     let parentRoute = [
@@ -226,10 +183,11 @@ function SideBar(props) {
                 }
             }
         }
-        return null; // Return null if not found
+        return null;
     };
 
     const result = findSubNavIndex(routes, pathname);
+    
     useEffect(() => {
         let activeRoute = routes.find(r => r.to === pathname);
         if (activeRoute === undefined) {
@@ -241,8 +199,6 @@ function SideBar(props) {
             setSubIsActive(0);
         }
     }, []);
-
-
 
     const sideBarHandler = (value) => {
         console.log("value", value);
@@ -264,24 +220,37 @@ function SideBar(props) {
         setSubIsActive(index);
         navigate(`${value.to}`);
     }
+
     return (
-        <div className="side-bar">
+        <div className="side-bar enhanced-sidebar">
             <ul className="mainSubClass">
                 {routes.map((data, index) =>
-                    <li key={index} className={isActive === data?.name ? "active" : " "}>
-                        <a className={data?.subNav ? "collapsed" : ""} data-bs-toggle="collapse" data-bs-target={data?.subNav?.length > 0 ? "#collapseWidthExample" + index : "#collapseWidthExample" + index} onClick={() => sideBarHandler(data)}><span className='icon'><i className={data?.icon}></i></span>{t(data?.transform)}
+                    <li key={index} className={`nav-item ${isActive === data?.name ? "active" : ""}`}>
+                        <a 
+                            className={`nav-link ${data?.subNav ? "collapsed" : ""}`} 
+                            data-bs-toggle="collapse" 
+                            data-bs-target={data?.subNav?.length > 0 ? `#collapseWidthExample${index}` : `#collapseWidthExample${index}`} 
+                            onClick={() => sideBarHandler(data)}
+                        >
+                            <span className='icon'>
+                                <i className={data?.icon}></i>
+                            </span>
+                            <span className="nav-text">{t(data?.transform)}</span>
                             {data?.subNav && <i className="fas fa-chevron-up"></i>}
                         </a>
-                        {data?.subNav?.length > 0 ?
-                            <ul className="subList collapse" id={"collapseWidthExample" + index}>
-                                {data?.subNav?.map((subData, index) =>
-                                    <li key={index} className={Number(isSubActive) === index ? "active" : " "}>
-                                        <a onClick={() => sideSubBarHandler(subData, index)}><span className='icon'><i className="fas fa-circle"></i></span>{t(subData?.transform)}</a>
+                        {data?.subNav?.length > 0 &&
+                            <ul className="subList collapse" id={`collapseWidthExample${index}`}>
+                                {data?.subNav?.map((subData, subIndex) =>
+                                    <li key={subIndex} className={Number(isSubActive) === subIndex ? "active" : ""}>
+                                        <a onClick={() => sideSubBarHandler(subData, subIndex)}>
+                                            <span className='icon'>
+                                                <i className="fas fa-circle"></i>
+                                            </span>
+                                            <span className="sub-nav-text">{t(subData?.transform)}</span>
+                                        </a>
                                     </li>
                                 )}
                             </ul>
-                            :
-                            ""
                         }
                     </li>
                 )}
