@@ -60,6 +60,8 @@
 
                 .btn-outline-light {
                     font-weight: 600;
+                    background: $yellowGradient;
+                    color: $black;
                     &:hover,
                     &:focus {
                         background: $body-gradient;

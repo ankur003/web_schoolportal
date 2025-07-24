@@ -4,12 +4,13 @@ import { MultiSelect } from "react-multi-select-component";
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import { getEntities } from '../../Redux/Action/entityAction';
-import { addStudentFee, getAllFees, getUserFeeListAction } from '../../Redux/Action/feeManageAction';
+import { addStudentFee, getAllFees, getUserFeeByUserId, getUserFeeListAction } from '../../Redux/Action/feeManageAction';
 import Loader from '../../components/Loader';
 import NoDataFound from '../../components/NoDataFound';
 import CounterCard from '../../components/CounterCard';
 import { use } from 'react';
 import { toast } from 'react-toastify';
+import { PARENT, SUPER_ADMIN, TEACHER } from '../../Redux/Constants';
 
 export default function FeePaymentModule() {
     const dispatch = useDispatch();
@@ -17,9 +18,11 @@ export default function FeePaymentModule() {
     const [isPending, startTransition] = useTransition();
 
     const { linkList } = useSelector(state => state.manageClassesReducer);
-    const { entityList } = useSelector(state => state.entityReducer);
+    const { entityList, feeUserId } = useSelector(state => state.entityReducer);
+    console.log({feeUserId})
     const { userFeeList } = useSelector(state => state.feeManageReducer);
     const { monthlyList, oneTimeList } = useSelector((state) => state.feeManageReducer);
+    const userRole = useSelector(state => state.loginReducer.role);
 
     const totalStudents = new Set(userFeeList?.map(item => item?.userUuid)).size;
     const totalPayments = userFeeList?.length;
@@ -83,7 +86,7 @@ export default function FeePaymentModule() {
     };
 
     useEffect(() => {
-        if (selectedClass?.value) {
+        if (selectedClass?.value && userRole === SUPER_ADMIN) {
             dispatch(getAllFees({ masterClassUuid: selectedClass.value, feeType: "ONE_TIME" }));
             dispatch(getAllFees({ masterClassUuid: selectedClass.value, feeType: "MONTHLY" }));
         }
@@ -158,7 +161,12 @@ export default function FeePaymentModule() {
 
     const getUserFeesList = (payload) => {
         startTransition(() => {
-            dispatch(getUserFeeListAction(payload));
+            if (userRole === SUPER_ADMIN) {
+                dispatch(getUserFeeListAction(payload));
+            }
+            else {
+                dispatch(getUserFeeByUserId(payload))
+            }
         });
     };
 
@@ -173,98 +181,109 @@ export default function FeePaymentModule() {
     }
 
     useEffect(() => {
-        getUserFeesList();
+        getUserFeesList((userRole === PARENT || userRole === TEACHER) && feeUserId);
     }, []);
 
     return (
         <>
             <div className="header">
                 <h1>Manage Student Fee's</h1>
+
                 <div className="header-right">
-                    <button type="button" className="btn btn-outline-light" onClick={() => { setIsPaymentModal(true); }}>Add Student Fee's</button>
+                    {userRole === SUPER_ADMIN &&
+                        <button type="button" className="btn btn-outline-light" onClick={() => { setIsPaymentModal(true); }}>Add Student Fee's</button>
+                    }
+                    {(userRole === PARENT || userRole === TEACHER) &&
+                        <button type="button" className="btn btn-outline-light" onClick={() => { navigate("/StudentPage") }}>Back</button>
+                    }
                 </div>
+
             </div>
             <div className="content-body">
-                <div className='counter-wrapper' >
-                    <div className="d-flex w-100">
-                        <div className="flex-25 pd-r-10">
-                            <CounterCard
-                                title="Total Collected"
-                                value={totalPaymentAmount}
-                                chartData={createChartData('students', [1120, 1180, 1190, 1210, 1245])}
-                            />
-                        </div>
-                        <div className="flex-25 pd-l-10 pd-r-10">
-                            <CounterCard
-                                title="Total Payments"
-                                value={totalPayments}
-                                chartData={createChartData('attendance', [88, 90, 91, 92, 92])}
-                            />
-                        </div>
-                        <div className="flex-25 pd-r-10 pd-l-10">
-                            <CounterCard
-                                title="Students"
-                                value={totalStudents}
-                                chartData={createChartData('teachers', [45, 48, 50, 52, 55])}
-                            />
-                        </div>
-                        <div className="flex-25 pd-l-10">
-                            <CounterCard
-                                title="Average Fee's"
-                                value={averagePaymentAmount.toFixed(2)}
-                                chartData={createChartData('classes', [30, 32, 33, 34, 35])}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="content-filter">
-                    <div className='d-flex'>
-                        <div className="flex-25 pd-l-5 pd-r-5">
-                            <div className="form-group">
-                                <Select
-                                    name="sections"
-                                    options={classOptionsList}
-                                    value={selectedClass}
-                                    onChange={handleChange}
-                                    className="basic-multi-select"
-                                    classNamePrefix="select"
-                                    placeholder="Select Class"
-                                />
+                {userRole === SUPER_ADMIN &&
+                    <>
+                        <div className='counter-wrapper' >
+                            <div className="d-flex w-100">
+                                <div className="flex-25 pd-r-10">
+                                    <CounterCard
+                                        title="Total Collected"
+                                        value={totalPaymentAmount}
+                                        chartData={createChartData('students', [1120, 1180, 1190, 1210, 1245])}
+                                    />
+                                </div>
+                                <div className="flex-25 pd-l-10 pd-r-10">
+                                    <CounterCard
+                                        title="Total Payments"
+                                        value={totalPayments}
+                                        chartData={createChartData('attendance', [88, 90, 91, 92, 92])}
+                                    />
+                                </div>
+                                <div className="flex-25 pd-r-10 pd-l-10">
+                                    <CounterCard
+                                        title="Students"
+                                        value={totalStudents}
+                                        chartData={createChartData('teachers', [45, 48, 50, 52, 55])}
+                                    />
+                                </div>
+                                <div className="flex-25 pd-l-10">
+                                    <CounterCard
+                                        title="Average Fee's"
+                                        value={averagePaymentAmount.toFixed(2)}
+                                        chartData={createChartData('classes', [30, 32, 33, 34, 35])}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div className="flex-25 pd-l-5 pd-r-5">
-                            <div className="form-group">
-                                <Select
-                                    name="sections"
-                                    options={sectionOptionsList}
-                                    value={selectedSections}
-                                    onChange={handleChangeSections}
-                                    className="basic-multi-select"
-                                    classNamePrefix="select"
-                                    placeholder="Select Sections"
-                                />
+                        <div className="content-filter">
+                            <div className='d-flex'>
+                                <div className="flex-25 pd-l-5 pd-r-5">
+                                    <div className="form-group">
+                                        <Select
+                                            name="sections"
+                                            options={classOptionsList}
+                                            value={selectedClass}
+                                            onChange={handleChange}
+                                            className="basic-multi-select"
+                                            classNamePrefix="select"
+                                            placeholder="Select Class"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex-25 pd-l-5 pd-r-5">
+                                    <div className="form-group">
+                                        <Select
+                                            name="sections"
+                                            options={sectionOptionsList}
+                                            value={selectedSections}
+                                            onChange={handleChangeSections}
+                                            className="basic-multi-select"
+                                            classNamePrefix="select"
+                                            placeholder="Select Sections"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex-25 pd-l-5 pd-r-5">
+                                    <div className="form-group">
+                                        <Select
+                                            name="students"
+                                            options={userOptions}
+                                            value={selectedUser}
+                                            onChange={setSelectedUser}
+                                            labelledBy="Select"
+                                            hasSelectAll={false}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex-25 pd-l-5">
+                                    <div className="form-group">
+                                        <button className="btn btn-block btn-success" onClick={() => filterHandler()}>Search</button>
+                                        {/* <button className="btn btn-block btn-success" onClick={() => getUserFeesList()}>Clear</button> */}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex-25 pd-l-5 pd-r-5">
-                            <div className="form-group">
-                                <Select
-                                    name="students"
-                                    options={userOptions}
-                                    value={selectedUser}
-                                    onChange={setSelectedUser}
-                                    labelledBy="Select"
-                                    hasSelectAll={false}
-                                />
-                            </div>
-                        </div>
-                        <div className="flex-25 pd-l-5">
-                            <div className="form-group">
-                                <button className="btn btn-block btn-success" onClick={() => filterHandler()}>Search</button>
-                                {/* <button className="btn btn-block btn-success" onClick={() => getUserFeesList()}>Clear</button> */}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </>
+                }
                 <div className="user-Fee-wrapper">
                     {isPending ? <Loader /> :
                         userFeeList?.length > 0 ?
@@ -293,7 +312,7 @@ export default function FeePaymentModule() {
                                                     <td>{data?.className ? data?.className : "N/A"} {data?.classSection ? `Sec - ${data?.classSection}` : "N/A"}</td>
                                                     <td>{data?.feeType ? <span className={data?.feeType === "ONE_TIME" ? "badge badge-warning" : "badge badge-success"}>{data?.feeType}</span> : "N/A"}</td>
                                                     <td>{data?.feeName ? data?.feeName : "N/A"}</td>
-                                                    <td>{data?.paymentDate.length > 0 ? `${data?.paymentDate[0]} - ${data?.paymentDate[1]} - ${data?.paymentDate[2]}` : "N/A"}</td>
+                                                    <td>{data?.paymentDate ? data?.paymentDate : "N/A"}</td>
                                                     <td>{data?.amountPaid ? data?.amountPaid : "N/A"}</td>
                                                     <td>
                                                         <button type='button' className="btn btn-primary mr-r-10" onClick={() => showPaymentDetails(data)}>View</button>

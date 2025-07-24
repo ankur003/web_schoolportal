@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getStudentEntities, createUser, linkClassSection, getAllUserDetails } from '../../Redux/Action/entityAction';
+import { getStudentEntities, createUser, linkClassSection, getAllUserDetails, getAllDetrails, getUserDetailsByParent } from '../../Redux/Action/entityAction';
 import { getClasses } from '../../Redux/Action/manageClassAction';
 import Select from 'react-select';
-import { STUDENT, SUPER_ADMIN } from '../../Redux/Constants';
+import { STUDENT, GET_ALL_USER_DETAILS, SUPER_ADMIN, TEACHER, PARENT, GET_CLASS_SECTION, GET_FEE_USER_ID } from '../../Redux/Constants';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import NoDataFound from '../../components/NoDataFound';
@@ -16,7 +16,9 @@ export default function StudentPage() {
     const { studentList, pageLimit, pageCount, loader } = useSelector(state => state.entityReducer);
     const { linkList } = useSelector(state => state.manageClassesReducer);
     const userRole = useSelector(state => state.loginReducer.role);
-    const { classSectionList } = useSelector(state => state.entityReducer);
+    const { classSectionList, userDetails } = useSelector(state => state.entityReducer);
+    const userID = useSelector((state) => state.loginReducer?.loginUserId);
+    console.log({ userDetails, userRole, studentList, userID })
 
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState("1");
@@ -38,9 +40,24 @@ export default function StudentPage() {
     const [userId, setUserId] = useState()
 
     useEffect(() => {
-        let data = { page, limit, userType: "STUDENT", isNotAdmin: userRole === SUPER_ADMIN ? false : true, sectionName: classSectionList?.sectionName, className: classSectionList?.className }
-        dispatch(getStudentEntities(data))
+        
+        if (userRole !== SUPER_ADMIN || userRole !== PARENT) {
+            console.log("api call ")
+            dispatch(getAllDetrails(userID, null));
+        }
+        if (userRole === PARENT) {
+            dispatch(getUserDetailsByParent(userID, null));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (userRole === SUPER_ADMIN) {
+            let data = { page, limit, userType: "STUDENT", isNotAdmin: userRole === SUPER_ADMIN ? false : true, sectionName:classSectionList?.sectionName, className: classSectionList?.className }
+            dispatch(getStudentEntities(data));
+        }
     }, [dispatch]);
+
+
 
     useEffect(() => {
         setDataList(studentList);
@@ -85,7 +102,18 @@ export default function StudentPage() {
 
     const getAllUserDetails = (data) => {
         dispatch({ type: "GET_USER_ID", payload: data });
+        dispatch({ type: GET_ALL_USER_DETAILS, payload: data });
         navigate("/ProfileDetailsPage");
+    }
+
+    const checkTimeTable = (classname, sectionname) => {
+        dispatch({ type: GET_CLASS_SECTION, payload: { classname, sectionname } })
+        navigate("/TimeTable");
+    }
+
+    const getFeeDetailsById = (id) => {
+        dispatch({ type: GET_FEE_USER_ID, payload: id })
+        navigate("/FeePaymentModule");
     }
 
 
@@ -96,6 +124,7 @@ export default function StudentPage() {
                 {userRole === SUPER_ADMIN && <div className="header-right">
                     <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Create Student</button>
                 </div>}
+
             </div>
             <div className="content-body">
                 {loader ?
@@ -136,7 +165,20 @@ export default function StudentPage() {
                                                     <button disabled className="btn btn-danger">Delete</button>
                                                 </>
                                                     :
-                                                    <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
+                                                    <>
+                                                        <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
+                                                        {userRole === PARENT &&
+                                                            <>
+                                                                <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
+                                                                <button type='button' className="btn btn-warning" onClick={() => checkTimeTable(data?.className, data?.sectionName)}>View Time Table</button>
+                                                            </>
+                                                        }
+                                                        {userRole === TEACHER &&
+                                                            <>
+                                                                <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
+                                                            </>
+                                                        }
+                                                    </>
                                                 }
                                             </td>
                                         </tr>

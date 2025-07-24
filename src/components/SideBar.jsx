@@ -200,18 +200,18 @@ function SideBar(props) {
             icon: "fa-solid fa-gauge"
         },
         {
-            name: "Parents",
-            component: "ParentsPage",
-            transform: "Parents",
-            to: "/ParentsPage",
+            name: "Profile Details",
+            component: "ProfileDetailsPage",
+            transform: "Profile",
+            to: "/ProfileDetailsPage",
             icon: "fa-solid fa-user",
         },
         {
-            name: "Manage Time Table",
-            component: "TimetableSystem",
-            transform: "TimeTable",
-            to: "/TimeTable",
-            icon: "fa-solid fa-table"
+            name: "Student",
+            component: "StudentPage",
+            transform: "Childrens",
+            to: "/StudentPage",
+            icon: "fa-solid fa-user",
         },
     ];
 

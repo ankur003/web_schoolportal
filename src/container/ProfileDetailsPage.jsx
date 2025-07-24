@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import EditAllProfileDetails from '../components/EditAllProfileDetails';
 import { getAllUserDetails, updateUserDetails } from '../Redux/Action/entityAction';
-import { SUPER_ADMIN } from '../Redux/Constants';
+import { PARENT, SUPER_ADMIN, TEACHER } from '../Redux/Constants';
 import { toast } from 'react-toastify';
 
 export default function ProfileDetailsPage() {
@@ -46,6 +46,11 @@ export default function ProfileDetailsPage() {
                 {role === SUPER_ADMIN && <div className="header-right">
                     <button type="button" className="btn btn-outline-light" onClick={() => navigate("/EntityPage")}>Back</button>
                 </div>}
+                <div className="header-right">
+                    {(role === PARENT || role === TEACHER) &&
+                        <button type="button" className="btn btn-outline-light" onClick={() => { navigate("/StudentPage") }}>Back</button>
+                    }
+                </div>
             </div>
             <div className="content-body">
                 <div className='profile-content-body'>

@@ -2,8 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, BookOpen, Edit3, Trash2, Plus, Eye, Filter, Search, Save, X, UserCheck } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import { PARENT, SUPER_ADMIN, TEACHER } from '../../Redux/Constants';
+import { useNavigate } from 'react-router-dom';
 
 const TimetableSystem = () => {
+  const navigate = useNavigate();
+  const applicationRole = sessionStorage.getItem("role");
+  const { userId } = useSelector((state) => state.loginReducer);
+  const { classAndSectionName } = useSelector(state => state.entityReducer);
+  console.log({ applicationRole, classAndSectionName });
   const [timetables, setTimetables] = useState([]);
   const [teacherTimetables, setTeacherTimetables] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -104,6 +112,7 @@ const TimetableSystem = () => {
 
   // Auto-select the first available class
   const autoSelectFirstClass = (classesData) => {
+    console.log({ classesData });
     const firstClass = classesData[0];
     if (firstClass) {
       setSelectedClass(firstClass.value);
@@ -133,62 +142,80 @@ const TimetableSystem = () => {
 
   // API call to fetch classes and sections
   const fetchClassesAndSections = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/v1/sa/class-section-link');
-      const data = response.data;
+    if (applicationRole === PARENT || applicationRole === SUPER_ADMIN) {
+      try {
+        const response = await axios.get('http://localhost:8080/api/v1/sa/class-section-link');
+        let data = response.data;
+        console.log({ data })
+        if (applicationRole === PARENT) {
+          console.log("parents")
+          const classLi = data
+            .filter(item => item.className === classAndSectionName?.classname)
+            .map(item => ({
+              ...item,
+              masterSection: item.masterSection.filter(section => section.sectionName === classAndSectionName?.sectionname)
+            }));
+          console.log({ classList: classLi })
+          data = classLi;
+        }
 
-      const classOptions = data.map(item => ({
-        label: item.className,
-        value: item.masterClassUuid,
-        sections: item.masterSection || []
-      }));
+        const classOptions = data.map(item => ({
+          label: item.className,
+          value: item.masterClassUuid,
+          sections: item.masterSection || []
+        }));
 
-      setClasses(classOptions);
-      return classOptions;
+        setClasses(classOptions);
+        return classOptions;
 
-    } catch (error) {
-      console.error('Error fetching classes and sections:', error);
-      return [];
+      } catch (error) {
+        console.error('Error fetching classes and sections:', error);
+        return [];
+      }
     }
   };
 
   // API call to fetch teachers
   const fetchTeachers = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/v1/sa/user?page=1&limit=100&userType=teacher');
-      const teachersData = response.data.data || [];
+    if (applicationRole !== PARENT) {
+      try {
+        const response = await axios.get('http://localhost:8080/api/v1/sa/user?page=1&limit=100&userType=teacher');
+        const teachersData = response.data.data || [];
 
-      const teacherOptions = teachersData.map(teacher => ({
-        label: teacher.fullName,
-        value: teacher.userUuid,
-        username: teacher.username,
-        phoneNo: teacher.phoneNo
-      }));
+        const teacherOptions = teachersData.map(teacher => ({
+          label: teacher.fullName,
+          value: teacher.userUuid,
+          username: teacher.username,
+          phoneNo: teacher.phoneNo
+        }));
 
-      return teacherOptions; // Return the data instead of setting state here
+        return teacherOptions; // Return the data instead of setting state here
 
-    } catch (error) {
-      console.error('Error fetching teachers:', error);
-      return [];
+      } catch (error) {
+        console.error('Error fetching teachers:', error);
+        return [];
+      }
     }
   };
 
   // API call to fetch subjects
   const fetchSubjects = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/v1/subjects/list');
-      const subjectsData = response.data || [];
+    if (applicationRole === SUPER_ADMIN) {
+      try {
+        const response = await axios.get('http://localhost:8080/api/v1/subjects/list');
+        const subjectsData = response.data || [];
 
-      const subjectOptions = subjectsData.map(subject => ({
-        label: subject.subjectName,
-        value: subject.subjectName,
-        description: subject.description
-      }));
+        const subjectOptions = subjectsData.map(subject => ({
+          label: subject.subjectName,
+          value: subject.subjectName,
+          description: subject.description
+        }));
 
-      setSubjects(subjectOptions);
+        setSubjects(subjectOptions);
 
-    } catch (error) {
-      console.error('Error fetching subjects:', error);
+      } catch (error) {
+        console.error('Error fetching subjects:', error);
+      }
     }
   };
 
@@ -352,10 +379,12 @@ const TimetableSystem = () => {
         teacherName: formData.teacher,
         roomNo: formData.room,
         masterClassUuid: selectedClassData?.value || selectedClass,
-        masterSectionUuid: selectedSectionData?.masterSectionUuid || selectedSection || null,
+        masterSectionUuid: selectedSectionData?.masterSectionUuid || selectedSection || "",
         sectionName: formData.section || "",
         teacherUuid: selectedTeacherData?.value || ""
       };
+
+      console.log({ payload })
 
       if (isUpdate && editingEntry?.id) {
         url = `http://localhost:8080/api/v1/timetable?id=${editingEntry?.id}`;
@@ -458,6 +487,14 @@ const TimetableSystem = () => {
     }
   };
 
+  useEffect(() => {
+    if (applicationRole === "TEACHER") {
+      autoSelectFirstTeacher(userId);
+      setViewMode("teacher");
+      setSelectedTeacher(userId);
+    }
+  }, [])
+
   // Handle class selection change
   const handleClassChange = (classUuid) => {
     setSelectedClass(classUuid);
@@ -529,11 +566,11 @@ const TimetableSystem = () => {
   };
 
   const handleSubmit = async () => {
+    console.log({ formData })
     if (!formData.class || !formData.day || !formData.timeSlot || !formData.subject || !formData.teacher || !formData.room) {
       toast.info('Please fill in all fields');
       return;
     }
-
     try {
       await saveTimetableEntry(formData, !!editingEntry);
       resetForm();
@@ -705,7 +742,7 @@ const TimetableSystem = () => {
                           {entry.class && viewMode === 'teacher' && (
                             <div className="class-name">Class: {entry.class}</div>
                           )}
-                          {showAddButtons && (
+                          {(applicationRole === SUPER_ADMIN && showAddButtons) && (
                             <div className="action-buttons">
                               <button
                                 onClick={() => handleEdit(entry)}
@@ -732,17 +769,22 @@ const TimetableSystem = () => {
                         </div>
                       ) : (
                         <div className="empty-cell">
-                          {showAddButtons ? (
-                            <button
-                              onClick={() => handleAddToSlot(day, slot)}
-                              className="add-slot-btn"
-                            >
-                              <Plus size={16} className="add-icon" />
-                              <span className="add-text">Add Class</span>
-                            </button>
-                          ) : (
+                          {applicationRole === SUPER_ADMIN ?
+                            <>
+                              {showAddButtons ? (
+                                <button
+                                  onClick={() => handleAddToSlot(day, slot)}
+                                  className="add-slot-btn"
+                                >
+                                  <Plus size={16} className="add-icon" />
+                                </button>
+                              ) : (
+                                <span className="free-text">Free</span>
+                              )}
+                            </>
+                            :
                             <span className="free-text">Free</span>
-                          )}
+                          }
                         </div>
                       )}
                     </div>
@@ -788,81 +830,88 @@ const TimetableSystem = () => {
     <>
       <div className="header">
         <h1>Time Table's</h1>
+        <div className="header-right">
+          {applicationRole === PARENT &&
+            <button type="button" className="btn btn-outline-light" onClick={() => { navigate("/StudentPage") }}>Back</button>
+          }
+        </div>
       </div>
       <div className="content-body">
         {/* Compact Single Row Filters */}
-        <div className="filters-section">
-          <div className="filters-content">
-            {/* View Mode Toggle */}
-            <div className="filter-item">
-              <label className="filter-label">View Type</label>
-              <div className="view-mode-buttons">
-                <button
-                  className={`view-mode-btn ${viewMode === 'class' ? 'active' : ''}`}
-                  onClick={() => handleViewModeChange('class')}
-                >
-                  <BookOpen size={14} />
-                  Class
-                </button>
-                <button
-                  className={`view-mode-btn ${viewMode === 'teacher' ? 'active' : ''}`}
-                  onClick={() => handleViewModeChange('teacher')}
-                >
-                  <UserCheck size={14} />
-                  Teacher
-                </button>
-              </div>
-            </div>
-
-            {/* Dynamic Filters based on View Mode */}
-            {viewMode === 'class' ? (
-              <>
-                <div className="filter-item">
-                  <label className="filter-label">Class</label>
-                  <select
-                    className="filter-select"
-                    value={selectedClass}
-                    onChange={(e) => handleClassChange(e.target.value)}
-                  >
-                    <option value="">Choose class...</option>
-                    {classes.map(cls => (
-                      <option key={cls.value} value={cls.value}>{cls.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="filter-item">
-                  <label className="filter-label">Section</label>
-                  <select
-                    className="filter-select"
-                    value={selectedSection}
-                    onChange={(e) => handleSectionChange(e.target.value)}
-                    disabled={!selectedClass || sections.length === 0}
-                  >
-                    <option value="">Choose section...</option>
-                    {sections.map(section => (
-                      <option key={section.value} value={section.value}>{section.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </>
-            ) : (
+        {applicationRole === SUPER_ADMIN &&
+          <div className="filters-section">
+            <div className="filters-content">
+              {/* View Mode Toggle */}
               <div className="filter-item">
-                <label className="filter-label">Teacher</label>
-                <select
-                  className="filter-select"
-                  value={selectedTeacher}
-                  onChange={(e) => handleTeacherChange(e.target.value)}
-                >
-                  <option value="">Choose teacher...</option>
-                  {teachers.map(teacher => (
-                    <option key={teacher.value} value={teacher.value}>{teacher.label}</option>
-                  ))}
-                </select>
+                <label className="filter-label">View Type</label>
+                <div className="view-mode-buttons">
+                  <button
+                    className={`view-mode-btn ${viewMode === 'class' ? 'active' : ''}`}
+                    onClick={() => handleViewModeChange('class')}
+                  >
+                    <BookOpen size={14} />
+                    Class
+                  </button>
+                  <button
+                    className={`view-mode-btn ${viewMode === 'teacher' ? 'active' : ''}`}
+                    onClick={() => handleViewModeChange('teacher')}
+                  >
+                    <UserCheck size={14} />
+                    Teacher
+                  </button>
+                </div>
               </div>
-            )}
+
+              {/* Dynamic Filters based on View Mode */}
+              {viewMode === 'class' ? (
+                <>
+                  <div className="filter-item">
+                    <label className="filter-label">Class</label>
+                    <select
+                      className="filter-select"
+                      value={selectedClass}
+                      onChange={(e) => handleClassChange(e.target.value)}
+                    >
+                      <option value="">Choose class...</option>
+                      {classes.map(cls => (
+                        <option key={cls.value} value={cls.value}>{cls.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="filter-item">
+                    <label className="filter-label">Section</label>
+                    <select
+                      className="filter-select"
+                      value={selectedSection}
+                      onChange={(e) => handleSectionChange(e.target.value)}
+                      disabled={!selectedClass || sections.length === 0}
+                    >
+                      <option value="">Choose section...</option>
+                      {sections.map(section => (
+                        <option key={section.value} value={section.value}>{section.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              ) : (
+                <div className="filter-item">
+                  <label className="filter-label">Teacher</label>
+                  <select
+                    className="filter-select"
+                    value={selectedTeacher}
+                    onChange={(e) => handleTeacherChange(e.target.value)}
+                  >
+                    <option value="">Choose teacher...</option>
+                    {teachers.map(teacher => (
+                      <option key={teacher.value} value={teacher.value}>{teacher.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        }
 
         {/* Main Timetable View */}
         {((viewMode === 'class' && selectedClass) || (viewMode === 'teacher' && selectedTeacher)) ? (
@@ -1065,19 +1114,6 @@ const TimetableSystem = () => {
                     </div>
                   </div>
                 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <div className="modal-footer">
                   <button
                     onClick={handleSubmit}
@@ -1102,7 +1138,7 @@ const TimetableSystem = () => {
       </div>
 
       {/* Add spinner CSS */}
-      <style jsx>{`
+      <style jsx="true">{`
         .spinner {
           border: 2px solid rgba(255, 255, 255, 0.3);
           border-top: 2px solid white;

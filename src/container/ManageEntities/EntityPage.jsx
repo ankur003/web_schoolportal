@@ -43,6 +43,7 @@ const EntityPage = () => {
     };
 
     const getAllUserDetails = (data) => {
+        
         dispatch({ type: "GET_USER_ID", payload: data });
         navigate("/ProfileDetailsPage");
     }

@@ -34,10 +34,12 @@ export const GET_MONTHLY_FEE = "GET_MONTHLY_FEE";
 export const SUPER_ADMIN = "SUPER_ADMIN";
 export const TEACHER = "TEACHER";
 export const STUDENT = "STUDENT";
+export const PARENT = "PARENT";
 export const GET_PARENT = "PARENT";
 export const GET_CHILDS_LIST = "GET_CHILDS_LIST";
 export const GET_USER_ID = "GET_USER_ID";
 export const LOGIN_GET_USER_ID = "LOGIN_GET_USER_ID";
+export const GET_FEE_USER_ID = "GET_FEE_USER_ID";
 
 export const SET_TECHER_CLASS_SECTION = "SET_TECHER_CLASS_SECTION";
 
@@ -51,3 +53,4 @@ export const GET_ALL_ATTANDANCE = "GET_ALL_ATTANDANCE";
 
 export const GET_SUBJECT = "GET_SUBJECT";
 export const GET_SUBJECT_LINKED = "GET_SUBJECT_LINKED";
+export const GET_CLASS_SECTION = "GET_CLASS_SECTION";

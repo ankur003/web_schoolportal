@@ -15,6 +15,8 @@ const initialState = {
     pic: "",
     isNavigate: false,
     classSectionList: [],
+    classAndSectionName: {},
+    feeUserId:""
 }
 
 
@@ -93,6 +95,21 @@ export default function entityReducer(state = initialState, action) {
             return {
                 ...state,
                 classSectionList: action.payload
+            }
+        case "GET_USER_DETAILS":
+            return {
+                ...state,
+                userAllDetails: action.payload
+            }
+        case Constants.GET_CLASS_SECTION:
+            return {
+                ...state,
+                classAndSectionName: action.payload
+            }
+        case Constants.GET_FEE_USER_ID:
+            return {
+                ...state,
+                feeUserId: action.payload
             }
         case Constants.RESET_STATE:
             return initialState;

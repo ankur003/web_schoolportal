@@ -2,19 +2,51 @@ import * as Constants from '../Constants';
 import axios from '../../api';
 const basePathUrl = process.env.REACT_APP_BASE_PATH;
 
+export const getAllDetrails = (data) => (dispatch) => {
+    console.log("call this function")
+    dispatch(getAllUserDetails(data));
+}
+
+export const getUserDetailsByParent = (data) => (dispatch) => {
+    console.log({ parentChildren: data })
+    let url = `${basePathUrl}/student-parent-link/by-parent/${data}`;
+    console.log({ url })
+    axios.get(url)
+        .then(response => {
+            console.log({ response })
+            if (response.status === 200) {
+                dispatch({ type: Constants.GET_STUDENT, payload: { data: response?.data } });
+            }
+            else if (response.status === 204) {
+                dispatch({
+                    type: Constants.NO_DATA_FOUND,
+                    payload: response.data
+                })
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
 export const getAllUserDetails = (data) => (dispatch) => {
+    console.log("api call ac", data)
     let url = `${basePathUrl}/sa/user/${data}`;
     axios.get(url)
         .then(response => {
+            console.log("api Res[onse", response)
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_ALL_USER_DETAILS,
                     payload: response.data,
                 })
+                let obj = { page:"1", limit:"100", userType: "STUDENT", isNotAdmin: true, sectionName: response?.data?.sectionName, className: response?.data?.className };
+
                 dispatch({
                     type: Constants.SET_TECHER_CLASS_SECTION,
                     payload: { className: response.data?.className, sectionName: response.data?.sectionName },
                 });
+                dispatch(getStudentEntities(obj));
             }
             else if (response.status === 204) {
                 dispatch({
@@ -89,6 +121,7 @@ export const getTeacherEntities = (data) => (dispatch) => {
 }
 
 export const getStudentEntities = (data) => (dispatch) => {
+    console.log("api data", data);
     let url = "";
     if (data?.isNotAdmin === true) {
         url = `${basePathUrl}/sa/user?page=${data?.page}&limit=${data?.limit}&className=${data?.className}&sectionName=${data?.sectionName}`;
@@ -196,7 +229,7 @@ export const createUser = (data, SetIsModal, toast) => (dispatch) => {
 }
 
 export const linkedStudent = (data, setIsModal, toast) => (dispatch) => {
-     dispatch({ type: Constants.RESET_STATE })
+    dispatch({ type: Constants.RESET_STATE })
     axios.put(`${basePathUrl}/student-parent-link/student/${data?.studentUuid}/parent/${data?.parentUuid}`).then(response => {
         if (response.status === 200) {
             setIsModal(false);

@@ -27,6 +27,7 @@ function Login(props) {
 		const config = { 'content-type': 'application/json' };
 		axios.post(`${basePathUrl}/login`, data, config).then(response => {
 			let { message, responseObject, status } = response.data;
+			console.log("loginDetails",{response})
 			if (status === 200) {
 				sessionStorage.setItem("role", responseObject.userType);
 				sessionStorage.setItem("token", responseObject.token);

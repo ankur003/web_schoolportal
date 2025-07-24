@@ -186,6 +186,31 @@ export const UpdateFee = (payload, classUuid, toast) => (dispatch) => {
 
 }
 
+export const getUserFeeByUserId = (id) => (dispatch) => {
+    dispatch({ type: Constants.RESET_STATE });
+    console.log({id})
+    let url = `${basePathUrl}/fees/payments/user?userUuid=${id}`;
+    axios.get(url)
+        .then(response => {
+            console.log({response});
+            if (response.status === 200) {
+                dispatch({
+                    type: Constants.GET_ALL_PAYMENT,
+                    payload: response.data
+                })
+            }
+            else if (response.status === 204) {
+                dispatch({
+                    type: Constants.NO_DATA_FOUND,
+                    payload: response.data
+                })
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
 export const getUserFeeListAction = (payload) => (dispatch) => {
     dispatch({ type: Constants.RESET_STATE });
     let url = `${basePathUrl}/fees/payments/class-section`;
