@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useTransition } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { MultiSelect } from "react-multi-select-component";
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import { getEntities } from '../../Redux/Action/entityAction';
@@ -393,7 +392,9 @@ export default function FeePaymentModule() {
                                             options={userOptions}
                                             value={selectedUser}
                                             onChange={setSelectedUser}
-                                            labelledBy="Select"
+                                             className="basic-multi-select"
+                                            classNamePrefix="select"
+                                            placeholder="Select Student"
                                             hasSelectAll={false}
                                         />
                                     </div>
