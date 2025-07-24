@@ -19,7 +19,7 @@ export default function FeePaymentModule() {
 
     const { linkList } = useSelector(state => state.manageClassesReducer);
     const { entityList, feeUserId } = useSelector(state => state.entityReducer);
-    console.log({feeUserId})
+    console.log({ feeUserId })
     const { userFeeList } = useSelector(state => state.feeManageReducer);
     const { monthlyList, oneTimeList } = useSelector((state) => state.feeManageReducer);
     const userRole = useSelector(state => state.loginReducer.role);
@@ -29,9 +29,10 @@ export default function FeePaymentModule() {
     const totalPaymentAmount = userFeeList?.reduce((sum, item) => sum + (item?.amountPaid || 0), 0);
     const averagePaymentAmount = totalPayments > 0 ? totalPaymentAmount / totalPayments : 0;
 
-    const [selectedSections, setSelectedSections] = useState([]);
-    const [selectedClass, setSelectedClass] = useState([]);
-    const [selectedUser, setSelectedUser] = useState([]);
+    // UPDATED: Changed initial state from [] to null for React Select compatibility
+    const [selectedSections, setSelectedSections] = useState(null);
+    const [selectedClass, setSelectedClass] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [sectionList, setSectionList] = useState([]);
     const [page, setPage] = useState("1");
     const [limit, setLimit] = useState("100");
@@ -58,6 +59,12 @@ export default function FeePaymentModule() {
         annualFee: "",
         dressFee: "",
         registrationFee: "",
+        common_month: "",
+        common_paymentDate: "",
+        common_paymentMode: "",
+        common_remarks: "",
+        common_transactionId: "",
+        common_year: ""
     });
 
     const [monthlyFormData, setMonthlyFormData] = useState({
@@ -86,13 +93,20 @@ export default function FeePaymentModule() {
     };
 
     useEffect(() => {
+        // UPDATED: Added null safety check
         if (selectedClass?.value && userRole === SUPER_ADMIN) {
             dispatch(getAllFees({ masterClassUuid: selectedClass.value, feeType: "ONE_TIME" }));
             dispatch(getAllFees({ masterClassUuid: selectedClass.value, feeType: "MONTHLY" }));
         }
     }, [selectedClass, dispatch]);
 
+    // UPDATED: Added null safety to formSubmit
     const formSubmit = () => {
+        if (!selectedUser) {
+            toast.error("Please select a student");
+            return;
+        }
+
         const commonFields = {
             month: oneTimeFormData.common_month || "",
             paymentDate: oneTimeFormData.common_paymentDate || "",
@@ -136,29 +150,135 @@ export default function FeePaymentModule() {
         dispatch(addStudentFee(finalPayload, setIsPaymentModal, toast));
     };
 
-
-
-
+    // UPDATED: Enhanced handleChangeSections to maintain options availability after clearing
     const handleChangeSections = (selected) => {
         setSelectedSections(selected);
-        let data = { page, limit, userType: "STUDENT", values: { sectionName: selected?.label, className: selectedClass?.label }, Studentfilter: true };
+        
+        // Always clear the selected student when section changes
+        setSelectedUser(null);
+        
+        if (!selected) {
+            // If section is cleared, fetch all students for the selected class (if class is selected)
+            if (selectedClass) {
+                let data = { 
+                    page, 
+                    limit, 
+                    userType: "STUDENT", 
+                    values: { 
+                        sectionName: "", // Empty section name to get all students for the class
+                        className: selectedClass?.label || "" 
+                    }, 
+                    Studentfilter: true 
+                };
+                dispatch(getEntities(data));
+            }
+            return;
+        }
+
+        // Fetch students for the selected class and section
+        let data = { 
+            page, 
+            limit, 
+            userType: "STUDENT", 
+            values: { 
+                sectionName: selected?.label, 
+                className: selectedClass?.label 
+            }, 
+            Studentfilter: true 
+        };
         dispatch(getEntities(data));
     }
 
+    // UPDATED: Enhanced handleChange to maintain proper option availability
     const handleChange = (selected) => {
         setSelectedClass(selected);
-        const selectedClassUuids = Array.isArray(selected) ? selected.map(s => s.value) : [selected.value];
+        
+        // Always clear the selected sections and students when class changes
+        setSelectedSections(null);
+        setSelectedUser(null);
+
+        if (!selected) {
+            // If class is cleared, clear section list and students
+            setSectionList([]);
+            // Clear student list as well
+            let data = { page, limit, userType: "STUDENT", values: { sectionName: "", className: "" }, Studentfilter: true };
+            dispatch(getEntities(data));
+            return;
+        }
+
+        // Get the selected class UUID
+        const selectedClassUuid = selected?.value;
+
+        // Filter sections based on the selected class
         const filteredSections = linkList
-            .filter(cls => selectedClassUuids.includes(cls.masterClassUuid))
+            .filter(cls => cls.masterClassUuid === selectedClassUuid)
             .flatMap(cls => cls.masterSection);
+
+        // Update section list with filtered sections
         setSectionList(filteredSections);
+
+        // Fetch all students for the selected class (without section filter)
+        let data = { 
+            page, 
+            limit, 
+            userType: "STUDENT", 
+            values: { 
+                sectionName: "", // Empty section name to get all students for the class
+                className: selected?.label 
+            }, 
+            Studentfilter: true 
+        };
+        dispatch(getEntities(data));
     };
 
+    // UPDATED: Enhanced filterHandler to maintain options availability after search
     const filterHandler = () => {
-        const payload = { userUuid: selectedUser.value, masterClassUuid: selectedClass.value, masterSectionUuid: selectedSections.value };
+        // Store current selections before search to maintain them
+        const currentClassSelection = selectedClass;
+        const currentSectionSelection = selectedSections;
+        const currentUserSelection = selectedUser;
+        
+        const payload = { 
+            userUuid: selectedUser?.value || "", 
+            masterClassUuid: selectedClass?.value || "", 
+            masterSectionUuid: selectedSections?.value || "" 
+        };
+        
+        // Perform the search
         getUserFeesList(payload);
+        
+        // Ensure selections and options remain available after search
+        // Re-fetch entities to maintain student options based on current filters
+        if (currentClassSelection && currentSectionSelection) {
+            // If both class and section are selected, fetch students for that combination
+            let data = { 
+                page, 
+                limit, 
+                userType: "STUDENT", 
+                values: { 
+                    sectionName: currentSectionSelection?.label || "", 
+                    className: currentClassSelection?.label || "" 
+                }, 
+                Studentfilter: true 
+            };
+            dispatch(getEntities(data));
+        } else if (currentClassSelection) {
+            // If only class is selected, fetch all students for that class
+            let data = { 
+                page, 
+                limit, 
+                userType: "STUDENT", 
+                values: { 
+                    sectionName: "", 
+                    className: currentClassSelection?.label || "" 
+                }, 
+                Studentfilter: true 
+            };
+            dispatch(getEntities(data));
+        }
     };
 
+    // UPDATED: Enhanced getUserFeesList to not interfere with select options
     const getUserFeesList = (payload) => {
         startTransition(() => {
             if (userRole === SUPER_ADMIN) {
@@ -168,6 +288,7 @@ export default function FeePaymentModule() {
                 dispatch(getUserFeeByUserId(payload))
             }
         });
+        // This function should only affect the fee list results, not the select options
     };
 
     const createChartData = (id, values) => [{
@@ -240,6 +361,7 @@ export default function FeePaymentModule() {
                                     <div className="form-group">
                                         <Select
                                             name="sections"
+                                            isClearable
                                             options={classOptionsList}
                                             value={selectedClass}
                                             onChange={handleChange}
@@ -253,6 +375,7 @@ export default function FeePaymentModule() {
                                     <div className="form-group">
                                         <Select
                                             name="sections"
+                                            isClearable
                                             options={sectionOptionsList}
                                             value={selectedSections}
                                             onChange={handleChangeSections}
@@ -266,6 +389,7 @@ export default function FeePaymentModule() {
                                     <div className="form-group">
                                         <Select
                                             name="students"
+                                            isClearable
                                             options={userOptions}
                                             value={selectedUser}
                                             onChange={setSelectedUser}
@@ -277,13 +401,13 @@ export default function FeePaymentModule() {
                                 <div className="flex-25 pd-l-5">
                                     <div className="form-group">
                                         <button className="btn btn-block btn-success" onClick={() => filterHandler()}>Search</button>
-                                        {/* <button className="btn btn-block btn-success" onClick={() => getUserFeesList()}>Clear</button> */}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </>
                 }
+                {/* Rest of your existing JSX remains the same */}
                 <div className="user-Fee-wrapper">
                     {isPending ? <Loader /> :
                         userFeeList?.length > 0 ?
@@ -316,7 +440,6 @@ export default function FeePaymentModule() {
                                                     <td>{data?.amountPaid ? data?.amountPaid : "N/A"}</td>
                                                     <td>
                                                         <button type='button' className="btn btn-primary mr-r-10" onClick={() => showPaymentDetails(data)}>View</button>
-                                                        {/* <button type='button' className="btn btn-success" onClick={() => " "}>Make Payment</button> */}
                                                     </td>
                                                 </tr>
                                             )}
@@ -329,6 +452,7 @@ export default function FeePaymentModule() {
                     }
                 </div>
             </div>
+            {/* All your existing modals remain exactly the same */}
             {isModal &&
                 <div className="modal d-block">
                     <div className="modal-dialog modal-dialog-centered" role="document">
@@ -429,7 +553,6 @@ export default function FeePaymentModule() {
 
                             <div className="modal-body">
                                 <div className="form-content">
-                                    {/* ✅ Student Selection */}
                                     <div className="d-flex">
                                         <div className="flex-33 pd-r-5">
                                             <div className="form-group">
@@ -479,7 +602,6 @@ export default function FeePaymentModule() {
                                         </div>
                                     </div>
 
-                                    {/* ✅ Common Payment Details - Month field removed from here */}
                                     <div className="common-details p-3 border rounded bg-light">
                                         <div className="row">
                                             <div className="col-md-4">
@@ -553,7 +675,6 @@ export default function FeePaymentModule() {
                                         </div>
                                     </div>
 
-                                    {/* ✅ Fee Amounts */}
                                     <div className="d-flex mr-t-15">
                                         <div className="flex-50 pd-r-5">
                                             <div className="fee-card one-time-fee">
@@ -585,7 +706,6 @@ export default function FeePaymentModule() {
 
                                         <div className="flex-50 pd-l-5">
                                             <div className="fee-card monthly-fee">
-                                                {/* ✅ Monthly Fee Card Header with Month selector */}
                                                 <div className="fee-card-header d-flex justify-content-between align-items-center">
                                                     <span>Monthly Fees</span>
                                                     <div className="month-selector" style={{ minWidth: '120px' }}>
@@ -656,8 +776,6 @@ export default function FeePaymentModule() {
                     </div>
                 </div>
             }
-
-
         </>
     )
 }

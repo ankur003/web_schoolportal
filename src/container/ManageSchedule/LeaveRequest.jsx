@@ -11,6 +11,7 @@ const LeaveRequest = () => {
     const { userId, role } = useSelector((state) => state.loginReducer);
     const { leaveRequest, loader, noDataFound } = useSelector((state) => state.leaveRequestReducer);
     let requests = leaveRequest.filter(mapData => mapData.category === "LEAVE") || [];
+    console.log({requests});
     const [isModal, SetIsModal] = useState(false);
 
     useEffect(() => {

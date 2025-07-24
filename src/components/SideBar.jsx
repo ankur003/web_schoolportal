@@ -144,13 +144,13 @@ function SideBar(props) {
             to: "/StudentPage",
             icon: "fa-solid fa-user",
         },
-        {
-            name: "Attendance",
-            component: "AttendancePage",
-            transform: "Attendance",
-            to: "/AttendanceCalendarPage",
-            icon: "fa-solid fa-calendar-check", // Changed to attendance-related icon
-        },
+        // {
+        //     name: "Attendance",
+        //     component: "AttendancePage",
+        //     transform: "Attendance",
+        //     to: "/AttendanceCalendarPage",
+        //     icon: "fa-solid fa-calendar-check",
+        // },
         {
             name: "Leave Requests",
             component: "LeaveRequest",
@@ -182,13 +182,13 @@ function SideBar(props) {
             to: "/TimeTable",
             icon: "fa-solid fa-table"
         },
-        {
-            name: "Attendance",
-            component: "AttendancePage",
-            transform: "Attendance",
-            to: "/AttendanceCalendarPage",
-            icon: "fa-solid fa-user",
-        },
+        // {
+        //     name: "Attendance",
+        //     component: "AttendancePage",
+        //     transform: "Attendance",
+        //     to: "/AttendanceCalendarPage",
+        //     icon: "fa-solid fa-user",
+        // },
     ];
 
     let parentRoute = [

@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, BookOpen, Edit3, Trash2, Plus, Eye, Filter, Search, Save, X, UserCheck } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
-import { PARENT, SUPER_ADMIN, TEACHER } from '../../Redux/Constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { PARENT, STUDENT, SUPER_ADMIN, TEACHER } from '../../Redux/Constants';
 import { useNavigate } from 'react-router-dom';
+import { getAllDetrails } from '../../Redux/Action/entityAction';
 
 const TimetableSystem = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const applicationRole = sessionStorage.getItem("role");
   const { userId } = useSelector((state) => state.loginReducer);
-  const { classAndSectionName } = useSelector(state => state.entityReducer);
+  const { classAndSectionName, userDetails } = useSelector(state => state.entityReducer);
   console.log({ applicationRole, classAndSectionName });
   const [timetables, setTimetables] = useState([]);
   const [teacherTimetables, setTeacherTimetables] = useState([]);
@@ -67,6 +69,13 @@ const TimetableSystem = () => {
     };
     return colors[subject] || 'subject-default';
   };
+
+  useEffect(() => {
+    if (applicationRole === STUDENT) {
+      dispatch(getAllDetrails(userId, null));
+      setViewMode('class');
+    }
+  }, [])
 
   // Fetch all data on component mount
   useEffect(() => {
@@ -142,18 +151,21 @@ const TimetableSystem = () => {
 
   // API call to fetch classes and sections
   const fetchClassesAndSections = async () => {
-    if (applicationRole === PARENT || applicationRole === SUPER_ADMIN) {
+    if (applicationRole === PARENT || applicationRole === SUPER_ADMIN || applicationRole === STUDENT) {
       try {
         const response = await axios.get('http://localhost:8080/api/v1/sa/class-section-link');
         let data = response.data;
         console.log({ data })
-        if (applicationRole === PARENT) {
+        console.log({ userDetails })
+        if (applicationRole === PARENT || applicationRole === STUDENT) {
+          let filterClassname = applicationRole === STUDENT ? userDetails?.className : classAndSectionName?.classname;
+          let filterSectionname = applicationRole === STUDENT ? userDetails?.sectionName : classAndSectionName?.sectionname;
           console.log("parents")
           const classLi = data
-            .filter(item => item.className === classAndSectionName?.classname)
+            .filter(item => item.className === filterClassname)
             .map(item => ({
               ...item,
-              masterSection: item.masterSection.filter(section => section.sectionName === classAndSectionName?.sectionname)
+              masterSection: item.masterSection.filter(section => section.sectionName === filterSectionname)
             }));
           console.log({ classList: classLi })
           data = classLi;
