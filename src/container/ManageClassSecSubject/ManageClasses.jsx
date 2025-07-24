@@ -394,9 +394,10 @@ function ManageClasses() {
                                                                         Edit Link Subjects
                                                                     </button>
                                                                 </div>
-                                                                {data?.sectionSubjects && data?.sectionSubjects?.map((item, idx) =>
-                                                                    <div key={idx} className="card-body">
-                                                                        <p className="badge bg-warning">Section -{item?.sectionName}</p>
+
+                                                                {/* If class has direct subjects (no sections) */}
+                                                                {data?.subjects && data?.subjects?.length > 0 && (
+                                                                    <div className="card-body">
                                                                         <table className="table table-bordered mb-0">
                                                                             <thead className="table-secondary">
                                                                                 <tr>
@@ -408,24 +409,55 @@ function ManageClasses() {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {item?.subjects && item?.subjects?.map((itm, idn) =>
-                                                                                    <tr key={idn}>
-                                                                                        <td>{itm?.subjectName}</td>
-                                                                                        <td>{itm?.subjectCode}</td>
-                                                                                        <td>{itm?.maxMarks}</td>
-                                                                                        <td>{itm?.passMarks}</td>
-                                                                                        <td>{itm?.createdAt}</td>
+                                                                                {data?.subjects?.map((subject, subjectIdx) =>
+                                                                                    <tr key={subjectIdx}>
+                                                                                        <td>{subject?.subjectName}</td>
+                                                                                        <td>{subject?.subjectCode}</td>
+                                                                                        <td>{subject?.maxMarks}</td>
+                                                                                        <td>{subject?.passMarks}</td>
+                                                                                        <td>{subject?.createdAt}</td>
                                                                                     </tr>
                                                                                 )}
                                                                             </tbody>
                                                                         </table>
                                                                     </div>
                                                                 )}
+
+                                                                {/* If class has section-based subjects */}
+                                                                {data?.sectionSubjects && data?.sectionSubjects?.length > 0 &&
+                                                                    data?.sectionSubjects?.map((item, idx) =>
+                                                                        <div key={idx} className="card-body">
+                                                                            <p className="badge bg-warning">Section - {item?.sectionName}</p>
+                                                                            <table className="table table-bordered mb-0">
+                                                                                <thead className="table-secondary">
+                                                                                    <tr>
+                                                                                        <th>Subject Name</th>
+                                                                                        <th>Subject Code</th>
+                                                                                        <th>Max Marks</th>
+                                                                                        <th>Pass Marks</th>
+                                                                                        <th>Created At</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {item?.subjects && item?.subjects?.map((subject, subjectIdx) =>
+                                                                                        <tr key={subjectIdx}>
+                                                                                            <td>{subject?.subjectName}</td>
+                                                                                            <td>{subject?.subjectCode}</td>
+                                                                                            <td>{subject?.maxMarks}</td>
+                                                                                            <td>{subject?.passMarks}</td>
+                                                                                            <td>{subject?.createdAt}</td>
+                                                                                        </tr>
+                                                                                    )}
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    )
+                                                                }
                                                             </div>
                                                         </div>
                                                     </div>
-                                                )
-                                                : <NoDataFound />
+                                                ) :
+                                                <NoDataFound />
                                             }
                                         </div>
                                     )
