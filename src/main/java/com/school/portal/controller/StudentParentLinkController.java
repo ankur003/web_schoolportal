@@ -76,6 +76,8 @@ public class StudentParentLinkController extends AbstractController {
 		            .ifPresent(usr -> {
 		                model.setClassName(usr.getMasterClass().getClassName());
 		                model.setSectionName(usr.getMasterSection().getSectionName());
+		                model.setMasterClassUuid(usr.getMasterClass().getMasterClassUuid());
+		                model.setMasterSectionUuid(usr.getMasterSection().getMasterSectionUuid());
 		            })
 		);
 		return ResponseEntity.ok(userResponseModel);

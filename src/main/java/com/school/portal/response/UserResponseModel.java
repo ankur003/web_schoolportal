@@ -58,6 +58,10 @@ public class UserResponseModel {
 	
 	private String enrollmentNumber;
 	
+	private String masterClassUuid;
+	
+	private String masterSectionUuid;
+	
 	public String getUserUuid() {
 		return userUuid;
 	}
@@ -245,5 +249,35 @@ public class UserResponseModel {
 	public void setEnrollmentNumber(String enrollmentNumber) {
 		this.enrollmentNumber = enrollmentNumber;
 	}
+
+	/**
+	 * @return the masterClassUuid
+	 */
+	public String getMasterClassUuid() {
+		return masterClassUuid;
+	}
+
+	/**
+	 * @param masterClassUuid the masterClassUuid to set
+	 */
+	public void setMasterClassUuid(String masterClassUuid) {
+		this.masterClassUuid = masterClassUuid;
+	}
+
+	/**
+	 * @return the masterSectionUuid
+	 */
+	public String getMasterSectionUuid() {
+		return masterSectionUuid;
+	}
+
+	/**
+	 * @param masterSectionUuid the masterSectionUuid to set
+	 */
+	public void setMasterSectionUuid(String masterSectionUuid) {
+		this.masterSectionUuid = masterSectionUuid;
+	}
+	
+	
 	
 }
