@@ -485,7 +485,7 @@
                 justify-content: center;
                 color: #9ca3af;
                 transition: all 0.2s ease;
-                background: #f4f6f7; 
+                background: #f4f6f7;
 
                 &:hover {
                     border-color: #4f46e5;
@@ -574,7 +574,7 @@
         background: white;
         border-radius: 12px;
         padding: 32px;
-        max-width: 480px;
+        max-width: 650px;
         width: 100%;
         margin: 16px;
         max-height: 90vh;
@@ -633,7 +633,26 @@
                         border-color: #4f46e5;
                         box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
                     }
+
+                    &:disabled {
+                        background-color: #e5e7eb;
+                        border-color: #9ca3af;
+                        color: #374151;
+                        cursor: not-allowed;
+                        opacity: 0.8;
+                    }
+
+                    &:disabled:hover {
+                        border-color: #9ca3af;
+                    }
+
+                    &:disabled:focus {
+                        outline: none;
+                        border-color: #9ca3af;
+                        box-shadow: none;
+                    }
                 }
+
             }
 
             .modal-footer {
@@ -740,278 +759,279 @@
 
 // Compact Filters SCSS
 .filters-section {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 12px 16px;
-  margin-bottom: 16px;
-
-  .filters-content {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .filter-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-
-    // Set widths for different filter types
-    &:first-child {
-      // View Type filter
-      flex-shrink: 0;
-      min-width: 140px;
-    }
-
-    &:not(:first-child) {
-      // Class, Section, Teacher filters
-      min-width: 140px;
-      flex: 1;
-      max-width: 180px;
-    }
-  }
-
-  .filter-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: #374151;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-    white-space: nowrap;
-  }
-
-  .filter-select {
-    padding: 6px 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    font-size: 13px;
     background: white;
-    height: 32px;
-    width: 100%;
-    transition: border-color 0.2s ease;
-
-    &:focus {
-      outline: none;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
-    }
-
-    &:disabled {
-      background-color: #f9fafb;
-      color: #9ca3af;
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    &:hover:not(:disabled) {
-      border-color: #d1d5db;
-    }
-  }
-
-  .view-mode-buttons {
-    display: flex;
-    gap: 2px;
-    background: #f3f4f6;
-    padding: 2px;
-    border-radius: 6px;
-    width: fit-content;
-  }
-
-  .view-mode-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    border: none;
-    border-radius: 4px;
-    background: transparent;
-    color: #6b7280;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 500;
-    font-size: 12px;
-    white-space: nowrap;
-
-    svg {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-    }
-
-    &.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      transform: translateY(-1px);
-    }
-
-    &:hover:not(.active) {
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-
-  // Responsive design for mobile
-  @media (max-width: 768px) {
-    padding: 10px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 12px 16px;
+    margin-bottom: 16px;
 
     .filters-content {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 10px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
     }
 
     .filter-item {
-      width: 100%;
-      max-width: none;
-      min-width: 0;
-
-      &:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
         min-width: 0;
-        
-        .view-mode-buttons {
-          width: 100%;
-          justify-content: center;
+
+        // Set widths for different filter types
+        &:first-child {
+            // View Type filter
+            flex-shrink: 0;
+            min-width: 140px;
         }
 
-        .view-mode-btn {
-          flex: 1;
-          justify-content: center;
+        &:not(:first-child) {
+            // Class, Section, Teacher filters
+            min-width: 140px;
+            flex: 1;
+            max-width: 180px;
         }
-      }
+    }
+
+    .filter-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+        white-space: nowrap;
     }
 
     .filter-select {
-      width: 100%;
-    }
-  }
+        padding: 6px 10px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 13px;
+        background: white;
+        height: 32px;
+        width: 100%;
+        transition: border-color 0.2s ease;
 
-  @media (max-width: 480px) {
+        &:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
+        &:disabled {
+            background-color: #f9fafb;
+            color: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        &:hover:not(:disabled) {
+            border-color: #d1d5db;
+        }
+    }
+
     .view-mode-buttons {
-      flex-direction: column;
-      gap: 4px;
+        display: flex;
+        gap: 2px;
+        background: #f3f4f6;
+        padding: 2px;
+        border-radius: 6px;
+        width: fit-content;
     }
 
     .view-mode-btn {
-      justify-content: center;
-      padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 4px;
+        background: transparent;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        font-size: 12px;
+        white-space: nowrap;
+
+        svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        &.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        &:hover:not(.active) {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     }
-  }
+
+    // Responsive design for mobile
+    @media (max-width: 768px) {
+        padding: 10px 12px;
+
+        .filters-content {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .filter-item {
+            width: 100%;
+            max-width: none;
+            min-width: 0;
+
+            &:first-child {
+                min-width: 0;
+
+                .view-mode-buttons {
+                    width: 100%;
+                    justify-content: center;
+                }
+
+                .view-mode-btn {
+                    flex: 1;
+                    justify-content: center;
+                }
+            }
+        }
+
+        .filter-select {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .view-mode-buttons {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .view-mode-btn {
+            justify-content: center;
+            padding: 8px 12px;
+        }
+    }
 }
 
 // Loading state
 .filters-section.loading {
-  .filter-select,
-  .view-mode-btn {
-    opacity: 0.6;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
+
+    .filter-select,
+    .view-mode-btn {
+        opacity: 0.6;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
 }
 
 // Animation for smooth filter transitions
 .filter-item {
-  transition: all 0.3s ease;
+    transition: all 0.3s ease;
 
-  // Entry animation for dynamic filters
-  &.filter-enter {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
+    // Entry animation for dynamic filters
+    &.filter-enter {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
 
-  &.filter-enter-active {
-    opacity: 1;
-    transform: translateX(0);
-  }
+    &.filter-enter-active {
+        opacity: 1;
+        transform: translateX(0);
+    }
 
-  &.filter-exit {
-    opacity: 1;
-    transform: translateX(0);
-  }
+    &.filter-exit {
+        opacity: 1;
+        transform: translateX(0);
+    }
 
-  &.filter-exit-active {
-    opacity: 0;
-    transform: translateX(10px);
-  }
+    &.filter-exit-active {
+        opacity: 0;
+        transform: translateX(10px);
+    }
 }
 
 // Subtle hover effects
 .view-mode-btn {
-  position: relative;
-  overflow: hidden;
+    position: relative;
+    overflow: hidden;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s;
-  }
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.6s;
+    }
 
-  &:hover::before {
-    left: 100%;
-  }
+    &:hover::before {
+        left: 100%;
+    }
 }
 
 // Focus states for accessibility
 .filter-select:focus,
 .view-mode-btn:focus {
-  outline: 2px solid #6366f1;
-  outline-offset: 2px;
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
 }
 
 // Dark mode support (optional)
 @media (prefers-color-scheme: dark) {
-  .filters-section {
-    background: #1f2937;
-    border: 1px solid #374151;
+    .filters-section {
+        background: #1f2937;
+        border: 1px solid #374151;
 
-    .filter-label {
-      color: #d1d5db;
+        .filter-label {
+            color: #d1d5db;
+        }
+
+        .filter-select {
+            background: #374151;
+            border-color: #4b5563;
+            color: #f9fafb;
+
+            &:focus {
+                border-color: #6366f1;
+            }
+
+            &:disabled {
+                background-color: #1f2937;
+                color: #6b7280;
+            }
+        }
+
+        .view-mode-buttons {
+            background: #374151;
+        }
+
+        .view-mode-btn {
+            color: #9ca3af;
+
+            &:hover:not(.active) {
+                background: #4b5563;
+                color: #f9fafb;
+            }
+        }
     }
-
-    .filter-select {
-      background: #374151;
-      border-color: #4b5563;
-      color: #f9fafb;
-
-      &:focus {
-        border-color: #6366f1;
-      }
-
-      &:disabled {
-        background-color: #1f2937;
-        color: #6b7280;
-      }
-    }
-
-    .view-mode-buttons {
-      background: #374151;
-    }
-
-    .view-mode-btn {
-      color: #9ca3af;
-
-      &:hover:not(.active) {
-        background: #4b5563;
-        color: #f9fafb;
-      }
-    }
-  }
 }

@@ -108,6 +108,7 @@ export default function FeePaymentModule() {
             if (oneTimeFormData[`${feeName}_amountPaid`]) {
                 oneTimePayments.push({
                     ...commonFields,
+                    month: null,
                     amountPaid: parseInt(oneTimeFormData[`${feeName}_amountPaid`]) || 0,
                     feeName: feeName,
                     feeType: "ONE_TIME"
@@ -459,34 +460,9 @@ export default function FeePaymentModule() {
                                         </div>
                                     </div>
 
-                                    {/* ✅ Common Payment Details */}
+                                    {/* ✅ Common Payment Details - Month field removed from here */}
                                     <div className="common-details p-3 border rounded bg-light">
                                         <div className="row">
-                                            <div className="col-md-4">
-                                                <div className="form-group">
-                                                    <label className="form-group-label">Month</label>
-                                                    <select
-                                                        className="form-control"
-                                                        name="common_month"
-                                                        value={oneTimeFormData?.common_month || ""}
-                                                        onChange={onChangeHandler}
-                                                    >
-                                                        <option value="">Select Month</option>
-                                                        <option value="JANUARY">January</option>
-                                                        <option value="FEBRUARY">February</option>
-                                                        <option value="MARCH">March</option>
-                                                        <option value="APRIL">April</option>
-                                                        <option value="MAY">May</option>
-                                                        <option value="JUNE">June</option>
-                                                        <option value="JULY">July</option>
-                                                        <option value="AUGUST">August</option>
-                                                        <option value="SEPTEMBER">September</option>
-                                                        <option value="OCTOBER">October</option>
-                                                        <option value="NOVEMBER">November</option>
-                                                        <option value="DECEMBER">December</option>
-                                                    </select>
-                                                </div>
-                                            </div>
                                             <div className="col-md-4">
                                                 <div className="form-group">
                                                     <label className="form-group-label">Payment Date</label>
@@ -542,7 +518,7 @@ export default function FeePaymentModule() {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="col-md-4">
+                                            <div className="col-md-8">
                                                 <div className="form-group">
                                                     <label className="form-group-label">Remarks</label>
                                                     <input
@@ -590,7 +566,33 @@ export default function FeePaymentModule() {
 
                                         <div className="flex-50 pd-l-5">
                                             <div className="fee-card monthly-fee">
-                                                <div className="fee-card-header">Monthly Fees</div>
+                                                {/* ✅ Monthly Fee Card Header with Month selector */}
+                                                <div className="fee-card-header d-flex justify-content-between align-items-center">
+                                                    <span>Monthly Fees</span>
+                                                    <div className="month-selector" style={{ minWidth: '120px' }}>
+                                                        <select
+                                                            className="form-control form-control-sm"
+                                                            name="common_month"
+                                                            value={oneTimeFormData?.common_month || ""}
+                                                            onChange={onChangeHandler}
+                                                            style={{ fontSize: '12px' }}
+                                                        >
+                                                            <option value="">Select Month</option>
+                                                            <option value="JANUARY">January</option>
+                                                            <option value="FEBRUARY">February</option>
+                                                            <option value="MARCH">March</option>
+                                                            <option value="APRIL">April</option>
+                                                            <option value="MAY">May</option>
+                                                            <option value="JUNE">June</option>
+                                                            <option value="JULY">July</option>
+                                                            <option value="AUGUST">August</option>
+                                                            <option value="SEPTEMBER">September</option>
+                                                            <option value="OCTOBER">October</option>
+                                                            <option value="NOVEMBER">November</option>
+                                                            <option value="DECEMBER">December</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div className="fee-card-body">
                                                     {["TUITION", "TRANSPORT", "FOOD"].map((feeName, index) => (
                                                         <div key={index} className="fee-row">
@@ -635,6 +637,7 @@ export default function FeePaymentModule() {
                     </div>
                 </div>
             }
+
 
         </>
     )

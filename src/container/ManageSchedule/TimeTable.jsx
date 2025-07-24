@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, BookOpen, Edit3, Trash2, Plus, Eye, Filter, Search, Save, X, UserCheck } from 'lucide-react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const TimetableSystem = () => {
   const [timetables, setTimetables] = useState([]);
@@ -20,6 +21,7 @@ const TimetableSystem = () => {
   const [loading, setLoading] = useState(true);
   const [timetableLoading, setTimetableLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(null);
 
   // Updated time slots with lunch after 4 periods
   const timeSlots = [
@@ -79,7 +81,7 @@ const TimetableSystem = () => {
   const initializeData = async () => {
     setLoading(true);
     try {
-      const [classesData] = await Promise.all([
+      const [classesData, teachersData] = await Promise.all([
         fetchClassesAndSections(),
         fetchTeachers(),
         fetchSubjects()
@@ -87,6 +89,11 @@ const TimetableSystem = () => {
 
       if (classesData && classesData.length > 0) {
         autoSelectFirstClass(classesData);
+      }
+
+      // Store teachers data for later use in view mode change
+      if (teachersData && teachersData.length > 0) {
+        setTeachers(teachersData);
       }
     } catch (error) {
       console.error('Error initializing data:', error);
@@ -112,6 +119,15 @@ const TimetableSystem = () => {
         setSections([]);
         setSelectedSection('');
       }
+    }
+  };
+
+  // Auto-select the first available teacher
+  const autoSelectFirstTeacher = (teachersData) => {
+    if (teachersData && teachersData.length > 0) {
+      const firstTeacher = teachersData[0];
+      setSelectedTeacher(firstTeacher.value);
+      console.log('Auto-selected first teacher:', firstTeacher.label, firstTeacher.value);
     }
   };
 
@@ -149,10 +165,11 @@ const TimetableSystem = () => {
         phoneNo: teacher.phoneNo
       }));
 
-      setTeachers(teacherOptions);
+      return teacherOptions; // Return the data instead of setting state here
 
     } catch (error) {
       console.error('Error fetching teachers:', error);
+      return [];
     }
   };
 
@@ -309,13 +326,22 @@ const TimetableSystem = () => {
 
   // API call to create/update timetable entry
   const saveTimetableEntry = async (formData, isUpdate = false) => {
+    let url = "";
     try {
       setSaving(true);
 
       const { startTime, endTime } = parseTimeSlotToString(formData.timeSlot);
       const selectedClassData = classes.find(cls => cls.label === formData.class);
       const selectedTeacherData = teachers.find(teacher => teacher.label === formData.teacher);
-      const selectedSectionData = sections.find(section => section.value === selectedSection);
+
+      // Find section data based on class and section name
+      let selectedSectionData = null;
+      if (formData.section && selectedClassData) {
+        const classWithSections = classes.find(cls => cls.value === selectedClassData.value);
+        if (classWithSections && classWithSections.sections) {
+          selectedSectionData = classWithSections.sections.find(section => section.sectionName === formData.section);
+        }
+      }
 
       const payload = {
         className: formData.class,
@@ -326,19 +352,22 @@ const TimetableSystem = () => {
         teacherName: formData.teacher,
         roomNo: formData.room,
         masterClassUuid: selectedClassData?.value || selectedClass,
-        masterSectionUuid: selectedSectionData?.value || selectedSection || null,
-        sectionName: selectedSectionData?.label || "",
+        masterSectionUuid: selectedSectionData?.masterSectionUuid || selectedSection || null,
+        sectionName: formData.section || "",
         teacherUuid: selectedTeacherData?.value || ""
       };
 
       if (isUpdate && editingEntry?.id) {
-        payload.id = editingEntry.id;
+        url = `http://localhost:8080/api/v1/timetable?id=${editingEntry?.id}`;
         payload.teacherTimetableUuid = editingEntry?.teacherTimetableUuid || "";
+      }
+      else {
+        url = `http://localhost:8080/api/v1/timetable`;
       }
 
       console.log('Payload being sent:', JSON.stringify(payload, null, 2));
 
-      const response = await axios.put('http://localhost:8080/api/v1/timetable', payload, {
+      const response = await axios.put(url, payload, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -347,7 +376,7 @@ const TimetableSystem = () => {
 
       console.log('Save response:', response.data);
 
-      alert(isUpdate ? 'Timetable entry updated successfully!' : 'Timetable entry created successfully!');
+      toast.success(isUpdate ? 'Timetable entry updated successfully!' : 'Timetable entry created successfully!');
 
       // Refresh appropriate timetable
       if (viewMode === 'class') {
@@ -361,24 +390,71 @@ const TimetableSystem = () => {
     } catch (error) {
       console.error('Error saving timetable entry:', error);
       const errorMessage = error.response?.data?.message || 'Invalid data provided';
-      alert(`Error: ${errorMessage}`);
+      toast.error(`Error: ${errorMessage}`);
       throw error;
     } finally {
       setSaving(false);
     }
   };
 
-  // Handle view mode change
+  // API call to delete timetable entry
+  const deleteTimetableEntry = async (entryId) => {
+    try {
+      setDeleting(entryId);
+
+      const deleteUrl = `http://localhost:8080/api/v1/timetable/${entryId}`;
+      console.log('Deleting timetable entry from:', deleteUrl);
+
+      const response = await axios.delete(deleteUrl, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      console.log('Delete response:', response.data);
+      toast.success('Timetable entry deleted successfully!');
+
+      // Refresh appropriate timetable after successful deletion
+      if (viewMode === 'class') {
+        await fetchClassTimetable();
+      } else if (viewMode === 'teacher') {
+        await fetchTeacherTimetable();
+      }
+
+      return response.data;
+
+    } catch (error) {
+      console.error('Error deleting timetable entry:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to delete timetable entry';
+      toast.error(`Error: ${errorMessage}`);
+      throw error;
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  // Updated handle view mode change with auto-selection
   const handleViewModeChange = (mode) => {
     setViewMode(mode);
     setTimetables([]);
     setTeacherTimetables([]);
 
     if (mode === 'class') {
+      // Switching to class view - reset teacher and auto-select first class if available
       setSelectedTeacher('');
+      if (classes.length > 0 && !selectedClass) {
+        autoSelectFirstClass(classes);
+      }
     } else {
+      // Switching to teacher view - reset class/section and auto-select first teacher
       setSelectedClass('');
       setSelectedSection('');
+      setSections([]);
+
+      // Auto-select first teacher if available
+      if (teachers.length > 0) {
+        autoSelectFirstTeacher(teachers);
+      }
     }
   };
 
@@ -409,15 +485,16 @@ const TimetableSystem = () => {
     setSelectedSection(sectionUuid);
   };
 
-  // Handle teacher selection change
+  // Handle teacher selection change - now changeable
   const handleTeacherChange = (teacherUuid) => {
     console.log('Teacher selected:', teacherUuid);
     setSelectedTeacher(teacherUuid);
-    setTeacherTimetables([]);
+    setTeacherTimetables([]); // Clear current timetable data
   };
 
   const [formData, setFormData] = useState({
     class: '',
+    section: '',
     day: '',
     timeSlot: '',
     subject: '',
@@ -425,16 +502,35 @@ const TimetableSystem = () => {
     room: ''
   });
 
+  const [modalSections, setModalSections] = useState([]);
+
+  // Updated handleInputChange function with proper section handling
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // If class changes in modal, update available sections
+    if (name === 'class') {
+      const selectedClassData = classes.find(cls => cls.label === value);
+      if (selectedClassData && selectedClassData.sections) {
+        setModalSections(selectedClassData.sections.map(section => ({
+          label: section.sectionName,
+          value: section.sectionName
+        })));
+      } else {
+        setModalSections([]);
+      }
+      // Reset section when class changes
+      setFormData(prev => ({ ...prev, section: '' }));
+    }
   };
 
   const handleSubmit = async () => {
     if (!formData.class || !formData.day || !formData.timeSlot || !formData.subject || !formData.teacher || !formData.room) {
-      alert('Please fill in all fields');
+      toast.info('Please fill in all fields');
       return;
     }
 
@@ -448,40 +544,88 @@ const TimetableSystem = () => {
 
   const handleEdit = (entry) => {
     setEditingEntry(entry);
+
+    // Set form data
     setFormData({
       class: entry.class,
+      section: entry.sectionName || '',
       day: entry.day,
       timeSlot: entry.timeSlot,
       subject: entry.subject,
       teacher: entry.teacher,
       room: entry.room
     });
+
+    // Set available sections for the selected class
+    const selectedClassData = classes.find(cls => cls.label === entry.class);
+    if (selectedClassData && selectedClassData.sections) {
+      setModalSections(selectedClassData.sections.map(section => ({
+        label: section.sectionName,
+        value: section.sectionName
+      })));
+    } else {
+      setModalSections([]);
+    }
+
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this entry?')) {
-      const currentTimetables = viewMode === 'class' ? timetables : teacherTimetables;
-      const filteredTimetables = currentTimetables.filter(item => item.id !== id);
+  // Updated handleDelete function to use API
+  const handleDelete = async (entry) => {
+    const entryId = entry.id || entry.teacherTimetableUuid;
 
-      if (viewMode === 'class') {
-        setTimetables(filteredTimetables);
-      } else {
-        setTeacherTimetables(filteredTimetables);
+    if (!entryId) {
+      toast.error('Unable to delete: Entry ID not found');
+      return;
+    }
+
+    if (window.confirm('Are you sure you want to delete this timetable entry?')) {
+      try {
+        await deleteTimetableEntry(entry.teacherTimetableUuid);
+      } catch (error) {
+        console.error('Delete error:', error);
+        // Error toast is already shown in deleteTimetableEntry function
       }
     }
   };
 
   const handleAddToSlot = (day, timeSlot) => {
-    const selectedClassName = classes.find(cls => cls.value === selectedClass)?.label || '';
+    let selectedClassName = '';
+    let selectedSectionName = '';
+    let selectedTeacherName = '';
+
+    if (viewMode === 'class') {
+      selectedClassName = classes.find(cls => cls.value === selectedClass)?.label || '';
+      selectedSectionName = sections.find(sec => sec.value === selectedSection)?.label || '';
+    } else if (viewMode === 'teacher') {
+      selectedTeacherName = teachers.find(t => t.value === selectedTeacher)?.label || '';
+    }
+
     setFormData({
       class: selectedClassName,
+      section: selectedSectionName,
       day: day,
       timeSlot: timeSlot,
       subject: '',
-      teacher: '',
+      teacher: selectedTeacherName,
       room: ''
     });
+
+    // Set available sections for the selected class
+    if (selectedClassName) {
+      const selectedClassData = classes.find(cls => cls.label === selectedClassName);
+      if (selectedClassData && selectedClassData.sections) {
+        setModalSections(selectedClassData.sections.map(section => ({
+          label: section.sectionName,
+          value: section.sectionName
+        })));
+      } else {
+        setModalSections([]);
+      }
+    } else {
+      setModalSections([]);
+    }
+
     setEditingEntry(null);
     setIsModalOpen(true);
   };
@@ -489,12 +633,14 @@ const TimetableSystem = () => {
   const resetForm = () => {
     setFormData({
       class: '',
+      section: '',
       day: '',
       timeSlot: '',
       subject: '',
       teacher: '',
       room: ''
     });
+    setModalSections([]);
     setEditingEntry(null);
     setIsModalOpen(false);
   };
@@ -564,14 +710,22 @@ const TimetableSystem = () => {
                               <button
                                 onClick={() => handleEdit(entry)}
                                 className="edit-btn"
+                                disabled={deleting === (entry.id || entry.teacherTimetableUuid)}
+                                title="Edit Entry"
                               >
                                 <Edit3 size={12} />
                               </button>
                               <button
-                                onClick={() => handleDelete(entry.id)}
+                                onClick={() => handleDelete(entry)}
                                 className="delete-btn"
+                                disabled={deleting === (entry.id || entry.teacherTimetableUuid)}
+                                title="Delete Entry"
                               >
-                                <Trash2 size={12} />
+                                {deleting === (entry.id || entry.teacherTimetableUuid) ? (
+                                  <div className="spinner" style={{ width: '12px', height: '12px' }}></div>
+                                ) : (
+                                  <Trash2 size={12} />
+                                )}
                               </button>
                             </div>
                           )}
@@ -740,13 +894,16 @@ const TimetableSystem = () => {
           </div>
         )}
 
-        {/* Modal */}
+        {/* FIXED Modal with Proper Section Selectability */}
         {isModalOpen && userRole === 'admin' && (
           <div className="modal-overlay">
             <div className="modal-content">
               <div className="modal-header">
                 <h3 className="modal-title">
                   {editingEntry ? 'Edit Timetable Entry' : 'Add Timetable Entry'}
+                  <span className="modal-context">
+                    ({viewMode === 'class' ? 'Class View' : 'Teacher View'})
+                  </span>
                 </h3>
                 <button
                   onClick={resetForm}
@@ -758,111 +915,168 @@ const TimetableSystem = () => {
               </div>
 
               <div className="modal-body">
-                <div className="form-group">
-                  <label className="form-label">Class</label>
-                  <select
-                    name="class"
-                    value={formData.class}
-                    onChange={handleInputChange}
-                    className="form-select"
-                    required
-                    disabled={saving}
-                  >
-                    <option value="">Select Class</option>
-                    {classes.map(cls => (
-                      <option key={cls.value} value={cls.label}>{cls.label}</option>
-                    ))}
-                  </select>
+                <div className="d-flex">
+                  <div className="flex-50 pd-r-10">
+                    {/* Class Field */}
+                    <div className="form-group">
+                      <label className="form-label">Class</label>
+                      <select
+                        name="class"
+                        value={formData.class}
+                        onChange={handleInputChange}
+                        className="form-select"
+                        required
+                        disabled={saving || (viewMode === 'class')} // Read-only for class view
+                      >
+                        <option value="">Select Class</option>
+                        {classes.map(cls => (
+                          <option key={cls.value} value={cls.label}>{cls.label}</option>
+                        ))}
+                      </select>
+                      {viewMode === 'class' && (
+                        <small className="form-help">Class is fixed in class view</small>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-50 pd-l-10">
+                    {/* FIXED Section Field - Now properly selectable for teacher view */}
+                    <div className="form-group">
+                      <label className="form-label">Section</label>
+                      <select
+                        name="section"
+                        value={formData.section}
+                        onChange={handleInputChange}
+                        className="form-select"
+                        required
+                        disabled={saving || (viewMode === 'class')} // Only disabled for class view and when saving
+                      >
+                        <option value="">Select Section</option>
+                        {modalSections.map(section => (
+                          <option key={section.value} value={section.value}>{section.label}</option>
+                        ))}
+                      </select>
+                      {viewMode === 'class' ? (
+                        <small className="form-help">Section is fixed in class view</small>
+                      ) : (
+                        !formData.class && (
+                          <small className="form-help">Select a class first to view sections</small>
+                        )
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-50 pd-r-10">
+                    {/* Day Field */}
+                    <div className="form-group">
+                      <label className="form-label">Day</label>
+                      <select
+                        name="day"
+                        value={formData.day}
+                        onChange={handleInputChange}
+                        className="form-select"
+                        required
+                        disabled={saving || (viewMode === 'class') || (viewMode === 'teacher')} // Read-only for both views
+                      >
+                        <option value="">Select Day</option>
+                        {days.map(day => (
+                          <option key={day} value={day}>{day.charAt(0) + day.slice(1).toLowerCase()}</option>
+                        ))}
+                      </select>
+                      <small className="form-help">Day is fixed when adding from timetable slot</small>
+                    </div>
+                  </div>
+                  <div className="flex-50 pd-l-10">
+                    {/* Time Slot Field */}
+                    <div className="form-group">
+                      <label className="form-label">Time Slot</label>
+                      <select
+                        name="timeSlot"
+                        value={formData.timeSlot}
+                        onChange={handleInputChange}
+                        className="form-select"
+                        required
+                        disabled={saving || (viewMode === 'class') || (viewMode === 'teacher')} // Read-only for both views
+                      >
+                        <option value="">Select Time Slot</option>
+                        {timeSlots.filter(slot => slot !== '11:00 - 11:45').map(slot => (
+                          <option key={slot} value={slot}>{slot}</option>
+                        ))}
+                      </select>
+                      <small className="form-help">Time slot is fixed when adding from timetable slot</small>
+                    </div>
+                  </div>
+                  <div className="flex-50 pd-r-10">
+                    {/* Teacher Field */}
+                    <div className="form-group">
+                      <label className="form-label">Teacher</label>
+                      <select
+                        name="teacher"
+                        value={formData.teacher}
+                        onChange={handleInputChange}
+                        className="form-select"
+                        required
+                        disabled={saving || (viewMode === 'teacher')} // Read-only for teacher view
+                      >
+                        <option value="">Select Teacher</option>
+                        {teachers.map(teacher => (
+                          <option key={teacher.value} value={teacher.label} title={teacher.username}>
+                            {teacher.label}
+                          </option>
+                        ))}
+                      </select>
+                      {viewMode === 'teacher' && (
+                        <small className="form-help">Teacher is fixed in teacher view</small>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-50 pd-l-10">
+                    {/* Subject Field */}
+                    <div className="form-group">
+                      <label className="form-label">Subject</label>
+                      <select
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleInputChange}
+                        className="form-select"
+                        required
+                        disabled={saving}
+                      >
+                        <option value="">Select Subject</option>
+                        {subjects.map(subject => (
+                          <option key={subject.value} value={subject.value} title={subject.description}>
+                            {subject.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex-100">
+                    {/* Room Field */}
+                    <div className="form-group">
+                      <label className="form-label">Room</label>
+                      <input
+                        type="text"
+                        name="room"
+                        value={formData.room}
+                        onChange={handleInputChange}
+                        className="form-select"
+                        required
+                        disabled={saving}
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">Day</label>
-                  <select
-                    name="day"
-                    value={formData.day}
-                    onChange={handleInputChange}
-                    className="form-select"
-                    required
-                    disabled={saving}
-                  >
-                    <option value="">Select Day</option>
-                    {days.map(day => (
-                      <option key={day} value={day}>{day.charAt(0) + day.slice(1).toLowerCase()}</option>
-                    ))}
-                  </select>
-                </div>
 
-                <div className="form-group">
-                  <label className="form-label">Time Slot</label>
-                  <select
-                    name="timeSlot"
-                    value={formData.timeSlot}
-                    onChange={handleInputChange}
-                    className="form-select"
-                    required
-                    disabled={saving}
-                  >
-                    <option value="">Select Time Slot</option>
-                    {timeSlots.filter(slot => slot !== '11:00 - 11:45').map(slot => (
-                      <option key={slot} value={slot}>{slot}</option>
-                    ))}
-                  </select>
-                </div>
 
-                <div className="form-group">
-                  <label className="form-label">Subject</label>
-                  <select
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    className="form-select"
-                    required
-                    disabled={saving}
-                  >
-                    <option value="">Select Subject</option>
-                    {subjects.map(subject => (
-                      <option key={subject.value} value={subject.value} title={subject.description}>
-                        {subject.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
 
-                <div className="form-group">
-                  <label className="form-label">Teacher</label>
-                  <select
-                    name="teacher"
-                    value={formData.teacher}
-                    onChange={handleInputChange}
-                    className="form-select"
-                    required
-                    disabled={saving}
-                  >
-                    <option value="">Select Teacher</option>
-                    {teachers.map(teacher => (
-                      <option key={teacher.value} value={teacher.label} title={teacher.username}>
-                        {teacher.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
 
-                <div className="form-group">
-                  <label className="form-label">Room</label>
-                  <select
-                    name="room"
-                    value={formData.room}
-                    onChange={handleInputChange}
-                    className="form-select"
-                    required
-                    disabled={saving}
-                  >
-                    <option value="">Select Room</option>
-                    {rooms.map(room => (
-                      <option key={room} value={room}>{room}</option>
-                    ))}
-                  </select>
-                </div>
+
+
+
+
+
+
+
 
                 <div className="modal-footer">
                   <button
@@ -887,7 +1101,42 @@ const TimetableSystem = () => {
         )}
       </div>
 
+      {/* Add spinner CSS */}
+      <style jsx>{`
+        .spinner {
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-top: 2px solid white;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
 
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        .modal-context {
+          font-size: 14px;
+          font-weight: normal;
+          color: #6b7280;
+          margin-left: 8px;
+        }
+
+        .form-help {
+          display: block;
+          margin-top: 4px;
+          color: #6b7280;
+          font-size: 12px;
+          font-style: italic;
+        }
+
+        .form-select:disabled {
+          background-color: #f9fafb;
+          color: #6b7280;
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
+      `}</style>
     </>
   );
 };
