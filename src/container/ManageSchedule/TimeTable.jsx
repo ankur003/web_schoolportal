@@ -32,6 +32,7 @@ const TimetableSystem = () => {
   const [timetableLoading, setTimetableLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(null);
+  const basePathUrl = process.env.REACT_APP_BASE_PATH;
 
   // Updated time slots with lunch after 4 periods
   const timeSlots = [
@@ -153,7 +154,7 @@ const TimetableSystem = () => {
   const fetchClassesAndSections = async () => {
     if (applicationRole === PARENT || applicationRole === SUPER_ADMIN || applicationRole === STUDENT) {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/sa/class-section-link');
+        const response = await axios.get(`${basePathUrl}/sa/class-section-link`);
         let data = response.data;
         console.log({ data })
         console.log({ userDetails })
@@ -191,7 +192,7 @@ const TimetableSystem = () => {
   const fetchTeachers = async () => {
     if (applicationRole !== PARENT) {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/sa/user?page=1&limit=100&userType=teacher');
+        const response = await axios.get(`${basePathUrl}/sa/user?page=1&limit=100&userType=teacher`);
         const teachersData = response.data.data || [];
 
         const teacherOptions = teachersData.map(teacher => ({
@@ -214,7 +215,7 @@ const TimetableSystem = () => {
   const fetchSubjects = async () => {
     if (applicationRole === SUPER_ADMIN) {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/subjects/list');
+        const response = await axios.get(`${basePathUrl}/subjects/list`);
         const subjectsData = response.data || [];
 
         const subjectOptions = subjectsData.map(subject => ({
@@ -240,9 +241,9 @@ const TimetableSystem = () => {
 
       let apiUrl;
       if (selectedSection) {
-        apiUrl = `http://localhost:8080/api/v1/timetable/class/${selectedClass}?sectionUuid=${selectedSection}`;
+        apiUrl = `${basePathUrl}/timetable/class/${selectedClass}?sectionUuid=${selectedSection}`;
       } else {
-        apiUrl = `http://localhost:8080/api/v1/timetable/class/${selectedClass}`;
+        apiUrl = `${basePathUrl}/timetable/class/${selectedClass}`;
       }
 
       console.log('Fetching class timetable from:', apiUrl);
@@ -289,7 +290,7 @@ const TimetableSystem = () => {
       console.log(`Fetching teacher timetable for: ${selectedTeacher}`);
 
       // Use the new API endpoint for teacher timetable
-      const response = await axios.get(`http://localhost:8080/api/v1/timetable/teacher/${selectedTeacher}`);
+      const response = await axios.get(`${basePathUrl}/timetable/teacher/${selectedTeacher}`);
       const data = response.data;
 
       console.log('Teacher timetable data:', data);
@@ -399,11 +400,11 @@ const TimetableSystem = () => {
       console.log({ payload })
 
       if (isUpdate && editingEntry?.id) {
-        url = `http://localhost:8080/api/v1/timetable?id=${editingEntry?.id}`;
+        url = `${basePathUrl}/timetable?id=${editingEntry?.id}`;
         payload.teacherTimetableUuid = editingEntry?.teacherTimetableUuid || "";
       }
       else {
-        url = `http://localhost:8080/api/v1/timetable`;
+        url = `${basePathUrl}/timetable`;
       }
 
       console.log('Payload being sent:', JSON.stringify(payload, null, 2));
@@ -443,7 +444,7 @@ const TimetableSystem = () => {
     try {
       setDeleting(entryId);
 
-      const deleteUrl = `http://localhost:8080/api/v1/timetable/${entryId}`;
+      const deleteUrl = `${basePathUrl}/timetable/${entryId}`;
       console.log('Deleting timetable entry from:', deleteUrl);
 
       const response = await axios.delete(deleteUrl, {
