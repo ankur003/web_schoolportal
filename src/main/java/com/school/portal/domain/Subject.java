@@ -62,9 +62,10 @@ public class Subject {
     // Constructors
     public Subject() {}
     
-    public Subject(String subjectName, String subjectCode) {
+    public Subject(String subjectName, String subjectCode, Integer subjectId) {
         this.subjectName = subjectName;
         this.subjectCode = subjectCode;
+        this.subjectId = subjectId;
     }
     
     // Getters and Setters

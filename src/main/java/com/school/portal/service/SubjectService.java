@@ -4,7 +4,6 @@ package com.school.portal.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -324,7 +323,7 @@ public class SubjectService {
 			    ));
 
 		return uniqueMap.values().stream()
-			    .map(s -> new UniqueSubjectDto(s.getSubjectName(), s.getDescription()))
+			    .map(s -> new UniqueSubjectDto(s.getSubjectName(), s.getDescription(), s.getSubjectId()))
 			    .collect(Collectors.toList());
 	}
 	
