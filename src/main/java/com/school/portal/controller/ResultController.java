@@ -42,8 +42,8 @@ public class ResultController {
 
     @PutMapping
     public ResponseEntity<Results> saveOrUpdateResult(@RequestBody ResultRequestDTO requestDTO) {
-        Results result = resultService.saveOrUpdateResult(requestDTO);
-        return ResponseEntity.ok(result);
+        resultService.saveOrUpdateResult(requestDTO);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/dashboard")

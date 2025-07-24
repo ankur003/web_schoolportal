@@ -43,7 +43,7 @@ public class ResultService {
         return resultsRepository.findResultsWithFilters(userUuid, classUuid, sectionUuid, examType, passedStatus);
     }
 
-    public Results saveOrUpdateResult(ResultRequestDTO requestDTO) {
+    public void saveOrUpdateResult(ResultRequestDTO requestDTO) {
         User user = userRepository.findByUserUuidAndIsActive(requestDTO.getUserUuid(), true);
 
 
@@ -76,7 +76,7 @@ public class ResultService {
         // Check if passed
         result.setIsPassed(requestDTO.getMarksObtained() >= subject.getPassMarks());
 
-        return resultsRepository.save(result);
+        resultsRepository.save(result);
     }
 
     public Map<String, Object> getDashboardData(String classUuid, String sectionUuid, 
