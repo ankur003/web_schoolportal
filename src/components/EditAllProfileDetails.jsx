@@ -1,10 +1,155 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
 
+
 const EditAllProfileDetails = React.forwardRef((props, ref) => {
     const { userDetails } = useSelector((state) => state.entityReducer);
     console.log("userDetails", userDetails);
     const [formData, setFormData] = React.useState({});
+    const [activeTab, setActiveTab] = React.useState('personal');
+
+
+    const styles = {
+        container: {
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+        },
+        tabsContainer: {
+            display: 'flex',
+            background: 'linear-gradient(90deg, #667eea, #764ba2)',
+            borderRadius: '20px 20px 0 0',
+            marginBottom: 0
+        },
+        tab: {
+            flex: 1,
+            padding: '1rem 1.5rem',
+            background: 'transparent',
+            border: 'none',
+            color: 'white',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            fontSize: '0.9rem',
+            textAlign: 'center'
+        },
+        activeTab: {
+            background: 'rgba(255,255,255,0.2)',
+            borderRadius: '20px 20px 0 0'
+        },
+        formCard: {
+            background: 'rgba(255,255,255,0.95)',
+            borderRadius: '0 0 20px 20px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            overflow: 'hidden'
+        },
+        sectionHeader: {
+            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+            color: 'white',
+            padding: '1.5rem 2rem',
+            fontSize: '1.2rem',
+            fontWeight: '700',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            margin: 0
+        },
+        formBody: {
+            padding: '2rem'
+        },
+        fieldsGrid: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '1.5rem'
+        },
+        formGroup: {
+            marginBottom: '1.5rem'
+        },
+        label: {
+            display: 'block',
+            fontSize: '0.9rem',
+            fontWeight: '600',
+            color: '#374151',
+            marginBottom: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+        },
+        input: {
+            width: '100%',
+            padding: '0.75rem 1rem',
+            border: '2px solid #e5e7eb',
+            borderRadius: '12px',
+            fontSize: '0.9rem',
+            transition: 'all 0.3s ease',
+            background: '#ffffff',
+            boxSizing: 'border-box',
+            color: '#374151'
+        },
+        inputFocus: {
+            borderColor: '#667eea',
+            boxShadow: '0 0 0 3px rgba(102, 126, 234, 0.1)',
+            outline: 'none'
+        },
+        select: {
+            width: '100%',
+            padding: '0.75rem 1rem',
+            border: '2px solid #e5e7eb',
+            borderRadius: '12px',
+            fontSize: '0.9rem',
+            transition: 'all 0.3s ease',
+            background: '#ffffff',
+            cursor: 'pointer',
+            boxSizing: 'border-box',
+            color: '#374151'
+        },
+        disabledInput: {
+            background: '#f9fafb',
+            color: '#6b7280',
+            cursor: 'not-allowed'
+        },
+        addressSection: {
+            marginTop: '2rem'
+        },
+        addressCard: {
+            background: 'linear-gradient(145deg, #ffffff, #f8f9fa)',
+            borderRadius: '15px',
+            padding: '2rem',
+            border: '2px solid transparent',
+            marginBottom: '2rem',
+            position: 'relative'
+        },
+        currentAddressCard: {
+            borderImage: 'linear-gradient(45deg, #4CAF50, #8BC34A) 1'
+        },
+        permanentAddressCard: {
+            borderImage: 'linear-gradient(45deg, #FF9800, #F44336) 1'
+        },
+        addressHeader: {
+            fontSize: '1.1rem',
+            fontWeight: '700',
+            marginBottom: '1.5rem',
+            color: '#333',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+        },
+        personalCard: {
+            background: 'linear-gradient(145deg, #ffffff, #f8f9fa)',
+            borderRadius: '15px',
+            padding: '2rem',
+            border: '2px solid transparent',
+            borderImage: 'linear-gradient(45deg, #9333ea, #ec4899) 1'
+        },
+        academicCard: {
+            background: 'linear-gradient(145deg, #ffffff, #f8f9fa)',
+            borderRadius: '15px',
+            padding: '2rem',
+            border: '2px solid transparent',
+            borderImage: 'linear-gradient(45deg, #667eea, #764ba2) 1'
+        }
+    };
+
 
     React.useEffect(() => {
         setFormData({
@@ -45,6 +190,7 @@ const EditAllProfileDetails = React.forwardRef((props, ref) => {
         });
     }, [userDetails]);
 
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -53,8 +199,7 @@ const EditAllProfileDetails = React.forwardRef((props, ref) => {
         }));
     };
 
-    // Call this function from parent ProfileDetailsPage.js on Save button
-    // Example: <EditAllProfileDetails ref={editRef} ... /> and then editRef.current.getFormData()
+
     React.useImperativeHandle(
         ref,
         () => ({
@@ -63,250 +208,217 @@ const EditAllProfileDetails = React.forwardRef((props, ref) => {
         [formData]
     );
 
+
+    const renderInput = (name, label, type = "text", placeholder = "", disabled = false, icon = "") => (
+        <div style={styles.formGroup}>
+            <label style={styles.label}>
+                <span>{icon}</span>
+                {label}
+            </label>
+            <input
+                type={type}
+                name={name}
+                placeholder={placeholder}
+                value={formData[name] || ""}
+                onChange={handleChange}
+                disabled={disabled}
+                style={{
+                    ...styles.input,
+                    ...(disabled ? styles.disabledInput : {})
+                }}
+                onFocus={(e) => {
+                    if (!disabled) {
+                        e.target.style.borderColor = '#667eea';
+                        e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+                    }
+                }}
+                onBlur={(e) => {
+                    e.target.style.borderColor = '#e5e7eb';
+                    e.target.style.boxShadow = 'none';
+                }}
+            />
+            <style>{`
+                input[name="${name}"]::placeholder {
+                    color: #9ca3af !important;
+                    opacity: 1 !important;
+                    font-style: italic;
+                }
+                input[name="${name}"]:focus::placeholder {
+                    color: #d1d5db !important;
+                }
+            `}</style>
+        </div>
+    );
+
+
+    const renderSelect = (name, label, options, icon = "") => (
+        <div style={styles.formGroup}>
+            <label style={styles.label}>
+                <span>{icon}</span>
+                {label}
+            </label>
+            <select
+                name={name}
+                value={formData[name] || ""}
+                onChange={handleChange}
+                style={styles.select}
+                onFocus={(e) => {
+                    e.target.style.borderColor = '#667eea';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+                }}
+                onBlur={(e) => {
+                    e.target.style.borderColor = '#e5e7eb';
+                    e.target.style.boxShadow = 'none';
+                }}
+            >
+                {options.map(option => (
+                    <option key={option.value} value={option.value}>
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+
+
+    const personalFields = () => (
+        <div style={styles.personalCard}>
+            <div style={styles.addressHeader}>
+                <span>👤</span>
+                Personal Information
+            </div>
+            <div style={styles.fieldsGrid}>
+                {renderInput("fullName", "Full Name", "text", "Enter Full Name", false, "👤")}
+                {renderInput("dob", "Date of Birth", "date", "", false, "🎂")}
+                {renderInput("doj", "Date of Joining", "date", "", false, "📅")}
+                {renderInput("bloodGroup", "Blood Group", "text", "Enter Blood Group", false, "🩸")}
+                {renderInput("age", "Age", "text", "", true, "⏰")}
+                {renderSelect("gender", "Gender", [
+                    { value: "", label: "Select Gender" },
+                    { value: "male", label: "Male" },
+                    { value: "female", label: "Female" }
+                ], "⚧")}
+            </div>
+        </div>
+    );
+
+
+    const familyFields = () => (
+        <div style={styles.academicCard}>
+            <div style={styles.addressHeader}>
+                <span>👪</span>
+                Family Information
+            </div>
+            <div style={styles.fieldsGrid}>
+                {renderInput("fatherName", "Father's Name", "text", "Enter Father's Name", false, "👨")}
+                {renderInput("motherName", "Mother's Name", "text", "Enter Mother's Name", false, "👩")}
+                {renderInput("fatherMobileNumber", "Father's Mobile", "tel", "Enter Father's Mobile", false, "📱")}
+                {renderInput("motherMobileNumber", "Mother's Mobile", "tel", "Enter Mother's Mobile", false, "📱")}
+                {renderInput("fatherEmailId", "Father's Email", "email", "Enter Father's Email", false, "✉️")}
+                {renderInput("motherEmailId", "Mother's Email", "email", "Enter Mother's Email", false, "✉️")}
+                {renderInput("fatherOccupation", "Father's Occupation", "text", "Enter Father's Occupation", false, "💼")}
+                {renderInput("motherOccupation", "Mother's Occupation", "text", "Enter Mother's Occupation", false, "💼")}
+            </div>
+        </div>
+    );
+
+
+    const addressFields = () => (
+        <div style={styles.addressSection}>
+            {/* Current Address */}
+            <div style={{
+                ...styles.addressCard,
+                ...styles.currentAddressCard
+            }}>
+                <div style={styles.addressHeader}>
+                    <span>🏠</span>
+                    Current Address
+                </div>
+                <div style={styles.fieldsGrid}>
+                    {renderInput("cBuildingName", "Building Name", "text", "Enter Building Name", false, "🏢")}
+                    {renderInput("cFlatNo", "Flat Number", "text", "Enter Flat Number", false, "🚪")}
+                    {renderInput("cFloorNo", "Floor Number", "text", "Enter Floor Number", false, "🏗️")}
+                    {renderInput("cHouseNo", "House Number", "text", "Enter House Number", false, "🏘️")}
+                    {renderInput("cVillage", "Village", "text", "Enter Village", false, "🏞️")}
+                    {renderInput("cTehsil", "Tehsil", "text", "Enter Tehsil", false, "🗺️")}
+                    {renderInput("cDistrict", "District", "text", "Enter District", false, "🌍")}
+                    {renderInput("cState", "State", "text", "Enter State", false, "🏛️")}
+                    {renderInput("cCoutry", "Country", "text", "Enter Country", false, "🌎")}
+                    {renderInput("cPinCode", "PIN Code", "text", "Enter PIN Code", false, "📮")}
+                </div>
+            </div>
+
+
+            {/* Permanent Address */}
+            <div style={{
+                ...styles.addressCard,
+                ...styles.permanentAddressCard
+            }}>
+                <div style={styles.addressHeader}>
+                    <span>🏡</span>
+                    Permanent Address
+                </div>
+                <div style={styles.fieldsGrid}>
+                    {renderInput("pBuildingName", "Building Name", "text", "Enter Building Name", false, "🏢")}
+                    {renderInput("pFlatNo", "Flat Number", "text", "Enter Flat Number", false, "🚪")}
+                    {renderInput("pFloorNo", "Floor Number", "text", "Enter Floor Number", false, "🏗️")}
+                    {renderInput("pHouseNo", "House Number", "text", "Enter House Number", false, "🏘️")}
+                    {renderInput("pVillage", "Village", "text", "Enter Village", false, "🏞️")}
+                    {renderInput("pTehsil", "Tehsil", "text", "Enter Tehsil", false, "🗺️")}
+                    {renderInput("pDistrict", "District", "text", "Enter District", false, "🌍")}
+                    {renderInput("pState", "State", "text", "Enter State", false, "🏛️")}
+                    {renderInput("pCoutry", "Country", "text", "Enter Country", false, "🌎")}
+                    {renderInput("pPinCode", "PIN Code", "text", "Enter PIN Code", false, "📮")}
+                </div>
+            </div>
+        </div>
+    );
+
+
     return (
-        <>
-            <div className="card">
-                <div className='card-header'>
-                    <h6>PERSONAL INFORMATION</h6>
-                </div>
-                <div className='card-body'>
-                    <div className="form-content">
-                        <div className="d-flex">
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Full Name</label>
-                                    <input type="text" className="form-control" name="fullName" placeholder="Enter Full Name" value={formData.fullName} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">DOB</label>
-                                    <input type="text" className="form-control" name="dob" placeholder="DOB" value={formData.dob} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">DOJ</label>
-                                    <input type="text" className="form-control" name="doj" placeholder="Enter DOJ" value={formData.doj} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Blood Group</label>
-                                    <input type="text" className="form-control" name="bloodGroup" placeholder="Enter Blood Group" value={formData.bloodGroup} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Age</label>
-                                    <input type="text" className="form-control" name="age" value={formData.age} disabled />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Gender</label>
-                                    <select className='form-control' name='gender' value={formData.gender} onChange={handleChange}>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Father Name</label>
-                                    <input type="text" className="form-control" name="fatherName" placeholder="Enter Father Name" value={formData.fatherName} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Mother Name</label>
-                                    <input type="text" className="form-control" name="motherName" placeholder="Enter Mother Name" value={formData.motherName} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Father Mobile No</label>
-                                    <input type="tel" className="form-control" name="fatherMobileNumber" placeholder="Enter Father Mobile No" value={formData.fatherMobileNumber} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Mother Mobile No</label>
-                                    <input type="tel" className="form-control" name="motherMobileNumber" placeholder="Enter Mother Mobile No" value={formData.motherMobileNumber} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Father Email Id</label>
-                                    <input type="text" className="form-control" name="fatherEmailId" placeholder="Enter Email Id" value={formData.fatherEmailId} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Mother Email Id</label>
-                                    <input type="text" className="form-control" name="motherEmailId" placeholder="Enter Mother Email Id" value={formData.motherEmailId} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Father Occupation</label>
-                                    <input type="text" className="form-control" name="fatherOccupation" placeholder="Enter Father Occupation" value={formData.fatherOccupation} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">Mother Occupation</label>
-                                    <input type="text" className="form-control" name="motherOccupation" placeholder="Enter Mother Occupation" value={formData.motherOccupation} onChange={handleChange} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div style={styles.container}>
+            {/* Tabs */}
+            <div style={styles.tabsContainer}>
+                {[
+                    { id: 'personal', label: '👤 Personal', icon: '👤' },
+                    { id: 'family', label: '👪 Family', icon: '👪' },
+                    { id: 'address', label: '🏠 Address', icon: '🏠' }
+                ].map(tab => (
+                    <button
+                        key={tab.id}
+                        style={{
+                            ...styles.tab,
+                            ...(activeTab === tab.id ? styles.activeTab : {})
+                        }}
+                        onClick={() => setActiveTab(tab.id)}
+                        onMouseEnter={(e) => {
+                            if (activeTab !== tab.id) {
+                                e.target.style.background = 'rgba(255,255,255,0.1)';
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (activeTab !== tab.id) {
+                                e.target.style.background = 'transparent';
+                            }
+                        }}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+
+            {/* Form Content */}
+            <div style={styles.formCard}>
+                <div style={styles.formBody}>
+                    {activeTab === 'personal' && personalFields()}
+                    {activeTab === 'family' && familyFields()}
+                    {activeTab === 'address' && addressFields()}
                 </div>
             </div>
-            <div className='card'>
-                <div className='card-header'>
-                    <h6>CURRENT ADDRESS</h6>
-                </div>
-                <div className='card-body'>
-                    <div className="form-content">
-                        <div className="d-flex">
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">BUILDING NAME</label>
-                                    <input type="text" className="form-control" name="cBuildingName" placeholder="Enter Building Name" value={formData.cBuildingName} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">FLAT NO</label>
-                                    <input type="text" className="form-control" name="cFlatNo" placeholder="Enter Flat No" value={formData.cFlatNo} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">FLOOR NO</label>
-                                    <input type="text" className="form-control" name="cFloorNo" placeholder="Enter Floor No" value={formData.cFloorNo} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">HOUSENO</label>
-                                    <input type="text" className="form-control" name="cHouseNo" placeholder="Enter House No" value={formData.cHouseNo} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">COUNTRY</label>
-                                    <input type="text" className="form-control" name="cCoutry" placeholder="Enter Country" value={formData.cCoutry} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">DISTRICT</label>
-                                    <input type="text" className="form-control" name="cDistrict" placeholder="Enter District" value={formData.cDistrict} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">STATE</label>
-                                    <input type="text" className="form-control" name="cState" placeholder="Enter State" value={formData.cState} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">PIN CODE</label>
-                                    <input type="text" className="form-control" name="cPinCode" placeholder="Enter Pin Code" value={formData.cPinCode} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">VILLAGE</label>
-                                    <input type="text" className="form-control" name="cVillage" placeholder="Enter Village" value={formData.cVillage} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">TEHSIL</label>
-                                    <input type="text" className="form-control" name="cTehsil" placeholder="Enter Tehsil" value={formData.cTehsil} onChange={handleChange} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className='card'>
-                <div className='card-header'>
-                    <h6>PERMANENT ADDRESS</h6>
-                </div>
-                <div className='card-body'>
-                    <div className="form-content">
-                        <div className="d-flex">
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">BUILDING NAME</label>
-                                    <input type="text" className="form-control" name="pBuildingName" placeholder="Enter Building Name" value={formData.pBuildingName} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">FLAT NO</label>
-                                    <input type="text" className="form-control" name="pFlatNo" placeholder="Enter Flat No" value={formData.pFlatNo} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">FLOOR NO</label>
-                                    <input type="text" className="form-control" name="pFloorNo" placeholder="Enter Floor No" value={formData.pFloorNo} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">HOUSENO</label>
-                                    <input type="text" className="form-control" name="pHouseNo" placeholder="Enter House No" value={formData.pHouseNo} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">COUNTRY</label>
-                                    <input type="text" className="form-control" name="pCoutry" placeholder="Enter Country" value={formData.pCoutry} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">DISTRICT</label>
-                                    <input type="text" className="form-control" name="pDistrict" placeholder="Enter District" value={formData.pDistrict} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">STATE</label>
-                                    <input type="text" className="form-control" name="pState" placeholder="Enter State" value={formData.pState} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">PIN CODE</label>
-                                    <input type="text" className="form-control" name="pPinCode" placeholder="Enter Pin Code" value={formData.pPinCode} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-r-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">VILLAGE</label>
-                                    <input type="text" className="form-control" name="pVillage" placeholder="Enter Village" value={formData.pVillage} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='flex-50 pd-l-5'>
-                                <div className="form-group">
-                                    <label className="form-group-label">TEHSIL</label>
-                                    <input type="text" className="form-control" name="pTehsil" placeholder="Enter Tehsil" value={formData.pTehsil} onChange={handleChange} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
-    )
+        </div>
+    );
 });
+
 
 export default EditAllProfileDetails;
