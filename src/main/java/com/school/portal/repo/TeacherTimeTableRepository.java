@@ -34,7 +34,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
-          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid")
+          "LEFT JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid")
   List<TeacherTimeTableDTO> findAllWithDetails();
 
   @Query("SELECT new com.school.portal.dto.TeacherTimeTableDTO(" +
@@ -57,7 +57,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
-          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+          "LEFT JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
           "WHERE t.masterClassUuid = :classUuid")
   List<TeacherTimeTableDTO> findByClassUuid(@Param("classUuid") String classUuid);
 
@@ -84,7 +84,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
-          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+          "LEFT JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
           "WHERE t.dayOfWeek = :dayOfWeek")
   List<TeacherTimeTableDTO> findByDayOfWeek(@Param("dayOfWeek") String dayOfWeek);
 
@@ -96,7 +96,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
-          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+          "LEFT JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
           "WHERE t.teacherTimetableUuid = :uuid")
   Optional<TeacherTimeTableDTO> findByTeacherTimeTableUuid(@Param("uuid") String uuid);
 
