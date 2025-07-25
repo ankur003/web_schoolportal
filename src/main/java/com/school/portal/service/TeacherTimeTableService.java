@@ -6,6 +6,8 @@ import com.school.portal.repo.TeacherTimeTableRepository;
 import com.school.portal.utils.SchoolPortalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -99,29 +101,34 @@ public class TeacherTimeTableService {
     public TeacherTimeTable upsertWithValidation(Long id, TeacherTimeTable entry) {
         if (id == null) {
             // CREATE logic
+            // Add one minute to the start time
+            LocalTime startTimePlusOne = entry.getStartTime().plusMinutes(1);
+            LocalTime endTimeMinusOne = entry.getEndTime().minusMinutes(1);
+
             List<TeacherTimeTable> clashes = timetableRepo.findOverlappingSlots(
                     entry.getTeacherUuid(),
                     entry.getDayOfWeek(),
-                    entry.getStartTime(),
-                    entry.getEndTime()
+                    startTimePlusOne,
+                    endTimeMinusOne
             );
 
             if (!clashes.isEmpty()) {
                 throw new RuntimeException("Teacher already has a class during this time.");
             }
-
             entry.setTeacherTimetableUuid(SchoolPortalUtils.getUniqueUuid());
             return timetableRepo.save(entry);
         } else {
             // UPDATE logic
             TeacherTimeTable existing = timetableRepo.findById(id)
                     .orElseThrow(() -> new RuntimeException("Timetable entry not found"));
+            LocalTime startTimePlusOne = entry.getStartTime().plusMinutes(1);
+            LocalTime endTimeMinusOne = entry.getEndTime().minusMinutes(1);
 
             List<TeacherTimeTable> clashes = timetableRepo.findOverlappingSlots(
                             entry.getTeacherUuid(),
                             entry.getDayOfWeek(),
-                            entry.getStartTime(),
-                            entry.getEndTime()
+                            startTimePlusOne,
+                            endTimeMinusOne
                     ).stream()
                     .filter(e -> !e.getId().equals(id))
                     .collect(Collectors.toList());
