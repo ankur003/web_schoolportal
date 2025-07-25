@@ -45,7 +45,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
-          "JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
+          "LEFT JOIN MasterSection ms ON t.masterSectionUuid = ms.masterSectionUuid " +
           "WHERE t.teacherUuid = :teacherUuid")
   List<TeacherTimeTableDTO> findByTeacherUuid(@Param("teacherUuid") String teacherUuid);
 
