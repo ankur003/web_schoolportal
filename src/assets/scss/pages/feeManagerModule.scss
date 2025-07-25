@@ -438,10 +438,6 @@
 
                 .fee-input {
                     width: 150px;
-                    margin-left: 10px;
-                    padding: 5px 8px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
 
                     &:focus {
                         border-color: #1976d2;
@@ -460,6 +456,7 @@
         .fee-card-header {
             background: #ffecb3;
             color: #e65100;
+
         }
 
         .fee-total {
@@ -475,6 +472,16 @@
         .fee-card-header {
             background: #bbdefb;
             color: #0d47a1;
+
+            .month-selector {
+                position: absolute;
+                right: 10px;
+            }
+
+            .form-control {
+                font-size: 12px;
+                padding: 7px 10px;
+            }
         }
 
         .fee-total {

@@ -10,6 +10,7 @@ import CounterCard from '../../components/CounterCard';
 import { use } from 'react';
 import { toast } from 'react-toastify';
 import { PARENT, SUPER_ADMIN, TEACHER } from '../../Redux/Constants';
+import { Eye } from 'lucide-react';
 
 export default function FeePaymentModule() {
     const dispatch = useDispatch();
@@ -151,22 +152,22 @@ export default function FeePaymentModule() {
     // UPDATED: Enhanced handleChangeSections to maintain options availability after clearing
     const handleChangeSections = (selected) => {
         setSelectedSections(selected);
-        
+
         // Always clear the selected student when section changes
         setSelectedUser(null);
-        
+
         if (!selected) {
             // If section is cleared, fetch all students for the selected class (if class is selected)
             if (selectedClass) {
-                let data = { 
-                    page, 
-                    limit, 
-                    userType: "STUDENT", 
-                    values: { 
+                let data = {
+                    page,
+                    limit,
+                    userType: "STUDENT",
+                    values: {
                         sectionName: "", // Empty section name to get all students for the class
-                        className: selectedClass?.label || "" 
-                    }, 
-                    Studentfilter: true 
+                        className: selectedClass?.label || ""
+                    },
+                    Studentfilter: true
                 };
                 dispatch(getEntities(data));
             }
@@ -174,15 +175,15 @@ export default function FeePaymentModule() {
         }
 
         // Fetch students for the selected class and section
-        let data = { 
-            page, 
-            limit, 
-            userType: "STUDENT", 
-            values: { 
-                sectionName: selected?.label, 
-                className: selectedClass?.label 
-            }, 
-            Studentfilter: true 
+        let data = {
+            page,
+            limit,
+            userType: "STUDENT",
+            values: {
+                sectionName: selected?.label,
+                className: selectedClass?.label
+            },
+            Studentfilter: true
         };
         dispatch(getEntities(data));
     }
@@ -190,7 +191,7 @@ export default function FeePaymentModule() {
     // UPDATED: Enhanced handleChange to maintain proper option availability
     const handleChange = (selected) => {
         setSelectedClass(selected);
-        
+
         // Always clear the selected sections and students when class changes
         setSelectedSections(null);
         setSelectedUser(null);
@@ -216,15 +217,15 @@ export default function FeePaymentModule() {
         setSectionList(filteredSections);
 
         // Fetch all students for the selected class (without section filter)
-        let data = { 
-            page, 
-            limit, 
-            userType: "STUDENT", 
-            values: { 
+        let data = {
+            page,
+            limit,
+            userType: "STUDENT",
+            values: {
                 sectionName: "", // Empty section name to get all students for the class
-                className: selected?.label 
-            }, 
-            Studentfilter: true 
+                className: selected?.label
+            },
+            Studentfilter: true
         };
         dispatch(getEntities(data));
     };
@@ -235,42 +236,42 @@ export default function FeePaymentModule() {
         const currentClassSelection = selectedClass;
         const currentSectionSelection = selectedSections;
         const currentUserSelection = selectedUser;
-        
-        const payload = { 
-            userUuid: selectedUser?.value || "", 
-            masterClassUuid: selectedClass?.value || "", 
-            masterSectionUuid: selectedSections?.value || "" 
+
+        const payload = {
+            userUuid: selectedUser?.value || "",
+            masterClassUuid: selectedClass?.value || "",
+            masterSectionUuid: selectedSections?.value || ""
         };
-        
+
         // Perform the search
         getUserFeesList(payload);
-        
+
         // Ensure selections and options remain available after search
         // Re-fetch entities to maintain student options based on current filters
         if (currentClassSelection && currentSectionSelection) {
             // If both class and section are selected, fetch students for that combination
-            let data = { 
-                page, 
-                limit, 
-                userType: "STUDENT", 
-                values: { 
-                    sectionName: currentSectionSelection?.label || "", 
-                    className: currentClassSelection?.label || "" 
-                }, 
-                Studentfilter: true 
+            let data = {
+                page,
+                limit,
+                userType: "STUDENT",
+                values: {
+                    sectionName: currentSectionSelection?.label || "",
+                    className: currentClassSelection?.label || ""
+                },
+                Studentfilter: true
             };
             dispatch(getEntities(data));
         } else if (currentClassSelection) {
             // If only class is selected, fetch all students for that class
-            let data = { 
-                page, 
-                limit, 
-                userType: "STUDENT", 
-                values: { 
-                    sectionName: "", 
-                    className: currentClassSelection?.label || "" 
-                }, 
-                Studentfilter: true 
+            let data = {
+                page,
+                limit,
+                userType: "STUDENT",
+                values: {
+                    sectionName: "",
+                    className: currentClassSelection?.label || ""
+                },
+                Studentfilter: true
             };
             dispatch(getEntities(data));
         }
@@ -325,6 +326,7 @@ export default function FeePaymentModule() {
                             <div className="d-flex w-100">
                                 <div className="flex-25 pd-r-10">
                                     <CounterCard
+                                        className="bg-primary"
                                         title="Total Collected"
                                         value={totalPaymentAmount}
                                         chartData={createChartData('students', [1120, 1180, 1190, 1210, 1245])}
@@ -332,6 +334,7 @@ export default function FeePaymentModule() {
                                 </div>
                                 <div className="flex-25 pd-l-10 pd-r-10">
                                     <CounterCard
+                                        className="bg-danger"
                                         title="Total Payments"
                                         value={totalPayments}
                                         chartData={createChartData('attendance', [88, 90, 91, 92, 92])}
@@ -339,6 +342,7 @@ export default function FeePaymentModule() {
                                 </div>
                                 <div className="flex-25 pd-r-10 pd-l-10">
                                     <CounterCard
+                                        className="bg-warning"
                                         title="Students"
                                         value={totalStudents}
                                         chartData={createChartData('teachers', [45, 48, 50, 52, 55])}
@@ -346,6 +350,7 @@ export default function FeePaymentModule() {
                                 </div>
                                 <div className="flex-25 pd-l-10">
                                     <CounterCard
+                                        className="bg-success"
                                         title="Average Fee's"
                                         value={averagePaymentAmount.toFixed(2)}
                                         chartData={createChartData('classes', [30, 32, 33, 34, 35])}
@@ -391,7 +396,7 @@ export default function FeePaymentModule() {
                                             options={userOptions}
                                             value={selectedUser}
                                             onChange={setSelectedUser}
-                                             className="basic-multi-select"
+                                            className="basic-multi-select"
                                             classNamePrefix="select"
                                             placeholder="Select Student"
                                             hasSelectAll={false}
@@ -439,7 +444,7 @@ export default function FeePaymentModule() {
                                                     <td>{data?.paymentDate ? data?.paymentDate : "N/A"}</td>
                                                     <td>{data?.amountPaid ? data?.amountPaid : "N/A"}</td>
                                                     <td>
-                                                        <button type='button' className="btn btn-primary mr-r-10" onClick={() => showPaymentDetails(data)}>View</button>
+                                                        <button type='button' className="btn btn-primary mr-r-10" onClick={() => showPaymentDetails(data)}><Eye /></button>
                                                     </td>
                                                 </tr>
                                             )}
@@ -485,7 +490,7 @@ export default function FeePaymentModule() {
                                         </div>
                                         <div className="info-item">
                                             <span className="info-label">Payment Date</span>
-                                            <span className="info-value">{ModalDataList?.paymentDate.length > 0 ? `${ModalDataList?.paymentDate[0]} - ${ModalDataList?.paymentDate[1]} - ${ModalDataList?.paymentDate[2]}` : "N/A"}</span>
+                                            <span className="info-value">{ModalDataList?.paymentDate ? ModalDataList?.paymentDate : "N/A"}</span>
                                         </div>
                                         <div className="info-item">
                                             <span className="info-label">Academic Year</span>

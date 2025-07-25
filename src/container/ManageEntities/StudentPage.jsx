@@ -9,6 +9,7 @@ import Loader from '../../components/Loader';
 import NoDataFound from '../../components/NoDataFound';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { CalendarClock, Eye, FilePen, IndianRupee, Link, Trash } from 'lucide-react';
 
 export default function StudentPage() {
     const dispatch = useDispatch();
@@ -170,8 +171,8 @@ export default function StudentPage() {
                                                 <td>{data?.fullName ? data?.fullName : "N/A"}</td>
                                                 <td><AttendanceButtons userId={data?.userUuid} /></td>
                                                 <td>
-                                                    <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
-                                                    <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
+                                                    <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}> <IndianRupee /></button>
+                                                    <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}><Eye /></button>
                                                     {/* <button type='button' className="btn btn-danger mr-r-4" onClick={() => getUserIdForCalender(data?.userUuid)}>Attendance</button> */}
                                                 </td>
                                             </tr>
@@ -189,23 +190,23 @@ export default function StudentPage() {
                                                     {userRole === SUPER_ADMIN ? <>
                                                         <button className={data?.className ? "btn mr-r-4 cursor-not-allowed" : "btn btn-warning mr-r-4"}
                                                             disabled={data?.className && data?.className}
-                                                            onClick={() => { openLinkModal(data) }}>Link</button>
-                                                        <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
-                                                        <button disabled className="btn btn-success mr-r-4">Edit</button>
-                                                        <button disabled className="btn btn-danger">Delete</button>
+                                                            onClick={() => { openLinkModal(data) }}><Link /></button>
+                                                        <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}><Eye /></button>
+                                                        <button disabled className="btn btn-success mr-r-4">  <FilePen /></button>
+                                                        <button disabled className="btn btn-danger"><Trash /></button>
                                                     </>
                                                         :
                                                         <>
-                                                            <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
+                                                            <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}><Eye /></button>
                                                             {userRole === PARENT &&
                                                                 <>
-                                                                    <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
-                                                                    <button type='button' className="btn btn-warning" onClick={() => checkTimeTable(data?.className, data?.sectionName)}>View Time Table</button>
+                                                                    <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}> <IndianRupee /></button>
+                                                                    <button type='button' className="btn btn-warning" onClick={() => checkTimeTable(data?.className, data?.sectionName)}> <CalendarClock /></button>
                                                                 </>
                                                             }
                                                             {userRole === TEACHER &&
                                                                 <>
-                                                                    <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
+                                                                    <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}> <IndianRupee /></button>
 
                                                                 </>
                                                             }

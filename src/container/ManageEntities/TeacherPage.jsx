@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import NoDataFound from '../../components/NoDataFound';
 import Loader from '../../components/Loader';
+import { Eye, FilePen, Link, Trash } from 'lucide-react';
 
 export default function TeacherPage() {
     const dispatch = useDispatch()
@@ -111,10 +112,10 @@ export default function TeacherPage() {
                                             <td>{data?.className ? data?.className : "N/A"}</td>
                                             <td>{data?.sectionName ? data?.sectionName : "N/A"}</td>
                                             <td>
-                                                <button className="btn btn-warning mr-r-4" onClick={() => { openLinkModal(data) }}>Link</button>
-                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
-                                                <button className="btn btn-success mr-r-4">Edit</button>
-                                                <button className="btn btn-danger">Delete</button>
+                                                <button className="btn btn-warning mr-r-4" onClick={() => { openLinkModal(data) }}><Link /></button>
+                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}><Eye /></button>
+                                                <button className="btn btn-success mr-r-4" disabled>  <FilePen /></button>
+                                                <button className="btn btn-danger" disabled><Trash /></button>
                                             </td>
                                         </tr>
                                     )}

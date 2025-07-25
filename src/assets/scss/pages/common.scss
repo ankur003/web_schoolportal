@@ -5,6 +5,13 @@ body {
     background: $body-gradient;
 }
 
+.dropdown-item {
+    cursor: pointer;
+}
+// .dropdown-menu {
+//  background: #F09819;
+// }
+
 .content-filter {
     margin-bottom: 20px;
     // Solid background with subtle gradient
@@ -12,7 +19,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 
+    box-shadow:
         0 4px 20px rgba(0, 0, 0, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
@@ -25,7 +32,7 @@ body {
         left: 0;
         right: 0;
         bottom: 0;
-        background-image: 
+        background-image:
             radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
             radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
         border-radius: 12px;
@@ -33,14 +40,14 @@ body {
     }
 
     // Ensure content stays above the pattern
-    > * {
+    >* {
         position: relative;
         z-index: 1;
     }
 
     &:hover {
         border-color: rgba(255, 255, 255, 0.15);
-        box-shadow: 
+        box-shadow:
             0 6px 25px rgba(0, 0, 0, 0.2),
             inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
@@ -121,7 +128,7 @@ body {
                 background: #1a202c;
                 color: $white;
                 padding: 8px 12px;
-                
+
                 &:hover {
                     background: #2d3748;
                 }
@@ -263,7 +270,7 @@ body {
 
     @media (max-width: 768px) {
         padding: 15px;
-        
+
         .d-flex {
             flex-direction: column;
             gap: 12px;
@@ -283,6 +290,7 @@ body {
         }
 
         .form-group {
+
             .form-control,
             .basic-multi-select .select__control {
                 height: 40px;
@@ -348,20 +356,80 @@ body {
 .modal {
     background: rgba(0, 0, 0, 0.5);
 
+
     .modal-content {
-        box-shadow: $yellowGradientShadow;
+        background: white;
+        border-radius: 12px;
+        padding: 32px;
+        // max-width: 650px;
+        width: 100%;
+        margin: 16px;
+        max-height: 90vh;
+        overflow-y: auto;
     }
 
-    .close {
-        background-color: transparent;
-        border: 0;
-        color: $white;
+    .modal-body {
+        padding: 0;
     }
 
     .modal-header {
-        background: $blue;
-        color: $white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        border: 0;
+        padding: 0px;
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.2s ease;
+        }
     }
+
+    .modal-footer {
+        display: flex;
+        gap: 16px;
+        margin-top: 24px;
+        border: 0;
+        padding: 0;
+
+        .btn {
+            flex: 1 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &.btn-secondary {
+                background: #e5e7eb !important;
+                color: #374151;
+            }
+
+            &.btn-primary {
+                background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+                color: white;
+
+            }
+        }
+    }
+
 }
 
 // table
@@ -558,6 +626,7 @@ body {
                     font-weight: 600;
                     transition: all 0.3s ease;
                     margin: 0 2px;
+                    color: $white !important;
 
                     &.btn-primary {
                         background: $body-gradient;
@@ -571,7 +640,7 @@ body {
                     }
 
                     &.btn-success {
-                        background: $yellowGradient;
+                        background: $greenGradient;
                         border: none;
                         color: $black;
 
@@ -630,7 +699,7 @@ body {
     &.loading {
         opacity: 0.7;
         pointer-events: none;
-        
+
         &::after {
             content: '';
             position: absolute;
@@ -716,13 +785,13 @@ body {
     @media print {
         box-shadow: none;
         border: 1px solid #ddd;
-        
+
         .table {
             thead th {
                 background: #f8f9fa !important;
                 color: #000 !important;
             }
-            
+
             tbody td {
                 color: #000 !important;
             }
@@ -732,13 +801,25 @@ body {
 
 // Animation keyframes
 @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .table-content {
@@ -815,14 +896,16 @@ body {
 
 .card {
     border: 0;
-    border-radius: 2px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
     .card-header {
-        background: $body-gradient;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);;
         color: $white;
         border: 0;
         border-radius: 0;
+        border-top-left-radius:16px;
+        border-top-right-radius: 16px;
 
         h6 {
             margin: 0;
@@ -843,6 +926,7 @@ body {
 
     .create-button {
         @include position-top-right;
+
         .btn-outline-light {
             font-size: 14px !important;
             padding: 5px 20px;
@@ -880,7 +964,6 @@ body {
 }
 
 .counter-card {
-    background: $body-gradient;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -911,7 +994,7 @@ body {
 
 .bg-custom {
     background: #F09819;
-    color: $white;
+    color: $white !important;
     padding: 5px 8px;
 }
 
@@ -943,12 +1026,14 @@ body {
 
 .alert-warning,
 .badge-warning {
-   background: linear-gradient(to right, #fffde7, #fff9c4);
+    background: linear-gradient(to right, #fffde7, #fff9c4);
 }
+
 .alert-success,
 .badge-success {
     background: linear-gradient(to right, #e8f5e9, #c8e6c9);
 }
+
 .alert-info,
 .badge-info {
     background: linear-gradient(to right, #e3f2fd, #bbdefb);

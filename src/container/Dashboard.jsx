@@ -85,6 +85,7 @@ export default function Dashboard() {
                     <div className="d-flex w-100">
                         <div className="flex-20 pd-r-10">
                             <CounterCard
+                                className="bg-primary"
                                 title="Total Students"
                                 value="1,245"
                                 chartData={createChartData('students', [1120, 1180, 1190, 1210, 1245])}
@@ -92,6 +93,7 @@ export default function Dashboard() {
                         </div>
                         <div className="flex-20 pd-r-10 pd-l-10">
                             <CounterCard
+                                className="bg-danger"
                                 title="Attendance Rate"
                                 value="92%"
                                 chartData={createChartData('attendance', [88, 90, 91, 92, 92])}
@@ -99,6 +101,7 @@ export default function Dashboard() {
                         </div>
                         <div className="flex-20 pd-r-10 pd-l-10">
                             <CounterCard
+                                className="bg-warning"
                                 title="Total Teachers"
                                 value="55"
                                 chartData={createChartData('teachers', [45, 48, 50, 52, 55])}
@@ -106,6 +109,7 @@ export default function Dashboard() {
                         </div>
                         <div className="flex-20 pd-r-10 pd-l-10">
                             <CounterCard
+                                className="bg-info"
                                 title="Total Classes"
                                 value="35"
                                 chartData={createChartData('classes', [30, 32, 33, 34, 35])}
@@ -113,6 +117,7 @@ export default function Dashboard() {
                         </div>
                         <div className="flex-20 pd-l-10">
                             <CounterCard
+                                className="bg-success"
                                 title="Fees Collected"
                                 value="₹12L"
                                 chartData={createChartData('fees', [8, 9, 10, 11, 12])}

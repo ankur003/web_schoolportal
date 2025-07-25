@@ -1,7 +1,7 @@
 @import "../theme/variables";
 @import "../utils/mixin";
 
-.form-control,
+
 .select__single-value,
 .dropdown-heading-value span {
     font-size: 14px;
@@ -15,6 +15,13 @@
     }
 }
 
+
+.select__placeholder,
+#react-select-13-placeholder {
+    color: $content-color;
+    opacity: 0.5;
+    font-size: 12px;
+}
 
 .form-icon {
     border-radius: 2px !important;
@@ -71,3 +78,39 @@
         cursor: pointer;
     }
 }
+
+
+
+// new form css 
+
+
+.form-group {
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 6px;
+    }
+}
+
+.form-control {
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: white;
+        font-size: 14px;
+
+        &:disabled {
+            background-color: #e5e7eb;
+            border-color: #9ca3af;
+            color: #374151;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        &::placeholder {
+            color: $content-color;
+            opacity: 0.5;
+        }
+    }

@@ -9,6 +9,7 @@ import { getClasses } from '../../Redux/Action/manageClassAction';
 import { createUser, getChildrenListByPar, getEntities, getParentEntities, linkedStudent } from '../../Redux/Action/entityAction';
 import { toast } from 'react-toastify';
 import { SUPER_ADMIN } from '../../Redux/Constants';
+import { Eye, FilePen, Link, Trash } from 'lucide-react';
 
 export default function ParentsPage() {
     const dispatch = useDispatch();
@@ -206,12 +207,12 @@ export default function ParentsPage() {
                                                 )}
                                             </td>
                                             <td>
-                                                {role === SUPER_ADMIN && <button type='button' className="btn btn-warning mr-r-4" onClick={() => linkHandler(data)}>Link</button>}
-                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
+                                                {role === SUPER_ADMIN && <button type='button' className="btn btn-warning mr-r-4" onClick={() => linkHandler(data)}><Link /></button>}
+                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}><Eye /></button>
                                                 {role === SUPER_ADMIN &&
                                                     <>
-                                                        <button className="btn btn-success mr-r-4">Edit</button>
-                                                        <button className="btn btn-danger">Delete</button>
+                                                        <button className="btn btn-success mr-r-4" disabled>  <FilePen /></button>
+                                                        <button className="btn btn-danger" disabled><Trash /></button>
                                                     </>
                                                 }
                                             </td>

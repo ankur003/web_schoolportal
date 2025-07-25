@@ -56,11 +56,11 @@ export default function ForgetPassword() {
     return (
         <>
             <div className="login-wrapper">
-                <div className="login-icon">
-                    <img alt='logo' src={require('../assets/images/logo.jpg')} />
-                </div>
                 {!isShow ?
                     <div className="login-content">
+                        <div className="login-icon">
+                            <img alt='logo' src={require('../assets/images/logo.jpg')} />
+                        </div>
                         <h1>FORGET PASSWORD !</h1>
                         <h5>Sent OTP to Continue</h5>
                         <div className="login-form">
@@ -74,6 +74,9 @@ export default function ForgetPassword() {
                     </div>
                     :
                     <div className="login-content">
+                        <div className="login-icon">
+                            <img alt='logo' src={require('../assets/images/logo.jpg')} />
+                        </div>
                         <h1>RESET PASSWORD !</h1>
                         <h5>Please Reset the Password To Continue</h5>
                         <div className="login-form">

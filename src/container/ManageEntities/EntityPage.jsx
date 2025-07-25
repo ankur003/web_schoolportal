@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import NoDataFound from '../../components/NoDataFound';
 import Loader from '../../components/Loader';
+import { Eye, FilePen, Trash } from 'lucide-react';
 
 
 const EntityPage = () => {
@@ -131,9 +132,9 @@ const EntityPage = () => {
                                             <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                             <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                             <td>
-                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
-                                                <button className="btn btn-success mr-r-4">Edit</button>
-                                                <button className="btn btn-danger">Delete</button>
+                                                <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}><Eye /></button>
+                                                <button className="btn btn-success mr-r-4">  <FilePen /></button>
+                                                <button className="btn btn-danger"><Trash /></button>
                                             </td>
                                         </tr>
                                     )}

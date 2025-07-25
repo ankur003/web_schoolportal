@@ -5,6 +5,7 @@ import { SUPER_ADMIN, TEACHER } from "../../Redux/Constants";
 import { getLeaveRequestDetails, leaveRequestAction, leaveRequestApply } from "../../Redux/Action/LeaveAndAttandanceAction";
 import NoDataFound from "../../components/NoDataFound";
 import Loader from "../../components/Loader";
+import { BadgeCheck, Check, X } from "lucide-react";
 
 const LeaveRequest = () => {
     const dispatch = useDispatch();
@@ -106,14 +107,14 @@ const LeaveRequest = () => {
                                                                     handleAction(req.user.userUuid, req.date, "APPROVED")
                                                                 }
                                                             >
-                                                                Approve
+                                                                   <Check />
                                                             </button>
                                                             <button className="btn btn-danger"
                                                                 onClick={() =>
                                                                     handleAction(req.user.userUuid, req.date, "REJECTED")
                                                                 }
                                                             >
-                                                                Reject
+                                                                <X />
                                                             </button>
                                                         </>}
                                                 </td>

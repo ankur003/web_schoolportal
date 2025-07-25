@@ -1,9 +1,9 @@
 import React from 'react';
 import { ResponsiveLine } from '@nivo/line';
 
-const CounterCard = ({ title, value, chartData }) => {
+const CounterCard = ({ title, value, chartData, className }) => {
     return (
-        <div className="counter-card">
+        <div className={`counter-card ${className}`}>
             <h4>{title}</h4>
             <h2>{value}</h2>
 

@@ -27,7 +27,7 @@ function Login(props) {
 		const config = { 'content-type': 'application/json' };
 		axios.post(`${basePathUrl}/login`, data, config).then(response => {
 			let { message, responseObject, status } = response.data;
-			console.log("loginDetails",{response})
+			console.log("loginDetails", { response })
 			if (status === 200) {
 				sessionStorage.setItem("role", responseObject.userType);
 				sessionStorage.setItem("token", responseObject.token);
@@ -69,10 +69,10 @@ function Login(props) {
 	return (
 		<>
 			<div className="login-wrapper">
-				<div className="login-icon">
-					<img alt='logo' src={require('../assets/images/logo.jpg')} />
-				</div>
 				<div className="login-content">
+					<div className="login-icon">
+						<img alt='logo' src={require('../assets/images/logo.jpg')} />
+					</div>
 					<h1>Welcome Back !</h1>
 					<h5>Login to Continue</h5>
 					<div className="login-form">
@@ -99,9 +99,6 @@ function Login(props) {
 						</button> : <button className="btn btn-block btn-primary" onClick={loginHandler}>Login</button>}
 					</div>
 				</div>
-				<div className="stripe top-right"></div>
-				<div className="stripe bottom-left"></div>
-				<div className="stripe bottom-right"></div>
 			</div>
 		</>
 	);

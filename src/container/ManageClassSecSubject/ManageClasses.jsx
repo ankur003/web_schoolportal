@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import Loader from '../../components/Loader';
 import NoDataFound from '../../components/NoDataFound';
+import { FilePen, Link, Trash } from 'lucide-react';
 
 function ManageClasses() {
     const { t } = useTranslation();
@@ -297,8 +298,8 @@ function ManageClasses() {
                                                     <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                                     <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                                     <td>
-                                                        <button className="btn btn-success mr-r-4">Edit</button>
-                                                        <button className="btn btn-danger">Delete</button>
+                                                        <button className="btn btn-success mr-r-4">  <FilePen /></button>
+                                                        <button className="btn btn-danger"><Trash /></button>
                                                     </td>
                                                 </tr>
                                             )}
@@ -330,8 +331,8 @@ function ManageClasses() {
                                                         <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
                                                         <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
                                                         <td>
-                                                            <button className="btn btn-success mr-r-4">Edit</button>
-                                                            <button className="btn btn-danger">Delete</button>
+                                                            <button className="btn btn-success mr-r-4">  <FilePen /></button>
+                                                            <button className="btn btn-danger"><Trash /></button>
                                                         </td>
                                                     </tr>
                                                 )}
@@ -361,8 +362,8 @@ function ManageClasses() {
                                                             <td>{data?.subjectName}</td>
                                                             <td>{data?.description ? data?.description : "N/A"}</td>
                                                             <td>
-                                                                <button className="btn btn-success mr-r-4">Edit</button>
-                                                                <button className="btn btn-danger">Delete</button>
+                                                                <button className="btn btn-success mr-r-4">  <FilePen /></button>
+                                                                <button className="btn btn-danger"><Trash /></button>
                                                             </td>
                                                         </tr>
                                                     )}
@@ -391,7 +392,7 @@ function ManageClasses() {
                                                                             subjectLinkedModal(data);
                                                                         }}
                                                                     >
-                                                                        Edit Link Subjects
+                                                                       <Link />
                                                                     </button>
                                                                 </div>
 
@@ -507,9 +508,9 @@ function ManageClasses() {
                                                                                 setSelected([]);
                                                                             }
                                                                         }}
-                                                                    >Link</button>
-                                                                    <button className="btn btn-success mr-r-4">Edit</button>
-                                                                    <button className="btn btn-danger">Delete</button>
+                                                                    ><Link /></button>
+                                                                      <button className="btn btn-success mr-r-4">  <FilePen /></button>
+                                                                <button className="btn btn-danger"><Trash /></button>
                                                                 </td>
                                                             </tr>
                                                         )}
@@ -592,7 +593,7 @@ function ManageClasses() {
                                                     {/* Class Selection - Only show for new linkage */}
                                                     {isNewLinkage && (
                                                         <div className="form-group">
-                                                            <label>Class Name *</label>
+                                                            <label className="form-group-label">Class Name</label>
                                                             <select
                                                                 className="form-control"
                                                                 value={selectedClass?.value || ""}
@@ -614,7 +615,7 @@ function ManageClasses() {
                                                     {/* Class Name - Read only for existing linkage */}
                                                     {!isNewLinkage && (
                                                         <div className="form-group">
-                                                            <label>Class Name</label>
+                                                           <label className="form-group-label">Class Name</label>
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
@@ -625,7 +626,7 @@ function ManageClasses() {
                                                     )}
 
                                                     <div className="form-group">
-                                                        <label>Section Name *</label>
+                                                        <label className="form-group-label">Section Name</label>
                                                         <MultiSelect
                                                             key={`section-${modalKey}-${classUuid}`}
                                                             options={options}
@@ -636,7 +637,7 @@ function ManageClasses() {
                                                         />
                                                     </div>
                                                     <div className="form-group">
-                                                        <label>Subject Name *</label>
+                                                        <label className="form-group-label">Subject Name</label>
                                                         <MultiSelect
                                                             key={`subject-${modalKey}-${classUuid}`}
                                                             options={SubjectOption}
@@ -653,11 +654,6 @@ function ManageClasses() {
                                                                 search: "Search subjects"
                                                             }}
                                                         />
-
-                                                        {/* Debug info - remove in production */}
-                                                        <small className="text-muted d-block mt-1">
-                                                            Selected: {selectedSubject?.map(s => s.label).join(', ')}
-                                                        </small>
                                                     </div>
                                                 </div>
                                                 :
