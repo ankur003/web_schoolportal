@@ -22,7 +22,7 @@ public class TeacherController extends AbstractController {
     private UserService userService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('TEACHER')")
+   // @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<Object> getTeacherDetail() {
         User user = userService.getUserDetail (authenticationFacade.getAuthentication ().getName ());
         UserResponseModel model = modelMapper.map (user, UserResponseModel.class);
@@ -30,7 +30,7 @@ public class TeacherController extends AbstractController {
     }
 
     @PostMapping("/attendance")
-    @PreAuthorize("hasRole('TEACHER')")
+    // @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<Object> markTeacherAttendance(@RequestParam(required = false) AttendanceStatus status,
                                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                                                         @RequestParam(required = true) String catagory) {
