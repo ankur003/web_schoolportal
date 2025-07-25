@@ -16,7 +16,8 @@ const initialState = {
     isNavigate: false,
     classSectionList: [],
     classAndSectionName: {},
-    feeUserId:""
+    feeUserId: "",
+    fetchUserId:{}
 }
 
 
@@ -110,6 +111,11 @@ export default function entityReducer(state = initialState, action) {
             return {
                 ...state,
                 feeUserId: action.payload
+            }
+        case "FETCH_USER_ID":
+            return {
+                ...state,
+                fetchUserId: action.payload
             }
         case Constants.RESET_STATE:
             return initialState;

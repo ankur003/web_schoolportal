@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { SUPER_ADMIN } from "../../Redux/Constants";
+import { SUPER_ADMIN, TEACHER } from "../../Redux/Constants";
 import { getLeaveRequestDetails, leaveRequestAction, leaveRequestApply } from "../../Redux/Action/LeaveAndAttandanceAction";
 import NoDataFound from "../../components/NoDataFound";
 import Loader from "../../components/Loader";
 
 const LeaveRequest = () => {
     const dispatch = useDispatch();
-    const { userId, role } = useSelector((state) => state.loginReducer);
+    const { loginUserId, role } = useSelector((state) => state.loginReducer);
     const { leaveRequest, loader, noDataFound } = useSelector((state) => state.leaveRequestReducer);
-    let requests = leaveRequest.filter(mapData => mapData.category === "LEAVE") || [];
-    console.log({requests});
+    let requests = leaveRequest;
+    console.log({ requests });
     const [isModal, SetIsModal] = useState(false);
 
     useEffect(() => {
-        let data = { userId: role !== SUPER_ADMIN && userId };
+        let data = { userId: role !== SUPER_ADMIN && loginUserId };
         console.log({ data })
         dispatch(getLeaveRequestDetails(data));
     }, []);
@@ -47,16 +47,16 @@ const LeaveRequest = () => {
         let data = {
             leaveType: formData.leaveType,
             date: formData.date,
-            catagory: "LEAVE"
+            catagory: formData?.leaveType.includes("LEAVE") ? "LEAVE" : "ATTENDANCE"
         };
         dispatch(leaveRequestApply(data, SetIsModal));
     };
     return (
         <>
             <div className="header">
-                <h1>Leave Requests</h1>
+                <h1>Raise Requests</h1>
                 {role !== SUPER_ADMIN && <div className="header-right">
-                    <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Apply Leave</button>
+                    <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Raise Request</button>
                 </div>}
             </div>
             <div className="content-body">
@@ -75,6 +75,7 @@ const LeaveRequest = () => {
                                         </>
                                         }
                                         <th>Leave Type</th>
+                                        {role === TEACHER && <th>Catagorie</th>}
                                         <th>Date</th>
                                         <th>Status</th>
                                         {role === SUPER_ADMIN && <th>Actions</th>}
@@ -92,8 +93,10 @@ const LeaveRequest = () => {
                                             </>
                                             }
                                             <td>{req.attendanceStatus}</td>
+                                            {role === TEACHER && <td className={req?.category === "LEAVE" ? "text-danger" : "text-primary"}>{req?.category}</td>}
+
                                             <td>{req.date}</td>
-                                            <td><div className={req.approvalStatus === "APPROVED" ? "fw-bold text-success" : req.approvalStatus === "REJECTED" ? "fw-bold text-danger" : "fw-bold text-warning"}>{req.approvalStatus}</div></td>
+                                            <td><div className={req.approvalStatus === "APPROVED" ? "fw-bold text-success" : req.approvalStatus === "REJECTED" ? "fw-bold text-danger" : "fw-bold text-warning"}>{req.approvalStatus} </div></td>
                                             {role === SUPER_ADMIN && (
                                                 <td>
                                                     {req.approvalStatus === "PENDING" &&
@@ -132,7 +135,7 @@ const LeaveRequest = () => {
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Apply Leave</h5>
+                                <h5 className="modal-title" id="exampleModalLabel">Raise Request</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => SetIsModal(false)}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -146,6 +149,9 @@ const LeaveRequest = () => {
                                             <option value="SICK_LEAVE">Sick Leave</option>
                                             <option value="CASUAL_LEAVE">Casual Leave</option>
                                             <option value="HALF_DAY">Half Day Leave</option>
+                                            <option value="PRESENT">PRESENT</option>
+                                            <option value="ABSENT">ABSENT</option>
+                                            <option value="LATE">LATE</option>
                                         </select>
                                     </div>
                                     <div className="form-group">

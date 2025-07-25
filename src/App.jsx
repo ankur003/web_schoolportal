@@ -20,6 +20,7 @@ import FeePaymentModule from './container/FeeManagementModule/FeePaymentModule';
 import EntityPage from './container/ManageEntities/EntityPage';
 import StudentPage from './container/ManageEntities/StudentPage';
 import TeacherPage from './container/ManageEntities/TeacherPage';
+import AttendancePage from './container/ManageSchedule/AttendancePage';
 
 const App = () => {
   // Assume you have a way to get the user's role, e.g., from localStorage or context
@@ -67,6 +68,7 @@ const App = () => {
             <Route element={<FeePaymentModule />} path="/FeePaymentModule" />
             <Route element={<TimeTable />} path="/TimeTable" />
             <Route element={<ParentsPage />} path="/ParentsPage" />
+             <Route element={<AttendancePage />} path="/AttendancePage" />
           </Route>
         </Routes>
       </Router>

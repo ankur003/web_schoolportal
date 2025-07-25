@@ -84,9 +84,9 @@ export default function ProfileDetailsPage() {
         },
         profileHeader: {
             display: 'flex',
-            alignItems: 'center',
+            // alignItems: 'center',
             gap: '2rem',
-            marginBottom: '2rem'
+            // marginBottom: '2rem'
         },
         avatarSection: {
             position: 'relative'
@@ -158,7 +158,7 @@ export default function ProfileDetailsPage() {
         actionButtons: {
             display: 'flex',
             gap: '1rem',
-            alignItems: 'center'
+            alignItems: 'start'
         },
         editButton: {
             background: isEdit ? 'linear-gradient(45deg, #ff6b6b, #ee5a24)' : 'linear-gradient(45deg, #00b894, #00cec9)',

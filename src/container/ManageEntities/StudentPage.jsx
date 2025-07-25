@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import NoDataFound from '../../components/NoDataFound';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 export default function StudentPage() {
     const dispatch = useDispatch();
@@ -19,6 +20,8 @@ export default function StudentPage() {
     const { classSectionList, userDetails } = useSelector(state => state.entityReducer);
     const userID = useSelector((state) => state.loginReducer?.loginUserId);
     console.log({ userDetails, userRole, studentList, userID })
+
+
 
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState("1");
@@ -39,8 +42,9 @@ export default function StudentPage() {
     const [selectedSections, setSelectedSections] = useState([]);
     const [userId, setUserId] = useState()
 
+
     useEffect(() => {
-        
+
         if (userRole !== SUPER_ADMIN || userRole !== PARENT) {
             console.log("api call ")
             dispatch(getAllDetrails(userID, null));
@@ -52,7 +56,7 @@ export default function StudentPage() {
 
     useEffect(() => {
         if (userRole === SUPER_ADMIN) {
-            let data = { page, limit, userType: "STUDENT", isNotAdmin: userRole === SUPER_ADMIN ? false : true, sectionName:classSectionList?.sectionName, className: classSectionList?.className }
+            let data = { page, limit, userType: "STUDENT", isNotAdmin: userRole === SUPER_ADMIN ? false : true, sectionName: classSectionList?.sectionName, className: classSectionList?.className }
             dispatch(getStudentEntities(data));
         }
     }, [dispatch]);
@@ -116,6 +120,11 @@ export default function StudentPage() {
         navigate("/FeePaymentModule");
     }
 
+    const getUserIdForCalender = (id) => {
+        dispatch({ type: "FETCH_USER_ID", payload: { id, isNavigate: true } })
+        navigate("/AttendancePage");
+    }
+
 
     return (
         <>
@@ -132,56 +141,78 @@ export default function StudentPage() {
                         <div className="table-content">
                             <table className="table  table-bordered">
                                 <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Full Name</th>
-                                        <th scope="col">Email Id</th>
-                                        <th scope="col">Phone No</th>
-                                        <th scope="col">Class Name</th>
-                                        <th scope="col">Section</th>
-                                        <th scope="col">Created By</th>
-                                        <th scope="col">Created At</th>
-                                        <th scop="col">Action</th>
-                                    </tr>
+                                    {userRole === TEACHER ?
+                                        <tr>
+                                            <th scope="col">Roll No</th>
+                                            <th scope="col">Full Name</th>
+                                            <th scope="col">Attendance</th>
+                                            <th scop="col">Action</th>
+                                        </tr>
+                                        :
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Full Name</th>
+                                            <th scope="col">Email Id</th>
+                                            <th scope="col">Phone No</th>
+                                            <th scope="col">Class Name</th>
+                                            <th scope="col">Section</th>
+                                            <th scope="col">Created By</th>
+                                            <th scope="col">Created At</th>
+                                            <th scop="col">Action</th>
+                                        </tr>
+                                    }
                                 </thead>
                                 <tbody>
                                     {dataList?.map((data, index) =>
-                                        <tr key={index + 1}>
-                                            <th scope="row">{index + 1}</th>
-                                            <td>{data?.fullName ? data?.fullName : "N/A"}</td>
-                                            <td>{data?.username}</td>
-                                            <td>{data?.phoneNo ? data?.phoneNo : "N/A"}</td>
-                                            <td>{data?.className ? data?.className : "N/A"}</td>
-                                            <td>{data?.sectionName ? data?.sectionName : "N/A"}</td>
-                                            <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
-                                            <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
-                                            <td>
-                                                {userRole === SUPER_ADMIN ? <>
-                                                    <button className={data?.className ? "btn mr-r-4 cursor-not-allowed" : "btn btn-warning mr-r-4"}
-                                                        disabled={data?.className && data?.className}
-                                                        onClick={() => { openLinkModal(data) }}>Link</button>
+                                        userRole === TEACHER ?
+                                            <tr key={index + 1}>
+                                                <td>{data?.rollNumber}</td>
+                                                <td>{data?.fullName ? data?.fullName : "N/A"}</td>
+                                                <td><AttendanceButtons userId={data?.userUuid} /></td>
+                                                <td>
+                                                    <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
                                                     <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
-                                                    <button disabled className="btn btn-success mr-r-4">Edit</button>
-                                                    <button disabled className="btn btn-danger">Delete</button>
-                                                </>
-                                                    :
-                                                    <>
+                                                    {/* <button type='button' className="btn btn-danger mr-r-4" onClick={() => getUserIdForCalender(data?.userUuid)}>Attendance</button> */}
+                                                </td>
+                                            </tr>
+                                            :
+                                            <tr key={index + 1}>
+                                                <th scope="row">{index + 1}</th>
+                                                <td>{data?.fullName ? data?.fullName : "N/A"}</td>
+                                                <td>{data?.username}</td>
+                                                <td>{data?.phoneNo ? data?.phoneNo : "N/A"}</td>
+                                                <td>{data?.className ? data?.className : "N/A"}</td>
+                                                <td>{data?.sectionName ? data?.sectionName : "N/A"}</td>
+                                                <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
+                                                <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
+                                                <td>
+                                                    {userRole === SUPER_ADMIN ? <>
+                                                        <button className={data?.className ? "btn mr-r-4 cursor-not-allowed" : "btn btn-warning mr-r-4"}
+                                                            disabled={data?.className && data?.className}
+                                                            onClick={() => { openLinkModal(data) }}>Link</button>
                                                         <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
-                                                        {userRole === PARENT &&
-                                                            <>
-                                                                <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
-                                                                <button type='button' className="btn btn-warning" onClick={() => checkTimeTable(data?.className, data?.sectionName)}>View Time Table</button>
-                                                            </>
-                                                        }
-                                                        {userRole === TEACHER &&
-                                                            <>
-                                                                <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
-                                                            </>
-                                                        }
+                                                        <button disabled className="btn btn-success mr-r-4">Edit</button>
+                                                        <button disabled className="btn btn-danger">Delete</button>
                                                     </>
-                                                }
-                                            </td>
-                                        </tr>
+                                                        :
+                                                        <>
+                                                            <button type='button' className="btn btn-primary mr-r-4" onClick={() => getAllUserDetails(data?.userUuid)}>View</button>
+                                                            {userRole === PARENT &&
+                                                                <>
+                                                                    <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
+                                                                    <button type='button' className="btn btn-warning" onClick={() => checkTimeTable(data?.className, data?.sectionName)}>View Time Table</button>
+                                                                </>
+                                                            }
+                                                            {userRole === TEACHER &&
+                                                                <>
+                                                                    <button type='button' className="btn btn-success mr-r-4" onClick={() => getFeeDetailsById(data?.userUuid)}>Fee Details</button>
+
+                                                                </>
+                                                            }
+                                                        </>
+                                                    }
+                                                </td>
+                                            </tr>
                                     )}
                                 </tbody>
                             </table>
@@ -297,3 +328,102 @@ export default function StudentPage() {
         </>
     )
 }
+
+
+
+const AttendanceButtons = ({ userId }) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+
+    const getTodayDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = `${today.getMonth() + 1}`.padStart(2, '0');
+        const day = `${today.getDate()}`.padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const getCategoryByStatus = (status) => {
+        const attendanceStatuses = ['PRESENT', 'ABSENT', 'LATE'];
+        const leaveStatuses = ['CASUAL_LEAVE', 'HALF_DAY', 'SICK_LEAVE'];
+
+        if (attendanceStatuses.includes(status)) return 'ATTENDANCE';
+        if (leaveStatuses.includes(status)) return 'LEAVE';
+        return 'OTHER';
+    };
+
+    const handleMarkAttendance = async (status) => {
+        setIsSubmitting(true);
+        setSuccessMessage('');
+
+        try {
+            const date = getTodayDate();
+            const category = getCategoryByStatus(status);
+
+            const url = `http://localhost:8080/api/v1/u/attendance?userId=${userId}&status=${status}&date=${date}&catagory=${category}`;
+            const response = await axios.post(url);
+
+            console.log("Attendance marked successfully:", response.data);
+            //   setSuccessMessage('✅ Successfully applied');
+            toast.success("✅ Successfully applied");
+        } catch (error) {
+            console.error("Error marking attendance:", error);
+            toast.error("❌ Failed to mark attendance. Please try again.");
+            setIsSubmitting(false);
+        }
+    };
+
+    const statusButtons = [
+        { label: "Present", value: "PRESENT", color: "#4CAF50" },
+        { label: "Absent", value: "ABSENT", color: "#f44336" },
+        { label: "Late", value: "LATE", color: "#FF5722" },
+        { label: "Casual Leave", value: "CASUAL_LEAVE", color: "#FF9800" },
+        { label: "Half Day", value: "HALF_DAY", color: "#3F51B5" },
+        { label: "Sick Leave", value: "SICK_LEAVE", color: "#9C27B0" },
+    ];
+
+    const buttonStyle = (color) => ({
+        padding: '6px 16px',                 // Smaller padding
+        fontSize: '14px',
+        borderRadius: '999px',
+        border: 'none',
+        backgroundColor: color,
+        color: '#fff',
+        fontWeight: 'bold',
+        cursor: isSubmitting ? 'not-allowed' : 'pointer',
+        opacity: isSubmitting ? 0.6 : 1,
+        boxShadow: '0 1px 4px rgba(0,0,0,0.15)', // Lighter shadow
+        transition: 'all 0.3s ease',
+    });
+
+    const buttonHoverStyle = {
+        transform: 'scale(1.05)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+    };
+
+    return (
+        <div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center' }}>
+                {statusButtons.map(({ label, value, color }) => (
+                    <button
+                        key={value}
+                        onClick={() => handleMarkAttendance(value)}
+                        disabled={isSubmitting}
+                        style={buttonStyle(color)}
+                        onMouseOver={(e) => Object.assign(e.target.style, buttonHoverStyle)}
+                        onMouseOut={(e) => Object.assign(e.target.style, buttonStyle(color))}
+                    >
+                        {label}
+                    </button>
+                ))}
+            </div>
+
+            {successMessage && (
+                <div style={{ color: 'green', fontWeight: 'bold', fontSize: '16px' }}>
+                    {successMessage}
+                </div>
+            )}
+        </div>
+    );
+};
+

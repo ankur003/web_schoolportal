@@ -12,7 +12,7 @@ function SideBar(props) {
     let { pathname } = useLocation();
     let role = sessionStorage.getItem("role");
     let userId = sessionStorage.getItem("userId");
-    
+
     let superAdmin = [
         {
             name: "Dashboard",
@@ -118,8 +118,15 @@ function SideBar(props) {
         {
             name: "Leave Requests",
             component: "LeaveRequest",
-            transform: "Leave Requests",
+            transform: "Raise Requests",
             to: "/LeaveRequest",
+            icon: "fa-solid fa-calendar-check",
+        },
+        {
+            name: "Calender",
+            component: "AttendancePage",
+            transform: "Calender",
+            to: "/AttendancePage",
             icon: "fa-solid fa-calendar-check",
         }
     ];
@@ -146,6 +153,13 @@ function SideBar(props) {
             to: "/TimeTable",
             icon: "fa-solid fa-table"
         },
+         {
+            name: "Calender",
+            component: "AttendancePage",
+            transform: "Calender",
+            to: "/AttendancePage",
+            icon: "fa-solid fa-calendar-check",
+        }
     ];
 
     let parentRoute = [
@@ -187,7 +201,7 @@ function SideBar(props) {
     };
 
     const result = findSubNavIndex(routes, pathname);
-    
+
     useEffect(() => {
         let activeRoute = routes.find(r => r.to === pathname);
         if (activeRoute === undefined) {
@@ -226,10 +240,10 @@ function SideBar(props) {
             <ul className="mainSubClass">
                 {routes.map((data, index) =>
                     <li key={index} className={`nav-item ${isActive === data?.name ? "active" : ""}`}>
-                        <a 
-                            className={`nav-link ${data?.subNav ? "collapsed" : ""}`} 
-                            data-bs-toggle="collapse" 
-                            data-bs-target={data?.subNav?.length > 0 ? `#collapseWidthExample${index}` : `#collapseWidthExample${index}`} 
+                        <a
+                            className={`nav-link ${data?.subNav ? "collapsed" : ""}`}
+                            data-bs-toggle="collapse"
+                            data-bs-target={data?.subNav?.length > 0 ? `#collapseWidthExample${index}` : `#collapseWidthExample${index}`}
                             onClick={() => sideBarHandler(data)}
                         >
                             <span className='icon'>

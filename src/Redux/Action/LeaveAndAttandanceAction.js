@@ -3,6 +3,7 @@ import axios from '../../api';
 const basePathUrl = process.env.REACT_APP_BASE_PATH;
 
 export const getLeaveRequestDetails = (data) => (dispatch) => {
+    dispatch({ type: Constants.RESET_STATE })
     let url = "";
     console.log({ data })
     if (data && data.userId) {
@@ -14,6 +15,7 @@ export const getLeaveRequestDetails = (data) => (dispatch) => {
     console.log({ url })
     axios.get(url)
         .then(response => {
+            console.log({response})
             if (response.status === 200) {
                 dispatch({
                     type: Constants.GET_LEAVE_REQUESTS,

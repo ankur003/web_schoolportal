@@ -18,7 +18,6 @@ export default function FeePaymentModule() {
 
     const { linkList } = useSelector(state => state.manageClassesReducer);
     const { entityList, feeUserId } = useSelector(state => state.entityReducer);
-    console.log({ feeUserId })
     const { userFeeList } = useSelector(state => state.feeManageReducer);
     const { monthlyList, oneTimeList } = useSelector((state) => state.feeManageReducer);
     const userRole = useSelector(state => state.loginReducer.role);
