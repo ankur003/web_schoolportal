@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import com.school.portal.domain.*;
+import com.school.portal.repo.*;
 import com.school.portal.response.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -26,13 +28,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
-import com.school.portal.domain.Address;
-import com.school.portal.domain.Attendance;
-import com.school.portal.domain.MasterClass;
-import com.school.portal.domain.MasterSection;
-import com.school.portal.domain.Otp;
-import com.school.portal.domain.Role;
-import com.school.portal.domain.User;
 import com.school.portal.dto.LoginUser;
 import com.school.portal.enums.ApprovalStatus;
 import com.school.portal.enums.AttendanceStatus;
@@ -42,13 +37,6 @@ import com.school.portal.exception.AlreadyExistsException;
 import com.school.portal.facade.AuthenticationFacade;
 import com.school.portal.queryfilter.GenericSpesification;
 import com.school.portal.queryfilter.SearchCriteria;
-import com.school.portal.repo.AddressRepo;
-import com.school.portal.repo.AttendanceRepository;
-import com.school.portal.repo.MasterClassRepo;
-import com.school.portal.repo.MasterSectionRepo;
-import com.school.portal.repo.OtpRepo;
-import com.school.portal.repo.RoleRepo;
-import com.school.portal.repo.UserRepo;
 import com.school.portal.requests.AttendanceRequest;
 import com.school.portal.requests.ChangePasswordModel;
 import com.school.portal.requests.CreateUserModel;
@@ -100,6 +88,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private final AuthenticationFacade authenticationFacade;
 
     private final ModelMapper modelMapper;
+
+    private final HolidaysRepo holidaysRepository;
 
     public UserDetails loadUserByUsername(String username) {
         User user = userRepo.findByUsernameAndIsActive (username, true);
@@ -485,22 +475,36 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         List<Attendance> attendanceList = attendanceRepository.findByUserIdAndDateRange(userUuid, startDate, endDate);
 
+        // Fetch holidays for the month
+        List<Holidays> holidaysList = holidaysRepository.findByDateRange(startDate, endDate);
+
         // Create a map for quick lookup of attendance records
         Map<LocalDate, Attendance> attendanceMap = attendanceList.stream()
                 .collect(Collectors.toMap(Attendance::getAttendanceDate, attendance -> attendance));
+
+        // Create a map for quick lookup of holidays
+        Map<LocalDate, Holidays> holidaysMap = holidaysList.stream()
+                .collect(Collectors.toMap(
+                        holiday -> LocalDate.parse(holiday.getHolidayDate()),
+                        holiday -> holiday
+                ));
 
         // Generate calendar for the entire month
         List<AttendanceCalendarModel> calendar = new ArrayList<>();
         LocalDate currentDate = startDate;
 
         while (!currentDate.isAfter(endDate)) {
-            AttendanceCalendarModel calendarEntry = createCalendarEntry(currentDate, attendanceMap.get(currentDate));
+            AttendanceCalendarModel calendarEntry = createCalendarEntry(
+                    currentDate,
+                    attendanceMap.get(currentDate),
+                    holidaysMap.get(currentDate)
+            );
             calendar.add(calendarEntry);
             currentDate = currentDate.plusDays(1);
         }
 
         // Calculate summary statistics from actual attendance records
-        AttendanceSummaryModel summary = calculateSummary(attendanceList);
+        AttendanceSummaryModel summary = calculateSummary(attendanceList, calendar);
 
         // Get user name (if attendance records exist)
         String userName = attendanceList.isEmpty() ? "Unknown User" :
@@ -514,13 +518,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .monthName(yearMonth.getMonth().toString())
                 .totalDaysInMonth(yearMonth.lengthOfMonth())
                 .totalWorkingDays(calculateWorkingDays(calendar))
+                .totalHolidays(holidaysList.size())
                 .summary(summary)
                 .calendar(calendar)
                 .build();
     }
 
-    private AttendanceCalendarModel createCalendarEntry(LocalDate date, Attendance attendance) {
+    private AttendanceCalendarModel createCalendarEntry(LocalDate date, Attendance attendance, Holidays holiday) {
         boolean isWeekend = date.getDayOfWeek().getValue() >= 6; // Saturday = 6, Sunday = 7
+        boolean isHoliday = holiday != null;
+        String holidayName = isHoliday ? holiday.getHolidayName() : null;
+        String holidayType = isHoliday ? holiday.getHolidayType() : null;
 
         if (attendance != null) {
             return AttendanceCalendarModel.builder()
@@ -533,7 +541,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     .approvedAt(attendance.getApprovedAt())
                     .remarks(attendance.getRemarks())
                     .isWeekend(isWeekend)
-                    .isHoliday(false) // You can implement holiday logic here
+                    .isHoliday(isHoliday)
+                    .holidayName(holidayName)
+                    .holidayType(holidayType)
                     .build();
         } else {
             // No attendance record for this date
@@ -546,12 +556,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     .approvedAt(null)
                     .remarks(null)
                     .isWeekend(isWeekend)
-                    .isHoliday(false) // You can implement holiday logic here
+                    .isHoliday(isHoliday)
+                    .holidayName(holidayName)
+                    .holidayType(holidayType)
                     .build();
         }
     }
 
-    private AttendanceSummaryModel calculateSummary(List<Attendance> attendanceList) {
+    private AttendanceSummaryModel calculateSummary(List<Attendance> attendanceList, List<AttendanceCalendarModel> calendar) {
         if (attendanceList.isEmpty()) {
             return AttendanceSummaryModel.builder()
                     .presentDays(0)
@@ -560,6 +572,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     .halfDays(0)
                     .sickLeaveDays(0)
                     .casualLeaveDays(0)
+                    .totalWorkingDays(calculateWorkingDays(calendar))
+                    .totalHolidays((int) calendar.stream().filter(AttendanceCalendarModel::isHoliday).count())
+                    .totalWeekends((int) calendar.stream().filter(AttendanceCalendarModel::isWeekend).count())
                     .attendancePercentage(0.0)
                     .build();
         }
@@ -583,8 +598,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .filter(a -> a.getStatus() == AttendanceStatus.CASUAL_LEAVE)
                 .count();
 
+        int totalWorkingDays = calculateWorkingDays(calendar);
+        int totalHolidays = (int) calendar.stream().filter(AttendanceCalendarModel::isHoliday).count();
+        int totalWeekends = (int) calendar.stream().filter(AttendanceCalendarModel::isWeekend).count();
+
+        // Calculate attendance percentage based on working days only
         double attendanceScore = presentDays + lateDays + (halfDays * 0.5) + sickLeaveDays + casualLeaveDays;
-        double attendancePercentage = attendanceScore / attendanceList.size() * 100;
+        double attendancePercentage = totalWorkingDays > 0 ? (attendanceScore / totalWorkingDays) * 100 : 0.0;
 
         return AttendanceSummaryModel.builder()
                 .presentDays(presentDays)
@@ -593,27 +613,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .halfDays(halfDays)
                 .sickLeaveDays(sickLeaveDays)
                 .casualLeaveDays(casualLeaveDays)
+                .totalWorkingDays(totalWorkingDays)
+                .totalHolidays(totalHolidays)
+                .totalWeekends(totalWeekends)
                 .attendancePercentage(Math.round(attendancePercentage * 100.0) / 100.0)
                 .build();
     }
+
 
     private int calculateWorkingDays(List<AttendanceCalendarModel> calendar) {
         return (int) calendar.stream()
                 .filter(day -> !day.isWeekend() && !day.isHoliday())
                 .count();
-    }
-
-    private AttendanceModel convertToDto(Attendance attendance) {
-        return AttendanceModel.builder()
-                .id(attendance.getId())
-                .attendanceDate(attendance.getAttendanceDate())
-                .status(attendance.getStatus())
-                .markedAt(attendance.getMarkedAt())
-                .approvalStatus(attendance.getApprovalStatus())
-                .approvedByName(attendance.getApprovedBy() != null ?
-                        attendance.getApprovedBy().getFullName() : null)
-                .approvedAt(attendance.getApprovedAt())
-                .remarks(attendance.getRemarks())
-                .build();
     }
 }

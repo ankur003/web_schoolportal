@@ -17,4 +17,7 @@ public class AttendanceSummaryModel {
     private int sickLeaveDays;
     private int casualLeaveDays;
     private double attendancePercentage;
+    private int totalWorkingDays;     // New field
+    private int totalHolidays;        // New field
+    private int totalWeekends;        // New field
 }

@@ -72,9 +72,9 @@ public class HolidayServiceImpl implements HolidayService {
 	private List<String> getSundayAsWeekOfHoliday() {
 		List<String> holidayList = new ArrayList<>();
 		Month startMonth = Month.APRIL;
-		int startYear = 2024;
+		int startYear = 2025;
 		Month endMonth = Month.MARCH;
-		int endYear = 2025;
+		int endYear = 2026;
 
 		LocalDate startDate = LocalDate.of(startYear, startMonth, 1);
 		LocalDate endDate = LocalDate.of(endYear, endMonth, 1).plusMonths(1).minusDays(1); // Last day of end month

@@ -19,6 +19,7 @@ public class AttendanceMonthlyReportResponse {
     private String monthName;
     private int totalWorkingDays;
     private int totalDaysInMonth;
+    private int totalHolidays;
     private AttendanceSummaryModel summary;
     private List<AttendanceCalendarModel> calendar;
 }

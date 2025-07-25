@@ -24,4 +24,6 @@ public class AttendanceCalendarModel {
     private String remarks;
     private boolean isWeekend;
     private boolean isHoliday;
+    private String holidayName;
+    private String holidayType;
 }
