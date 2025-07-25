@@ -420,18 +420,18 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public void markAttendance(User user, AttendanceStatus status, LocalDate date, String catagory) {
         if (date == null)
-            date = LocalDate.now ();
+            date = LocalDate.now();
         if (status == null)
             status = AttendanceStatus.PRESENT;
-        boolean isExist = attendanceRepository.existsByUserAndStatusAndAttendanceDate (user, status, date);
+        boolean isExist = attendanceRepository.existsByUserAndAttendanceDate(user, date);
         if (isExist)
-            throw new AlreadyExistsException ("Attendance already marked for this date");
-        Attendance attendance = Attendance.builder ().attendanceDate (date)
-                .user (user).status (status)
-                .approvalStatus (ApprovalStatus.PENDING)
+            throw new AlreadyExistsException("Attendance already marked for this date");
+        Attendance attendance = Attendance.builder().attendanceDate(date)
+                .user(user).status(status)
+                .approvalStatus(ApprovalStatus.PENDING)
                 .catagory(catagory)
-                .markedAt (LocalDateTime.now ()).build ();
-        attendanceRepository.save (attendance);
+                .markedAt(LocalDateTime.now()).build();
+        attendanceRepository.save(attendance);
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long>, JpaSpecificationExecutor<Attendance> {
-    boolean existsByUserAndStatusAndAttendanceDate(User user, AttendanceStatus status, LocalDate now);
+    boolean existsByUserAndAttendanceDate(User user, LocalDate now);
 
     Optional<Attendance> findByUser_UserUuidAndAttendanceDate(String userUuid, LocalDate date);
 
