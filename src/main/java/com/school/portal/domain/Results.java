@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.ExamType;
 
 @Entity
@@ -55,6 +56,9 @@ public class Results {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @Enumerated(EnumType.STRING)
+    private AcademicYear academicYear; 
 
 	/**
 	 * @return the resultId
@@ -209,6 +213,20 @@ public class Results {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-    
+
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
+	}
+	
 }
     

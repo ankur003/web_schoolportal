@@ -10,16 +10,19 @@ import com.school.portal.domain.FeePayment;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterFee;
 import com.school.portal.domain.User;
+import com.school.portal.domain.UserClassSection;
 import com.school.portal.dto.FeeDto;
 import com.school.portal.dto.FeePaymentRequestDto;
 import com.school.portal.dto.FeePaymentResponseDTO;
 import com.school.portal.dto.FeePaymentUpdateDto;
 import com.school.portal.dto.MasterFeeRequestDTO;
 import com.school.portal.dto.UpdateMasterFeeRequestDTO;
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.FeeType;
 import com.school.portal.repo.FeePaymentRepository;
 import com.school.portal.repo.MasterClassRepo;
 import com.school.portal.repo.MasterFeeRepository;
+import com.school.portal.repo.UserClassSectionRepository;
 import com.school.portal.repo.UserRepo;
 import com.school.portal.utils.SchoolPortalUtils;
 
@@ -40,10 +43,13 @@ public class FeeService {
 	
 	@Autowired
 	MasterClassRepo masterClassRepo;
+	
+	@Autowired
+	UserClassSectionRepository userClassSectionRepository;
 
 
 	public List<FeePaymentResponseDTO> getPaymentsByUserUuid(String userUuid) {
-        return feePaymentRepository.findAllPaymentsByUserUuid(userUuid);
+        return feePaymentRepository.findAllPaymentsByUserUuid(userUuid, AcademicYear.YEAR_2025_2026);
 
 	}
 	
@@ -52,8 +58,8 @@ public class FeeService {
         if (masterClass == null) {
         	return null;
         }
-        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassId(dto.getFeeType(), 
-        		dto.getFeeName(), masterClass.getMasterClassId());
+        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassIdAndAcademicYear(dto.getFeeType(), 
+        		dto.getFeeName(), masterClass.getMasterClassId(), AcademicYear.YEAR_2025_2026.name());
         if (masterFee != null) {
         	return null;
         }
@@ -63,13 +69,13 @@ public class FeeService {
         masterFee.setFeeType(dto.getFeeType());
         masterFee.setFeeName(dto.getFeeName());
         masterFee.setTotalFee(dto.getTotalFee());
-        masterFee.setAcademicYear(dto.getAcademicYear());
+        masterFee.setAcademicYear(AcademicYear.YEAR_2025_2026.name());
 
         return masterFeeRepository.save(masterFee).getMasterFeesUuid();
     }
 
 	public List<FeePaymentResponseDTO> getPaymentsByClassUuidAndSectionuuidAnduserUuid(String classUuid, String sectionUuid, String userUuid) {
-		return feePaymentRepository.findAllPaymentsByClassUuidAndSectionUuidAndUserUuid(classUuid, sectionUuid, userUuid);
+		return feePaymentRepository.findAllPaymentsByClassUuidAndSectionUuidAndUserUuid(classUuid, sectionUuid, userUuid, AcademicYear.YEAR_2025_2026);
 	}
 
 	public void updateMasterFee(String masterFeeUuid, UpdateMasterFeeRequestDTO updateFeeDto) {
@@ -97,10 +103,10 @@ public class FeeService {
         	return null;
         }
         
-        Long masterClassId = user.getMasterClass().getMasterClassId();
+        UserClassSection userClassSection =  userClassSectionRepository.findByUserAndAcademicYear(user, AcademicYear.YEAR_2025_2026);
 
-        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassId(dto.getFeeType(), dto.getFeeName(),
-        		masterClassId);
+        MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassIdAndAcademicYear(dto.getFeeType(), dto.getFeeName(),
+        		userClassSection.getMasterClass().getMasterClassId(), AcademicYear.YEAR_2025_2026.name());
         
         if (masterFee == null) {
         	return null;
@@ -141,6 +147,7 @@ public class FeeService {
         payment.setRemarks(dto.getRemarks());
         payment.setMonth(dto.getMonth());
         payment.setYear(dto.getYear());
+        payment.setAcademicYear(AcademicYear.YEAR_2025_2026);
 
         return feePaymentRepository.save(payment).getFeePaymentUuid();
     }
@@ -162,7 +169,7 @@ public class FeeService {
 
 	public FeePaymentResponseDTO getSinglePayment(String feePaymentUuid) {
 
-		return feePaymentRepository.getSinglePayment(feePaymentUuid);
+		return feePaymentRepository.getSinglePayment(feePaymentUuid, AcademicYear.YEAR_2025_2026);
 	}
 
 	public List<FeeDto> getMasterFeesByClassUuid(String classUuid) {
@@ -175,7 +182,7 @@ public class FeeService {
 
 	public List<FeePaymentResponseDTO> getAllPayments() {
 		
-		return feePaymentRepository.getAllPayments();
+		return feePaymentRepository.getAllPayments(AcademicYear.YEAR_2025_2026);
 	}
 
 	public List<FeeDto> getMasterFeesByClassUuidAndFeeType(String classUuid, FeeType feeType) {

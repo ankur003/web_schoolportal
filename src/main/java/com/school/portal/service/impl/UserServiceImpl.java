@@ -4,19 +4,22 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
-import com.school.portal.domain.*;
-import com.school.portal.repo.*;
-import com.school.portal.response.*;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,20 +31,39 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
+import com.school.portal.domain.Address;
+import com.school.portal.domain.Attendance;
+import com.school.portal.domain.Holidays;
+import com.school.portal.domain.MasterClass;
+import com.school.portal.domain.Otp;
+import com.school.portal.domain.Role;
+import com.school.portal.domain.User;
+import com.school.portal.domain.UserClassSection;
 import com.school.portal.dto.LoginUser;
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.ApprovalStatus;
 import com.school.portal.enums.AttendanceStatus;
-import com.school.portal.enums.SearchOperation;
 import com.school.portal.enums.UserType;
 import com.school.portal.exception.AlreadyExistsException;
 import com.school.portal.facade.AuthenticationFacade;
-import com.school.portal.queryfilter.GenericSpesification;
-import com.school.portal.queryfilter.SearchCriteria;
+import com.school.portal.repo.AddressRepo;
+import com.school.portal.repo.AttendanceRepository;
+import com.school.portal.repo.HolidaysRepo;
+import com.school.portal.repo.MasterClassRepo;
+import com.school.portal.repo.OtpRepo;
+import com.school.portal.repo.RoleRepo;
+import com.school.portal.repo.UserClassSectionRepository;
+import com.school.portal.repo.UserRepo;
 import com.school.portal.requests.AttendanceRequest;
 import com.school.portal.requests.ChangePasswordModel;
 import com.school.portal.requests.CreateUserModel;
 import com.school.portal.requests.UpdateUserModel;
 import com.school.portal.requests.UserRequestModel;
+import com.school.portal.response.AttendanceCalendarModel;
+import com.school.portal.response.AttendanceMonthlyReportResponse;
+import com.school.portal.response.AttendanceSummaryModel;
+import com.school.portal.response.UserAttendanceModel;
+import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.EmailService;
 import com.school.portal.service.StudentParentLinkService;
 import com.school.portal.service.UserEducationService;
@@ -70,8 +92,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private final BCryptPasswordEncoder encoder;
 
     private final MasterClassRepo masterClassRepo;
-
-    private final MasterSectionRepo masterSectionRepo;
+    
+    private final UserClassSectionRepository classSectionRepository;
 
     private final AddressRepo addressRepo;
 
@@ -158,7 +180,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 if (createUserModel.getUserType ().equals(UserType.PARENT)) {
                 	linkageParentStudent(user, createUserModel);
                 }
-                sendPasswordOnMail (user, tempPassword);
+               // sendPasswordOnMail (user, tempPassword);
                 sendWhatsAppNotification(user, tempPassword);
                 return user.getUserUuid ();
             }
@@ -193,17 +215,21 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         if (mastserClass == null) {
             return false;
         }
-        user.setMasterClass (mastserClass);
+        UserClassSection classSection = new UserClassSection();
+        classSection.setMasterClass (mastserClass);
+        classSection.setAcademicYear(AcademicYear.YEAR_2025_2026);
         if (StringUtils.isBlank (createUserModel.getSectionUuid ())) {
-            return true;
+        	classSectionRepository.save(classSection);            
+        	return true;
         }
         if (mastserClass.getMasterSection () != null) {
             mastserClass.getMasterSection ().forEach (ms -> {
                 if (createUserModel.getSectionUuid ().equals (ms.getMasterSectionUuid ())) {
-                    user.setMasterSection (ms);
+                	classSection.setMasterSection (ms);
+                	classSectionRepository.save(classSection); 
                 }
             });
-            return user.getMasterSection () != null;
+            return classSection.getMasterSection () != null;
         }
         return false;
     }
@@ -240,50 +266,67 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return true;
     }
 
-    @Override
-    public Boolean changePassword(User user, ChangePasswordModel changePasswordModel) {
-        Boolean isValid = encoder.matches (changePasswordModel.getOldPassword (), user.getPassword ());
-        if (BooleanUtils.isTrue (isValid)) {
-            user.setPassword (encoder.encode (changePasswordModel.getNewPassword ()));
-            user.setUpdatedAt (LocalDateTime.now ());
-            userRepo.save (user);
-        }
-        return isValid;
-    }
+	@Override
+	public Boolean changePassword(User user, ChangePasswordModel changePasswordModel) {
+		Boolean isValid = encoder.matches(changePasswordModel.getOldPassword(), user.getPassword());
+		if (BooleanUtils.isTrue(isValid)) {
+			user.setPassword(encoder.encode(changePasswordModel.getNewPassword()));
+			user.setUpdatedAt(LocalDateTime.now());
+			userRepo.save(user);
+		}
+		return isValid;
+	}
 
-    @Override
-    public Page<User> getAllUsers(UserRequestModel userRequestModel) {
-        GenericSpesification<User> genericSpesification = new GenericSpesification<> ();
-        if (StringUtils.isNotBlank (userRequestModel.getFullName ())) {
-            genericSpesification
-                    .add (new SearchCriteria ("fullName", userRequestModel.getFullName (), SearchOperation.MATCH));
-        }
-        if (StringUtils.isNotBlank (userRequestModel.getUsername ())) {
-            genericSpesification
-                    .add (new SearchCriteria ("username", userRequestModel.getUsername (), SearchOperation.MATCH));
-        }
-        if (StringUtils.isNotBlank (userRequestModel.getUserType ())) {
-            genericSpesification
-                    .add (new SearchCriteria ("userType", userRequestModel.getUserType (), SearchOperation.EQUAL));
-        }
-        if (StringUtils.isNotBlank (userRequestModel.getClassName ())) {
-            MasterClass masterClass = masterClassRepo.findByClassName (userRequestModel.getClassName ());
-            genericSpesification
-                    .add (new SearchCriteria ("masterClass", masterClass, SearchOperation.EQUAL));
+	@Override
+	public Page<UserResponseModel> getAllUsers(UserRequestModel userRequestModel) {
+		
+		PageRequest page = PageRequest.of(userRequestModel.getPage() - 1,
+				userRequestModel.getLimit(), Direction.DESC, "userId");
+		
+		Page<UserResponseModel> userPage = userRepo.findUsersWithOptionalFilters(userRequestModel.getFullName(), userRequestModel.getUsername(),
+				userRequestModel.getUserType(), page);
+		
+		Stream<UserResponseModel> filteredStream = userPage.getContent().stream();
 
-        }
-        if (StringUtils.isNotBlank (userRequestModel.getSectionName ())) {
-            MasterSection section = masterSectionRepo.findBySectionName (userRequestModel.getSectionName ());
-            genericSpesification
-                    .add (new SearchCriteria ("masterSection", section, SearchOperation.EQUAL));
-        }
-        if (CollectionUtils.isNotEmpty (genericSpesification.getSearchCriteriaList ())) {
-            return userRepo.findAll (genericSpesification,
-                    PageRequest.of (userRequestModel.getPage () - 1, userRequestModel.getLimit (), Direction.DESC, "userId"));
-        }
-        return userRepo
-                .findAll (PageRequest.of (userRequestModel.getPage () - 1, userRequestModel.getLimit (), Direction.DESC, "userId"));
-    }
+		String className = userRequestModel.getClassName();
+		String sectionName = userRequestModel.getSectionName();
+
+		boolean classNameValid = (className != null && !className.isEmpty());
+		boolean sectionNameValid = (sectionName != null && !sectionName.isEmpty());
+
+		if (classNameValid && sectionNameValid) {
+		    final String classNameLower = className.toLowerCase();
+		    final String sectionNameLower = sectionName.toLowerCase();
+		    filteredStream = filteredStream
+		            .filter(u -> u.getClassName() != null && u.getClassName().toLowerCase().equals(classNameLower))
+		            .filter(u -> u.getSectionName() != null && u.getSectionName().toLowerCase().equals(sectionNameLower));
+		} else if (classNameValid) {
+		    final String classNameLower = className.toLowerCase();
+		    filteredStream = filteredStream
+		            .filter(u -> u.getClassName() != null && u.getClassName().toLowerCase().equals(classNameLower));
+		} else if (sectionNameValid) {
+		    final String sectionNameLower = sectionName.toLowerCase();
+		    filteredStream = filteredStream
+		            .filter(u -> u.getSectionName() != null && u.getSectionName().toLowerCase().equals(sectionNameLower));
+		}
+		AcademicYear filterAcademicYear = AcademicYear.YEAR_2025_2026;//userRequestModel.getAcademicYear(); // or any AcademicYear value
+		if (filterAcademicYear != null) {
+		    filteredStream = filteredStream
+		        .filter(u -> u.getAcademicYear() == null || filterAcademicYear.equals(u.getAcademicYear()));
+		}
+
+		List<UserResponseModel> filteredList = filteredStream.collect(Collectors.toList());
+
+		// Optionally: correct the page total count if needed.
+		return new PageImpl<>(
+		    filteredList,
+		    userPage.getPageable(),
+		    filteredList.size() // or userPage.getTotalElements() if you want original total
+		);
+
+
+		
+	}
 
     @Override
     public Boolean saveFile(File file, User user) {

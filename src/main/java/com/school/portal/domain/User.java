@@ -16,13 +16,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class User implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4448558925455978237L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
@@ -63,14 +67,6 @@ public class User implements Serializable {
 	@JoinTable(name = "USER_ROLES", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = {
 			@JoinColumn(name = "ROLE_ID") })
 	private Set<Role> roles = new HashSet<>();
-	
-	@OneToOne
-	@JoinColumn(name = "master_class_id")
-	private MasterClass masterClass;
-	
-	@OneToOne
-	@JoinColumn(name = "master_section_id")
-	private MasterSection masterSection;
 	
 	private String createdBy;
 	
@@ -188,22 +184,6 @@ public class User implements Serializable {
 
 	public void setIsClassTeacher(Boolean isClassTeacher) {
 		this.isClassTeacher = isClassTeacher;
-	}
-
-	public MasterClass getMasterClass() {
-		return masterClass;
-	}
-
-	public void setMasterClass(MasterClass masterClass) {
-		this.masterClass = masterClass;
-	}
-
-	public MasterSection getMasterSection() {
-		return masterSection;
-	}
-
-	public void setMasterSection(MasterSection masterSection) {
-		this.masterSection = masterSection;
 	}
 
 	public LocalDateTime getCreatedAt() {

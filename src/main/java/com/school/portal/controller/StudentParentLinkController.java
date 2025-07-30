@@ -1,6 +1,10 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.AbstractController;
 import com.school.portal.domain.User;
+import com.school.portal.domain.UserClassSection;
+import com.school.portal.enums.AcademicYear;
+import com.school.portal.repo.UserClassSectionRepository;
 import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.StudentParentLinkService;
 import com.school.portal.service.UserService;
@@ -29,6 +36,9 @@ public class StudentParentLinkController extends AbstractController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private UserClassSectionRepository userClassSectionRepository;
 
     // return students of the parant.
     @GetMapping("/by-parent/{parentUuid}")
@@ -66,22 +76,39 @@ public class StudentParentLinkController extends AbstractController {
     }
 	
 	private ResponseEntity<Object> map(List<User> usersData) {
-    	List<UserResponseModel> userResponseModel = ModelMapperUtil.mapList(modelMapper, usersData , UserResponseModel.class);
-		userResponseModel.forEach(model -> 
-		    usersData.stream()
-		            .filter(usr -> usr.getUserUuid().equals(model.getUserUuid())
-		            		&& usr.getMasterClass() != null
-		            		&& usr.getMasterSection() != null
-		            		).findFirst()
-		            .ifPresent(usr -> {
-		                model.setClassName(usr.getMasterClass().getClassName());
-		                model.setSectionName(usr.getMasterSection().getSectionName());
-		                model.setMasterClassUuid(usr.getMasterClass().getMasterClassUuid());
-		                model.setMasterSectionUuid(usr.getMasterSection().getMasterSectionUuid());
-		            })
-		);
-		return ResponseEntity.ok(userResponseModel);
+	    List<UserResponseModel> userResponseModel = ModelMapperUtil.mapList(modelMapper, usersData , UserResponseModel.class);
+
+	    fillUserClassSectionDetails(usersData, userResponseModel);
+
+	    return ResponseEntity.ok(userResponseModel);
 	}
+
+	private void fillUserClassSectionDetails(List<User> usersData, List<UserResponseModel> userResponseModel) {
+		// 1. Get all UUIDs
+	    List<Long> userIds = usersData.stream()
+	            .map(User::getUserId)
+	            .collect(Collectors.toList());
+
+	    // 2. Fetch active class-section mapping
+	    List<UserClassSection> classSections = userClassSectionRepository.findActiveByUserIdsAndAcademicYear(userIds,
+	    		AcademicYear.YEAR_2025_2026);
+
+	    // 3. Map to a quick lookup map by userUuid
+	    Map<Long, UserClassSection> userClassSectionMap = classSections.stream()
+	            .collect(Collectors.toMap(ucs -> ucs.getUser().getUserId(), Function.identity(), (a, b) -> a));
+
+	    // 4. Enrich response model with class/section info
+	    userResponseModel.forEach(model ->
+	        Optional.ofNullable(userClassSectionMap.get(model.getUserId()))
+	                .ifPresent(ucs -> {
+	                    model.setClassName(ucs.getMasterClass().getClassName());
+	                    model.setMasterClassUuid(ucs.getMasterClass().getMasterClassUuid());
+	                    model.setSectionName(ucs.getMasterSection() != null ? ucs.getMasterSection().getSectionName() : null);
+	                    model.setMasterSectionUuid(ucs.getMasterSection() != null ? ucs.getMasterSection().getMasterSectionUuid() : null);
+	                })
+	    );
+	}
+
     
     
     

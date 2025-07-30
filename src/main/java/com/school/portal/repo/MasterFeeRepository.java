@@ -13,7 +13,8 @@ import com.school.portal.enums.FeeType;
 
 public interface MasterFeeRepository extends JpaRepository<MasterFee, Long> {
    
-	MasterFee findByFeeTypeAndFeeNameAndMasterClassId(FeeType feeType, FeeName feeName, Long masterClassId);
+	MasterFee findByFeeTypeAndFeeNameAndMasterClassIdAndAcademicYear(FeeType feeType, FeeName feeName, Long masterClassId,
+			String academicYear);
 	
     
     @Query("SELECT new com.school.portal.dto.FeeDto(" +

@@ -13,8 +13,11 @@ import org.springframework.stereotype.Service;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.User;
+import com.school.portal.domain.UserClassSection;
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.repo.MasterClassRepo;
 import com.school.portal.repo.MasterSectionRepo;
+import com.school.portal.repo.UserClassSectionRepository;
 import com.school.portal.repo.UserRepo;
 import com.school.portal.requests.AssignClassSectionStudentModel;
 import com.school.portal.requests.CreateMasterClassModel;
@@ -35,6 +38,10 @@ public class MasterClassServiceImpl implements MasterClassService {
 	
 	@Autowired
 	private UserRepo userRepo;
+	
+	
+	@Autowired
+	private UserClassSectionRepository userClassSectionRepository;
 
 	@Override
 	public String createMasterClass(CreateMasterClassModel createMasterClassModel) {
@@ -124,16 +131,23 @@ public class MasterClassServiceImpl implements MasterClassService {
 			return Boolean.FALSE;
 		}
 		MasterSection masterSection = null;
+		UserClassSection classSection = userClassSectionRepository.findByUserAndAcademicYear(user, AcademicYear.YEAR_2025_2026);
+		if (classSection == null) {
+			classSection = new UserClassSection();
+			classSection.setUserClassSectionUuid(SchoolPortalUtils.getUniqueUuid());
+			classSection.setIsActive(true);
+		}
+		
         if (StringUtils.isNotBlank(assignClassSectionStudentModel.getSectionUuid())) {
             masterSection = masterSectionRepo.findByMasterSectionUuid(assignClassSectionStudentModel.getSectionUuid());
             if (masterSection != null) {
-                user.setMasterSection(masterSection);
+                classSection.setMasterSection(masterSection);
                 user.setUpdatedAt(LocalDateTime.now());
             }
         }
         MasterClass masterClass = masterClassRepo.findByMasterClassUuid(assignClassSectionStudentModel.getClassUuid());
 		if (masterClass != null) {
-			user.setMasterClass(masterClass);
+			classSection.setMasterClass(masterClass);
 			user.setUpdatedAt(LocalDateTime.now());
 		}
 		if (Objects.equals(user.getUserType(), "TEACHER")) {
@@ -142,16 +156,19 @@ public class MasterClassServiceImpl implements MasterClassService {
 			assignRollNumberAndEnrollmentNumber(masterClass, masterSection, user);
 
 		}
+		classSection.setUser(user);
+		classSection.setAcademicYear(AcademicYear.YEAR_2025_2026);
 		userRepo.save(user);
+		userClassSectionRepository.save(classSection);
 		return true;
 	}
 
 	private void assignRollNumberAndEnrollmentNumber(MasterClass masterClass, MasterSection masterSection, User user) {
 		if (masterSection != null  && masterClass != null) {
-			List<User> users = userRepo.findByMasterClassAndMasterSection(masterClass, masterSection);
+			List<UserClassSection> users = userClassSectionRepository.findByMasterClassAndMasterSection(masterClass, masterSection);
 			user.setRollNumber(users.size() + 1L);
 		} else if (masterClass != null) { 
-			List<User> users = userRepo.findByMasterClass(masterClass);
+			List<UserClassSection> users = userClassSectionRepository.findByMasterClass(masterClass);
 			user.setRollNumber(users.size() + 1L);
 		}
 		if (StringUtils.isBlank(user.getEnrollmentNumber())) {

@@ -18,6 +18,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.Month;
 
 import lombok.AllArgsConstructor;
@@ -79,6 +80,9 @@ public class FeePayment {
     
     @NotNull
     private String year;
+    
+    @Enumerated(EnumType.STRING)
+    private AcademicYear academicYear;
 
     @PrePersist
     protected void onCreate() {
@@ -90,6 +94,8 @@ public class FeePayment {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+    
+    
 
     // Getters and setters
 }

@@ -35,11 +35,14 @@ import com.school.portal.domain.Holidays;
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.User;
+import com.school.portal.domain.UserClassSection;
 import com.school.portal.domain.UserEducation;
 import com.school.portal.domain.UserExperience;
 import com.school.portal.domain.UserInfo;
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.ApprovalStatus;
 import com.school.portal.enums.UserType;
+import com.school.portal.repo.UserClassSectionRepository;
 import com.school.portal.requests.AssignClassSectionStudentModel;
 import com.school.portal.requests.CreateMasterClassModel;
 import com.school.portal.requests.CreateMasterSectionsModel;
@@ -85,6 +88,9 @@ public class SuperAdminController extends AbstractController {
 	
 	@Autowired
 	private UserInfoService userInfoService;
+	
+	@Autowired
+	private UserClassSectionRepository userClassSectionRepository;
 
 	
 	@PostMapping("/user")
@@ -124,6 +130,7 @@ public class SuperAdminController extends AbstractController {
 		List<UserEducation> userEducations = userEducationService.getUserEducationByUserId(user.getUserId());
 		List<UserExperience> userExps = userExperience.getUserExperienceByUser(user);
 		UserInfo info = userInfoService.getUserInfo(user);
+		UserClassSection classSection = userClassSectionRepository.findByUserAndAcademicYear(user, AcademicYear.YEAR_2025_2026);
 		UserResponseModel responseModel = modelMapper.map(user, UserResponseModel.class);
 		if (address != null) {
 			responseModel.setAddress(address);
@@ -137,34 +144,31 @@ public class SuperAdminController extends AbstractController {
 		if (info != null) {
 			responseModel.setUserInfo(info);
 		}
+		if (classSection != null) {
+			responseModel.setClassName(classSection.getMasterClass().getClassName());
+			responseModel.setMasterClassUuid(classSection.getMasterClass().getMasterClassUuid());
+			MasterSection ms = classSection.getMasterSection();
+			responseModel.setSectionName(ms == null ? null :  ms.getSectionName());
+			responseModel.setMasterSectionUuid(ms == null ? null :  ms.getMasterSectionUuid());
+		}
 		return ResponseEntity.ok(responseModel);
 	}
 	
 	@GetMapping("/user")
 	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> getAllUsers(@ModelAttribute UserRequestModel userRequestModel) {
-		Page<User> users = userService.getAllUsers(userRequestModel);
+		validate(userRequestModel);
+		Page<UserResponseModel> users = userService.getAllUsers(userRequestModel);
 		if (users == null || users.isEmpty() || CollectionUtils.isEmpty(users.getContent())) {
 			return ResponseEntity.noContent().build();
 		}
-		List<User> usersData = users.getContent();
-		List<UserResponseModel> userResponseModel = ModelMapperUtil.mapList(modelMapper, usersData , UserResponseModel.class);
-		userResponseModel.forEach(model -> 
-		    usersData.stream()
-		            .filter(usr -> usr.getUserUuid().equals(model.getUserUuid())
-		            		&& usr.getMasterClass() != null
-		            		&& usr.getMasterSection() != null
-		            		).findFirst()
-		            .ifPresent(usr -> {
-		                model.setClassName(usr.getMasterClass().getClassName());
-		                model.setSectionName(usr.getMasterSection().getSectionName());
-		            })
-		);
-		final Map<String, Object> responseMap = ModelMapperUtil.mapPaginationData(users, userResponseModel);
+		List<UserResponseModel> usersData = users.getContent();
+		
+		
+		final Map<String, Object> responseMap = ModelMapperUtil.mapPaginationData(users, usersData);
 		return ResponseEntity.ok(responseMap);
 	}
 
-	
 	@PutMapping("/user/{userUuid}")
 	//@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<Object> updateUserDetail(@NotBlank(message = "userUuid can not be blank") @PathVariable ("userUuid") String userUuid,
@@ -363,4 +367,49 @@ public class SuperAdminController extends AbstractController {
 		}
 		return ResponseEntity.badRequest().build();
 	}
+	
+	
+	private void validate(UserRequestModel userRequestModel) {
+		if (userRequestModel.getClassName() != null && userRequestModel.getClassName().contains("Select")) {
+			userRequestModel.setClassName(null);
+		}
+		
+		if (userRequestModel.getSectionName() != null && userRequestModel.getSectionName().contains("Select")) {
+			userRequestModel.setSectionName(null);
+		}
+		
+		if (userRequestModel.getUsername() != null && userRequestModel.getUsername().contains("Select")) {
+			userRequestModel.setUsername(null);
+		}
+		
+		if (userRequestModel.getUserType() != null && userRequestModel.getUserType().contains("Select")) {
+			userRequestModel.setUserType(null);
+		}
+		
+		if (userRequestModel.getFullName() != null && userRequestModel.getFullName().contains("Select")) {
+			userRequestModel.setFullName(null);
+		}
+		
+		if (StringUtils.isBlank(userRequestModel.getClassName())) {
+			userRequestModel.setClassName(null);
+		}
+		
+		if (StringUtils.isBlank(userRequestModel.getSectionName())) {
+			userRequestModel.setSectionName(null);
+		}
+		
+		if (StringUtils.isBlank(userRequestModel.getUsername())) {
+			userRequestModel.setUsername(null);
+		}
+		
+		if (StringUtils.isBlank(userRequestModel.getUserType())) {
+			userRequestModel.setUserType(null);
+		}
+		
+		if (StringUtils.isBlank(userRequestModel.getFullName())) {
+			userRequestModel.setFullName(null);
+		}
+		
+	}
+	
 }

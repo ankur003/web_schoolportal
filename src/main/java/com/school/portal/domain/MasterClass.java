@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,9 +18,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import com.school.portal.enums.AcademicYear;
+
 @Entity
 public class MasterClass implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5348951937623306641L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long masterClassId;
@@ -28,6 +37,9 @@ public class MasterClass implements Serializable {
 	
 	@Column(nullable = false, unique = true)
 	private String className;
+	
+	@Enumerated(EnumType.STRING)
+	private AcademicYear academicYear;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(name = "CLASS_SECTIONS", joinColumns = { @JoinColumn(name = "MASTER_CLASS_ID") }, inverseJoinColumns = {
@@ -104,6 +116,20 @@ public class MasterClass implements Serializable {
 
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
 	}
 	
 }

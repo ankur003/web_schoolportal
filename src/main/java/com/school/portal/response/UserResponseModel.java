@@ -9,8 +9,11 @@ import com.school.portal.domain.Address;
 import com.school.portal.domain.UserEducation;
 import com.school.portal.domain.UserExperience;
 import com.school.portal.domain.UserInfo;
+import com.school.portal.enums.AcademicYear;
 
 public class UserResponseModel {
+	
+	private Long userId;
 	
 	private String userUuid;
 
@@ -61,6 +64,61 @@ public class UserResponseModel {
 	private String masterClassUuid;
 	
 	private String masterSectionUuid;
+	
+	private AcademicYear academicYear;
+	
+	public UserResponseModel() {
+		
+	}
+	
+	public UserResponseModel(
+		    Long userId,
+		    String userUuid,
+		    String username,
+		    String className,
+		    String sectionName,
+		    String fullName,
+		    Long phoneNo,
+		    String userType,
+		    LocalDate dob,
+		    LocalDate doj,
+		    Boolean isAdmin,
+		    Boolean isSuperAdmin,
+		    Boolean isClassTeacher,
+		    Boolean isActive,
+		    LocalDateTime createdAt,
+		    LocalDateTime updatedAt,
+		    String createdBy,
+		    long rollNumber,
+		    String enrollmentNumber,
+		    String masterClassUuid,
+		    String masterSectionUuid,
+		    AcademicYear academicYear
+		) {
+		    this.userId = userId;
+		    this.userUuid = userUuid;
+		    this.username = username;
+		    this.className = className;
+		    this.sectionName = sectionName;
+		    this.fullName = fullName;
+		    this.phoneNo = phoneNo;
+		    this.userType = userType;
+		    this.dob = dob;
+		    this.doj = doj;
+		    this.isAdmin = isAdmin;
+		    this.isSuperAdmin = isSuperAdmin;
+		    this.isClassTeacher = isClassTeacher;
+		    this.isActive = isActive;
+		    this.createdAt = createdAt;
+		    this.updatedAt = updatedAt;
+		    this.createdBy = createdBy;
+		    this.rollNumber = rollNumber;
+		    this.enrollmentNumber = enrollmentNumber;
+		    this.masterClassUuid = masterClassUuid;
+		    this.masterSectionUuid = masterSectionUuid;
+		    this.academicYear = academicYear;
+		}
+
 	
 	public String getUserUuid() {
 		return userUuid;
@@ -276,6 +334,34 @@ public class UserResponseModel {
 	 */
 	public void setMasterSectionUuid(String masterSectionUuid) {
 		this.masterSectionUuid = masterSectionUuid;
+	}
+
+	/**
+	 * @return the userId
+	 */
+	public Long getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
 	}
 	
 	

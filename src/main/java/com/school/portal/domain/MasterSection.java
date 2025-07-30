@@ -5,9 +5,13 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import com.school.portal.enums.AcademicYear;
 
 @Entity
 public class MasterSection implements Serializable {
@@ -22,6 +26,9 @@ public class MasterSection implements Serializable {
 	
 	@Column(nullable = false, unique = true)
 	private String sectionName;
+	
+	@Enumerated(EnumType.STRING)
+	private AcademicYear academicYear;
 	
 	private Boolean isActive = true;
 	
@@ -85,6 +92,20 @@ public class MasterSection implements Serializable {
 
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
 	}
 	
 }

@@ -1,15 +1,23 @@
 package com.school.portal.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.school.portal.domain.TeacherTimeTable;
 import com.school.portal.dto.TeacherTimeTableDTO;
 import com.school.portal.service.TeacherTimeTableService;
 import com.school.portal.utils.TeacherTimeTableMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/timetable")
@@ -18,21 +26,6 @@ public class TeacherTimeTableController {
 
     @Autowired
     private TeacherTimeTableService timetableService;
-
-//    @PostMapping
-//    public ResponseEntity<TeacherTimeTableDTO> create(@RequestBody TeacherTimeTableDTO dto) {
-//        TeacherTimeTable entity = TeacherTimeTableMapper.toEntity(dto);
-//        TeacherTimeTable saved = timetableService.createEntryWithValidation(entity);
-//        return ResponseEntity.ok(TeacherTimeTableMapper.toDto(saved));
-//    }
-//
-//    @PutMapping("/{id}")
-//    public ResponseEntity<TeacherTimeTableDTO> update(@PathVariable Long id,
-//                                                      @RequestBody TeacherTimeTableDTO dto) {
-//        TeacherTimeTable updatedEntity = TeacherTimeTableMapper.toEntity(dto);
-//        TeacherTimeTable saved = timetableService.updateEntryWithValidation(id, updatedEntity);
-//        return ResponseEntity.ok(TeacherTimeTableMapper.toDto(saved));
-//    }
 
     @PutMapping
     public ResponseEntity<TeacherTimeTableDTO> upsert(@RequestBody TeacherTimeTableDTO dto,
@@ -60,22 +53,11 @@ public class TeacherTimeTableController {
         return timetableService.getByTeacher(teacherUuid);
     }
 
-//    @GetMapping("/class/{classUuid}")
-//    public List<TeacherTimeTableDTO> getByClass(@PathVariable String classUuid) {
-//        return timetableService.getByClass(classUuid);
-//    }
-
     @GetMapping("/class/{classUuid}")
     public List<TeacherTimeTableDTO> getByClassAndSection(@PathVariable String classUuid,
                                                 @RequestParam(required = false) String sectionUuid) {
         return timetableService.getByClassAndSection(classUuid, sectionUuid);
     }
-//    @GetMapping("/class/section/{sectionUuid}")
-//    public List<TeacherTimeTableDTO> getBySection(@PathVariable String sectionUuid) {
-//        return timetableService.getByClass(sectionUuid).stream()
-//                .map(TeacherTimeTableMapper::toDto)
-//                .collect(Collectors.toList());
-//    }
 
     @GetMapping("/day/{dayOfWeek}")
     public List<TeacherTimeTableDTO> getByDay(@PathVariable String dayOfWeek) {
