@@ -20,8 +20,12 @@ public class LoggedInUserUtil {
 	}
 	
 	public static AcademicYear getLoginUserAcadmicYear() {
-		String userUuid = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getUserUuid();
-		return academicMap.get(userUuid);
+		CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
+		        .getContext()
+		        .getAuthentication()
+		        .getPrincipal();
+
+		return academicMap.get(userDetails.getUserUuid());
 	}
 
 	public static void setLoginUserAcadmicYear(String userName, AcademicYear academicYear) {
