@@ -21,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.school.portal.enums.AcademicYear;
 import com.school.portal.service.CustomUserDetails;
 import com.school.portal.utils.LoggedInUserUtil;
+import com.school.portal.utils.SchoolPortalUtils;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -44,10 +45,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			authToken = header.replace(TOKEN_PREFIX, "");
 			try {
 				username = jwtTokenUtil.getUsernameFromToken(authToken);
-			} catch (IllegalArgumentException e) {
-				logger.error("an error occured during getting username from token", e);
-			} catch (ExpiredJwtException e) {
-			} catch (SignatureException e) {
+			}
+			 catch (Exception e) {
 				logger.error("Authentication Failed. Username or Password not valid.");
 			}
 		}
@@ -60,8 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				logger.info("authenticated user " + username + ", setting security context");
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 				
-				if (!"GET".equalsIgnoreCase(req.getMethod()) && userAcademicYear != null &&
-			            !AcademicYear.YEAR_2025_2026.name().equalsIgnoreCase(userAcademicYear)) {
+				if (!"GET".equalsIgnoreCase(req.getMethod()) &&
+			            !SchoolPortalUtils.getCurrentAcademicYear().equalsIgnoreCase(userAcademicYear)) {
 
 	                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 	                res.setContentType("application/json");

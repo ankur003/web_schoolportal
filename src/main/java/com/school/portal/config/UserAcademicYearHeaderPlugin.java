@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.school.portal.enums.AcademicYear;
+import com.school.portal.utils.SchoolPortalUtils;
 
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.schema.ModelRef;
@@ -25,9 +26,9 @@ public class UserAcademicYearHeaderPlugin implements OperationBuilderPlugin {
 
 		context.operationBuilder()
 				.parameters(Collections.singletonList(
-						new ParameterBuilder().name("user_academic_year").description("Academic year of the user")
+						new ParameterBuilder().name("user_academic_year").description("Academic year of the login user")
 								.modelRef(new ModelRef("string")).parameterType("header").required(true)
-								.defaultValue(AcademicYear.YEAR_2025_2026.name()) 
+								.defaultValue(SchoolPortalUtils.getCurrentAcademicYear()) 
 								.allowableValues(new AllowableListValues(enumNames, "string")).build()));
 	}
 

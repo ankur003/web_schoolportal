@@ -2,6 +2,8 @@ package com.school.portal.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Random;
 import java.util.UUID;
 
@@ -44,4 +46,15 @@ public final class SchoolPortalUtils {
             return null;
         }
     }
+	
+	 public static String getCurrentAcademicYear() {
+	        LocalDate today = LocalDate.now();
+	        int year = today.getYear();
+
+	        // If current date is before April, the academic year started in the previous year
+	        int startYear = today.getMonthValue() < Month.APRIL.getValue() ? year - 1 : year;
+	        int endYear = startYear + 1;
+
+	        return String.format("YEAR_%d_%d", startYear, endYear);
+	    }
 }

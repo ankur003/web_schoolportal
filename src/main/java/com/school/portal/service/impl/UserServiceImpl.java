@@ -73,6 +73,7 @@ import com.school.portal.service.UserInfoService;
 import com.school.portal.service.UserService;
 import com.school.portal.specification.AttendanceSpec;
 import com.school.portal.utils.FileService;
+import com.school.portal.utils.LoggedInUserUtil;
 import com.school.portal.utils.SchoolPortalUtils;
 import com.school.portal.utils.WhatsAppUtil;
 
@@ -223,7 +224,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
         UserClassSection classSection = new UserClassSection();
         classSection.setMasterClass (mastserClass);
-        classSection.setAcademicYear(AcademicYear.YEAR_2025_2026);
+        classSection.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
         if (StringUtils.isBlank (createUserModel.getSectionUuid ())) {
         	classSectionRepository.save(classSection);            
         	return true;
@@ -315,7 +316,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		    filteredStream = filteredStream
 		            .filter(u -> u.getSectionName() != null && u.getSectionName().toLowerCase().equals(sectionNameLower));
 		}
-		AcademicYear filterAcademicYear = AcademicYear.YEAR_2025_2026;//userRequestModel.getAcademicYear(); // or any AcademicYear value
+		AcademicYear filterAcademicYear = LoggedInUserUtil.getLoginUserAcadmicYear();//userRequestModel.getAcademicYear(); // or any AcademicYear value
 		if (filterAcademicYear != null) {
 		    filteredStream = filteredStream
 		        .filter(u -> u.getAcademicYear() == null || filterAcademicYear.equals(u.getAcademicYear()));

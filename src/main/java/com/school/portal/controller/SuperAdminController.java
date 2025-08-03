@@ -62,6 +62,7 @@ import com.school.portal.service.UserEducationService;
 import com.school.portal.service.UserExperienceService;
 import com.school.portal.service.UserInfoService;
 import com.school.portal.service.UserService;
+import com.school.portal.utils.LoggedInUserUtil;
 import com.school.portal.utils.ModelMapperUtil;
 import com.school.portal.utils.ResponseBuilder;
 import com.school.portal.utils.SchoolPortalUtils;
@@ -130,7 +131,7 @@ public class SuperAdminController extends AbstractController {
 		List<UserEducation> userEducations = userEducationService.getUserEducationByUserId(user.getUserId());
 		List<UserExperience> userExps = userExperience.getUserExperienceByUser(user);
 		UserInfo info = userInfoService.getUserInfo(user);
-		UserClassSection classSection = userClassSectionRepository.findByUserAndAcademicYear(user, AcademicYear.YEAR_2025_2026);
+		UserClassSection classSection = userClassSectionRepository.findByUserAndAcademicYear(user, LoggedInUserUtil.getLoginUserAcadmicYear());
 		UserResponseModel responseModel = modelMapper.map(user, UserResponseModel.class);
 		if (address != null) {
 			responseModel.setAddress(address);

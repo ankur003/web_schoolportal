@@ -60,7 +60,7 @@ public class FeeService {
         	return null;
         }
         MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassIdAndAcademicYear(dto.getFeeType(), 
-        		dto.getFeeName(), masterClass.getMasterClassId(), AcademicYear.YEAR_2025_2026.name());
+        		dto.getFeeName(), masterClass.getMasterClassId(), LoggedInUserUtil.getLoginUserAcadmicYear().name());
         if (masterFee != null) {
         	return null;
         }
@@ -70,7 +70,7 @@ public class FeeService {
         masterFee.setFeeType(dto.getFeeType());
         masterFee.setFeeName(dto.getFeeName());
         masterFee.setTotalFee(dto.getTotalFee());
-        masterFee.setAcademicYear(AcademicYear.YEAR_2025_2026.name());
+        masterFee.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear().name());
 
         return masterFeeRepository.save(masterFee).getMasterFeesUuid();
     }
@@ -105,10 +105,10 @@ public class FeeService {
         	return null;
         }
         
-        UserClassSection userClassSection =  userClassSectionRepository.findByUserAndAcademicYear(user, AcademicYear.YEAR_2025_2026);
+        UserClassSection userClassSection =  userClassSectionRepository.findByUserAndAcademicYear(user, LoggedInUserUtil.getLoginUserAcadmicYear());
 
         MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassIdAndAcademicYear(dto.getFeeType(), dto.getFeeName(),
-        		userClassSection.getMasterClass().getMasterClassId(), AcademicYear.YEAR_2025_2026.name());
+        		userClassSection.getMasterClass().getMasterClassId(), LoggedInUserUtil.getLoginUserAcadmicYear().name());
         
         if (masterFee == null) {
         	return null;
@@ -149,7 +149,7 @@ public class FeeService {
         payment.setRemarks(dto.getRemarks());
         payment.setMonth(dto.getMonth());
         payment.setYear(dto.getYear());
-        payment.setAcademicYear(AcademicYear.YEAR_2025_2026);
+        payment.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
 
         return feePaymentRepository.save(payment).getFeePaymentUuid();
     }

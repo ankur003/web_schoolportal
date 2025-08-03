@@ -24,6 +24,7 @@ import com.school.portal.repo.UserClassSectionRepository;
 import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.StudentParentLinkService;
 import com.school.portal.service.UserService;
+import com.school.portal.utils.LoggedInUserUtil;
 import com.school.portal.utils.ModelMapperUtil;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -91,7 +92,7 @@ public class StudentParentLinkController extends AbstractController {
 
 	    // 2. Fetch active class-section mapping
 	    List<UserClassSection> classSections = userClassSectionRepository.findActiveByUserIdsAndAcademicYear(userIds,
-	    		AcademicYear.YEAR_2025_2026);
+	    		LoggedInUserUtil.getLoginUserAcadmicYear());
 
 	    // 3. Map to a quick lookup map by userUuid
 	    Map<Long, UserClassSection> userClassSectionMap = classSections.stream()
