@@ -4,12 +4,14 @@ import static com.school.portal.constants.JwtConstants.HEADER_STRING;
 import static com.school.portal.constants.JwtConstants.TOKEN_PREFIX;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,9 +24,6 @@ import com.school.portal.enums.AcademicYear;
 import com.school.portal.service.CustomUserDetails;
 import com.school.portal.utils.LoggedInUserUtil;
 import com.school.portal.utils.SchoolPortalUtils;
-
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.SignatureException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -41,6 +40,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String userAcademicYear = req.getHeader("user_academic_year");
 		String username = null;
 		String authToken = null;
+
+		if (StringUtils.isBlank(userAcademicYear) || Arrays.stream(AcademicYear.values())
+				.noneMatch(year -> year.name().equalsIgnoreCase(userAcademicYear))) {
+
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			res.setContentType("application/json");
+			String error = StringUtils.isBlank(userAcademicYear) ? "Missing required header: user_academic_year"
+					: "Invalid academic year: " + userAcademicYear;
+			res.getWriter().write("{\"error\": \"" + error + "\"}");
+			return;
+		}
+		
 		if (header != null && header.startsWith(TOKEN_PREFIX)) {
 			authToken = header.replace(TOKEN_PREFIX, "");
 			try {
@@ -68,13 +79,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	                return; // short-circuit the filter chain
 	            }
 				
-				addLoginUserAcademicYear(req, userAcademicYear, userDetails);
+				addLoginUserAcademicYear(userAcademicYear, userDetails);
 			}
 		}
 		chain.doFilter(req, res);
 	}
 
-	private void addLoginUserAcademicYear(HttpServletRequest req, String userAcademicYear, UserDetails userDetails) {
+	private void addLoginUserAcademicYear(String userAcademicYear, UserDetails userDetails) {
 		if (userDetails instanceof CustomUserDetails) {
 			String userUuid = ((CustomUserDetails) userDetails).getUserUuid();
 			LoggedInUserUtil.setLoginUserAcadmicYear(userUuid, AcademicYear.valueOf(userAcademicYear));
