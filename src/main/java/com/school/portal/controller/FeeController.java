@@ -26,6 +26,8 @@ import com.school.portal.enums.FeeName;
 import com.school.portal.enums.FeeType;
 import com.school.portal.service.FeeService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/api/v1/fees")
 @CrossOrigin("*")
@@ -34,6 +36,7 @@ public class FeeController {
     @Autowired
     private FeeService feeService;
     
+	@ApiOperation(value = "create Master Fee", notes = "create Master Fee")
     @PostMapping("/master-fee")
     public ResponseEntity<Object> createMasterFee(@RequestBody List<MasterFeeRequestDTO> dtos) {
         try {
@@ -52,30 +55,35 @@ public class FeeController {
         return ResponseEntity.ok().build();
     }
     
+	@ApiOperation(value = "get Master Fees By Masteruuid")
     @GetMapping("/master-fee/{masterFeeUuid}")
     public ResponseEntity<Object> getMasterFeesByMasteruuid(@PathVariable String masterFeeUuid) {
         FeeDto fee = feeService.getMasterFeesByMasteruuid(masterFeeUuid);
         return ResponseEntity.ok(fee);
     }
     
+	@ApiOperation(value = "Get All Master Fees")
     @GetMapping("/master-fee")
     public ResponseEntity<Object> getAllMasterFees() {
         List<FeeDto> fees = feeService.getAllMasterFees();
         return ResponseEntity.ok(fees);
     }
     
+	@ApiOperation(value = "get Master Fees By ClassUuid And FeeType")
     @GetMapping("/master-fee/class/{classUuid}/feeType/{feeType}")
     public ResponseEntity<Object> getMasterFeesByClassUuidAndFeeType(@PathVariable String classUuid, @PathVariable FeeType feeType) {
         List<FeeDto> fees = feeService.getMasterFeesByClassUuidAndFeeType(classUuid, feeType);
         return ResponseEntity.ok(fees);
     }
     
+	@ApiOperation(value = "get Master Fees By ClassUuid")
     @GetMapping("/master-fee/class/{classUuid}")
     public ResponseEntity<Object> getMasterFeesByClassUuid(@PathVariable String classUuid) {
         List<FeeDto> fees = feeService.getMasterFeesByClassUuid(classUuid);
         return ResponseEntity.ok(fees);
     }
-    
+	
+	@ApiOperation(value = "update Master Fee")
     @PutMapping("/master-fee")
     public ResponseEntity<Object> updateMasterFee(@RequestBody List<UpdateMasterFeeRequestDTO> updateFeeDtos) {
         try {

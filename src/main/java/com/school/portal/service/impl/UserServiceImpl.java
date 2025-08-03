@@ -64,6 +64,7 @@ import com.school.portal.response.AttendanceMonthlyReportResponse;
 import com.school.portal.response.AttendanceSummaryModel;
 import com.school.portal.response.UserAttendanceModel;
 import com.school.portal.response.UserResponseModel;
+import com.school.portal.service.CustomUserDetails;
 import com.school.portal.service.EmailService;
 import com.school.portal.service.StudentParentLinkService;
 import com.school.portal.service.UserEducationService;
@@ -114,12 +115,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private final HolidaysRepo holidaysRepository;
 
     public UserDetails loadUserByUsername(String username) {
-        User user = userRepo.findByUsernameAndIsActive (username, true);
-        if (user == null) {
-            throw new UsernameNotFoundException ("Invalid username or password.");
-        }
-        return new org.springframework.security.core.userdetails.User (user.getUsername (), user.getPassword (),
-                getAuthority (user));
+    	User user = userRepo.findByUsernameAndIsActive(username, true);
+    	if (user == null) {
+    		throw new UsernameNotFoundException("Invalid username or password.");
+    	}
+
+    	return new CustomUserDetails(
+    		user.getUsername(),
+    		user.getPassword(),
+    		user.getUserUuid(), 
+    		getAuthority(user)
+    	);
     }
 
     private Set<SimpleGrantedAuthority> getAuthority(User user) {

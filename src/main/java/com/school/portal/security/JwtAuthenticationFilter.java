@@ -1,7 +1,15 @@
 package com.school.portal.security;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.SignatureException;
+import static com.school.portal.constants.JwtConstants.HEADER_STRING;
+import static com.school.portal.constants.JwtConstants.TOKEN_PREFIX;
+
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,14 +18,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import com.school.portal.enums.AcademicYear;
+import com.school.portal.service.CustomUserDetails;
+import com.school.portal.utils.LoggedInUserUtil;
 
-import static com.school.portal.constants.JwtConstants.HEADER_STRING;
-import static com.school.portal.constants.JwtConstants.TOKEN_PREFIX;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -31,6 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
 		String header = req.getHeader(HEADER_STRING);
+		String userAcademicYear = req.getHeader("user_academic_year");
 		String username = null;
 		String authToken = null;
 		if (header != null && header.startsWith(TOKEN_PREFIX)) {
@@ -46,14 +53,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-			if (jwtTokenUtil.validateToken(authToken, userDetails)) {
+			if (Boolean.TRUE.equals(jwtTokenUtil.validateToken(authToken, userDetails))) {
 				UsernamePasswordAuthenticationToken authentication = jwtTokenUtil.getAuthentication(authToken,
 						userDetails);
 				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
 				logger.info("authenticated user " + username + ", setting security context");
 				SecurityContextHolder.getContext().setAuthentication(authentication);
+				
+				addLoginUserAcademicYear(req, userAcademicYear, userDetails);
 			}
 		}
 		chain.doFilter(req, res);
+	}
+
+	private void addLoginUserAcademicYear(HttpServletRequest req, String userAcademicYear, UserDetails userDetails) {
+		if ("GET".equalsIgnoreCase(req.getMethod()) && userDetails instanceof CustomUserDetails) {
+			String userUuid = ((CustomUserDetails) userDetails).getUserUuid();
+			LoggedInUserUtil.setLoginUserAcadmicYear(userUuid, AcademicYear.valueOf(userAcademicYear));
+		}
 	}
 }
