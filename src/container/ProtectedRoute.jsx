@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Outlet, Navigate, useNavigate } from 'react-router-dom';
 import SideBar from '../components/SideBar';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import * as Constants from '../Redux/Constants';
 // import { routesList } from '../../src/routes.js';
 
 const Header = styled.header`
@@ -38,8 +39,9 @@ const H1 = styled.h1`
     }
 `;
 
-const ProtectedRoute = () => {
+const ProtectedRoute = (props) => {
     let navigate = useNavigate();
+    let dispatch = useDispatch();
     const [isActive, setIsActive] = useState(true)
     const isAuthenticated = sessionStorage.getItem("token");
     const { role } = useSelector((state) => state.loginReducer);
@@ -73,6 +75,18 @@ const ProtectedRoute = () => {
                         <li className={isActive ? "active" : ""} onClick={() => changeLanguage('en')}>En</li>
                         <li className={!isActive ? "active" : ""} onClick={() => changeLanguage('hi')}>Hi</li>
                     </ul> */}
+                    <div className="form-group">
+                        <select
+                            className="form-control"
+                            value={props?.academicYearProps}
+                            onChange={e => { props?.setAcademicYearProps(e.target.value); dispatch({ type: Constants.RESET_STATE }) }}
+                            style={{ marginRight: 16, padding: 4,textAlign: 'center' ,width: '150px'}}
+                        >
+                            {props?.academicYearList.map(year => (
+                                <option key={year.key} value={year.key}>{year.label}</option>
+                            ))}
+                        </select>
+                    </div>
                     <div className="dropdown">
                         <button className="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             <span className='badge bg-custom'>{role}</span> {user} <i className="fas fa-ellipsis-v"></i>

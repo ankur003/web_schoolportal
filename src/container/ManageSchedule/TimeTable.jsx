@@ -156,13 +156,13 @@ const TimetableSystem = () => {
       try {
         const response = await axios.get(`${basePathUrl}/sa/class-section-link`);
         let data = response.data;
-        console.log({ data })
+        console.log({ response })
         console.log({ userDetails })
         if (applicationRole === PARENT || applicationRole === STUDENT) {
           let filterClassname = applicationRole === STUDENT ? userDetails?.className : classAndSectionName?.classname;
           let filterSectionname = applicationRole === STUDENT ? userDetails?.sectionName : classAndSectionName?.sectionname;
           console.log("parents")
-          const classLi = data
+          let classLi = data
             .filter(item => item.className === filterClassname)
             .map(item => ({
               ...item,
@@ -172,7 +172,7 @@ const TimetableSystem = () => {
           data = classLi;
         }
 
-        const classOptions = data.map(item => ({
+        const classOptions = data && data?.map(item => ({
           label: item.className,
           value: item.masterClassUuid,
           sections: item.masterSection || []
@@ -292,6 +292,7 @@ const TimetableSystem = () => {
       // Use the new API endpoint for teacher timetable
       const response = await axios.get(`${basePathUrl}/timetable/teacher/${selectedTeacher}`);
       const data = response.data;
+      console.log('Teacher timetable response:', response);
 
       console.log('Teacher timetable data:', data);
 
@@ -371,13 +372,13 @@ const TimetableSystem = () => {
       setSaving(true);
 
       const { startTime, endTime } = parseTimeSlotToString(formData.timeSlot);
-      const selectedClassData = classes.find(cls => cls.label === formData.class);
+      const selectedClassData = classes &&classes?.find(cls => cls.label === formData.class);
       const selectedTeacherData = teachers.find(teacher => teacher.label === formData.teacher);
 
       // Find section data based on class and section name
       let selectedSectionData = null;
       if (formData.section && selectedClassData) {
-        const classWithSections = classes.find(cls => cls.value === selectedClassData.value);
+        const classWithSections = classes && classes?.find(cls => cls.value === selectedClassData.value);
         if (classWithSections && classWithSections.sections) {
           selectedSectionData = classWithSections.sections.find(section => section.sectionName === formData.section);
         }
@@ -514,7 +515,7 @@ const TimetableSystem = () => {
     setSelectedSection('');
     setTimetables([]);
 
-    const selectedClassData = classes.find(cls => cls.value === classUuid);
+    const selectedClassData = classes && classes?.find(cls => cls.value === classUuid);
     if (selectedClassData && selectedClassData.sections) {
       const sectionOptions = selectedClassData.sections.map(section => ({
         label: section.sectionName,
@@ -564,7 +565,7 @@ const TimetableSystem = () => {
 
     // If class changes in modal, update available sections
     if (name === 'class') {
-      const selectedClassData = classes.find(cls => cls.label === value);
+      const selectedClassData = classes &&classes?.find(cls => cls.label === value);
       if (selectedClassData && selectedClassData.sections) {
         setModalSections(selectedClassData.sections.map(section => ({
           label: section.sectionName,
@@ -816,7 +817,7 @@ const TimetableSystem = () => {
       const teacherName = teachers.find(t => t.value === selectedTeacher)?.label || 'Teacher';
       return `${teacherName}'s Timetable`;
     } else {
-      const className = classes.find(cls => cls.value === selectedClass)?.label || 'Class';
+      const className = classes &&classes?.find(cls => cls.value === selectedClass)?.label || 'Class';
       const sectionName = sections.find(sec => sec.value === selectedSection)?.label || 'Section';
 
       if (selectedSection) {
@@ -886,7 +887,7 @@ const TimetableSystem = () => {
                       onChange={(e) => handleClassChange(e.target.value)}
                     >
                       <option value="">Choose class...</option>
-                      {classes.map(cls => (
+                      {classes && classes?.map(cls => (
                         <option key={cls.value} value={cls.value}>{cls.label}</option>
                       ))}
                     </select>
@@ -991,7 +992,7 @@ const TimetableSystem = () => {
                         disabled={saving || (viewMode === 'class')} // Read-only for class view
                       >
                         <option value="">Select Class</option>
-                        {classes.map(cls => (
+                        {classes && classes?.map(cls => (
                           <option key={cls.value} value={cls.label}>{cls.label}</option>
                         ))}
                       </select>

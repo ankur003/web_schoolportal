@@ -1,5 +1,5 @@
 import '././assets/scss/main.scss';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './i18n';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Bounce, ToastContainer } from 'react-toastify';
@@ -21,8 +21,11 @@ import EntityPage from './container/ManageEntities/EntityPage';
 import StudentPage from './container/ManageEntities/StudentPage';
 import TeacherPage from './container/ManageEntities/TeacherPage';
 import AttendancePage from './container/ManageSchedule/AttendancePage';
+import { use } from 'react';
+import axios from 'axios';
 
 const App = () => {
+
   // Assume you have a way to get the user's role, e.g., from localStorage or context
   // Example: const userRole = localStorage.getItem('role');
   // For demonstration, let's use a placeholder function:
@@ -44,17 +47,43 @@ const App = () => {
     return <Navigate to="/ManageClasses" replace />;
   };
 
+  // Academic Year State
+  const getAcademicYears = () => {
+    const years = [];
+    const current = new Date().getFullYear();
+    for (let i = 0; i < 5; i++) {
+      const start = current - i;
+      const end = start + 1;
+      years.push({
+        key: `YEAR_${start}_${end}`,
+        label: `${start}-${end}`
+      });
+    }
+    return years;
+  };
+
+  const academicYears = getAcademicYears();
+  const [academicYear, setAcademicYear] = useState(academicYears[0].key);
+
+  console.log("Academic Year:", academicYear);
+
+  // Set up axios interceptor for academic year header
+  useEffect(() => {
+    // Add user_academic_year header to all axios requests
+    axios.defaults.headers.common['user_academic_year'] = academicYear;
+  }, [academicYear]);
+
   return (
     <>
       <Router>
-        <Routes>
+        <Routes key={academicYear}>
           <Route path="/" element={<Login />} />
           <Route path="/ForgetPassword" element={<ForgetPassword />} />
           <Route
             path="/redirect"
             element={<RoleBasedRedirect />}
           />
-          <Route element={<ProtectedRoute />} >
+          <Route element={<ProtectedRoute setAcademicYearProps={setAcademicYear} academicYearProps={academicYear} academicYearList={academicYears} />}>
             <Route element={<Dashboard />} path="/Dashboard" />
             <Route element={<ManageClasses />} path="/ManageClasses" />
             <Route element={<EntityPage />} path="/EntityPage" />
@@ -62,13 +91,13 @@ const App = () => {
             <Route element={<StudentPage />} path="/StudentPage" />
             <Route element={<TeacherPage />} path="/TeacherPage" />
             <Route element={<ProfileDetailsPage />} path="/ProfileDetailsPage" />
-            <Route element={<AttendanceCalendarPage />} path="/AttendanceCalendarPage" />
+            {/* <Route element={<AttendanceCalendarPage />} path="/AttendanceCalendarPage" /> */}
             <Route element={<LeaveRequest />} path="/LeaveRequest" />
             <Route element={<FeeSetUpModule />} path="/FeeSetUpModule" />
             <Route element={<FeePaymentModule />} path="/FeePaymentModule" />
             <Route element={<TimeTable />} path="/TimeTable" />
             <Route element={<ParentsPage />} path="/ParentsPage" />
-             <Route element={<AttendancePage />} path="/AttendancePage" />
+            <Route element={<AttendancePage />} path="/AttendancePage" />
           </Route>
         </Routes>
       </Router>
