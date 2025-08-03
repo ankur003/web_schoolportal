@@ -60,6 +60,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				logger.info("authenticated user " + username + ", setting security context");
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 				
+				if (!"GET".equalsIgnoreCase(req.getMethod()) && userAcademicYear != null &&
+			            !AcademicYear.YEAR_2025_2026.name().equalsIgnoreCase(userAcademicYear)) {
+
+	                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	                res.setContentType("application/json");
+	                res.getWriter().write("{\"error\": \"Save or edit functionalities are not allowed in old academic years.\"}");
+	                return; // short-circuit the filter chain
+	            }
+				
 				addLoginUserAcademicYear(req, userAcademicYear, userDetails);
 			}
 		}
