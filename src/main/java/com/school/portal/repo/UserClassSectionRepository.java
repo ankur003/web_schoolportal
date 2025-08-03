@@ -39,8 +39,8 @@ public interface UserClassSectionRepository extends JpaRepository<UserClassSecti
 
 	UserClassSection findByUserAndAcademicYear(User user, AcademicYear academicYear);
 
-	List<UserClassSection> findByMasterClassAndMasterSection(MasterClass masterClass, MasterSection masterSection);
+	List<UserClassSection> findByMasterClassAndMasterSectionAndAcademicYear(MasterClass masterClass, MasterSection masterSection, AcademicYear academicYear);
 
-	List<UserClassSection> findByMasterClass(MasterClass masterClass);
+	List<UserClassSection> findByMasterClassAndAcademicYear(MasterClass masterClass, AcademicYear academicYear);
 
 }

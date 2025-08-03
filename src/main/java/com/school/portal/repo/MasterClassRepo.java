@@ -5,12 +5,13 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.school.portal.domain.MasterClass;
+import com.school.portal.enums.AcademicYear;
 
 public interface MasterClassRepo extends JpaRepository<MasterClass, Long> {
 
-	MasterClass findByClassName(String className);
+	MasterClass findByClassNameAndAcademicYear(String className, AcademicYear academicYear);
 	
 	MasterClass findByMasterClassUuid(String classUuid);
 
-	List<MasterClass> findByIsActive(boolean isActive);
+	List<MasterClass> findByIsActiveAndAcademicYear(boolean isActive, AcademicYear academicYear);
 }

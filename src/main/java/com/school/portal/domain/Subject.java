@@ -3,12 +3,16 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+
+import com.school.portal.enums.AcademicYear;
 
 @Entity
 @Table(name = "subjects")
@@ -47,6 +51,9 @@ public class Subject {
     
     @Column(name = "is_active")
     private Boolean isActive = true;
+    
+	@Enumerated(EnumType.STRING)
+	private AcademicYear academicYear;
     
     @PrePersist
     protected void onCreate() {
@@ -144,6 +151,20 @@ public class Subject {
 	 */
 	public void setMasterSectionId(Long masterSectionId) {
 		this.masterSectionId = masterSectionId;
+	}
+
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
 	}
 
     

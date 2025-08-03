@@ -24,6 +24,7 @@ import com.school.portal.repo.MasterClassRepo;
 import com.school.portal.repo.MasterFeeRepository;
 import com.school.portal.repo.UserClassSectionRepository;
 import com.school.portal.repo.UserRepo;
+import com.school.portal.utils.LoggedInUserUtil;
 import com.school.portal.utils.SchoolPortalUtils;
 
 @Service
@@ -49,7 +50,7 @@ public class FeeService {
 
 
 	public List<FeePaymentResponseDTO> getPaymentsByUserUuid(String userUuid) {
-        return feePaymentRepository.findAllPaymentsByUserUuid(userUuid, AcademicYear.YEAR_2025_2026);
+        return feePaymentRepository.findAllPaymentsByUserUuid(userUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
 
 	}
 	
@@ -75,7 +76,8 @@ public class FeeService {
     }
 
 	public List<FeePaymentResponseDTO> getPaymentsByClassUuidAndSectionuuidAnduserUuid(String classUuid, String sectionUuid, String userUuid) {
-		return feePaymentRepository.findAllPaymentsByClassUuidAndSectionUuidAndUserUuid(classUuid, sectionUuid, userUuid, AcademicYear.YEAR_2025_2026);
+		return feePaymentRepository.findAllPaymentsByClassUuidAndSectionUuidAndUserUuid(classUuid, sectionUuid, userUuid,
+				LoggedInUserUtil.getLoginUserAcadmicYear());
 	}
 
 	public void updateMasterFee(String masterFeeUuid, UpdateMasterFeeRequestDTO updateFeeDto) {
@@ -89,11 +91,11 @@ public class FeeService {
 	}
 
 	public List<FeeDto> getAllMasterFees() {
-		return masterFeeRepository.findAllMasterFees();
+		return masterFeeRepository.findAllMasterFees(LoggedInUserUtil.getLoginUserAcadmicYear().name());
 	}
 
 	public FeeDto getMasterFeesByMasteruuid(String masterFeeUuid) {
-		return masterFeeRepository.getMasterFeesByMasteruuid(masterFeeUuid);
+		return masterFeeRepository.getMasterFeesByMasteruuid(masterFeeUuid, LoggedInUserUtil.getLoginUserAcadmicYear().name());
 	}
 	
 	public String createPayment(FeePaymentRequestDto dto) {
@@ -112,7 +114,7 @@ public class FeeService {
         	return null;
         }
         
-        List<FeePayment> userFeePayments =  feePaymentRepository.findByUser(user);
+        List<FeePayment> userFeePayments =  feePaymentRepository.findByUserAndAcademicYear(user, LoggedInUserUtil.getLoginUserAcadmicYear());
         
         for (FeePayment userFeePayment : userFeePayments) {
         	
@@ -153,7 +155,7 @@ public class FeeService {
     }
 
 	public void updatePayment(String feePaymentUuid, FeePaymentUpdateDto updateDto) {
-		FeePayment feePayment = feePaymentRepository.findByFeePaymentUuid(feePaymentUuid);
+		FeePayment feePayment = feePaymentRepository.findByFeePaymentUuidAndAcademicYear(feePaymentUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
 		if (feePayment == null) {
 			return;
 		}
@@ -169,7 +171,7 @@ public class FeeService {
 
 	public FeePaymentResponseDTO getSinglePayment(String feePaymentUuid) {
 
-		return feePaymentRepository.getSinglePayment(feePaymentUuid, AcademicYear.YEAR_2025_2026);
+		return feePaymentRepository.getSinglePayment(feePaymentUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
 	}
 
 	public List<FeeDto> getMasterFeesByClassUuid(String classUuid) {
@@ -177,12 +179,12 @@ public class FeeService {
 		if (masterClass == null) {
 			return Collections.emptyList();
 		}
-		return masterFeeRepository.findMasterFeesByClassId(masterClass.getMasterClassId());
+		return masterFeeRepository.findMasterFeesByClassId(masterClass.getMasterClassId(), LoggedInUserUtil.getLoginUserAcadmicYear().name());
 	}
 
 	public List<FeePaymentResponseDTO> getAllPayments() {
 		
-		return feePaymentRepository.getAllPayments(AcademicYear.YEAR_2025_2026);
+		return feePaymentRepository.getAllPayments(LoggedInUserUtil.getLoginUserAcadmicYear());
 	}
 
 	public List<FeeDto> getMasterFeesByClassUuidAndFeeType(String classUuid, FeeType feeType) {
@@ -190,7 +192,7 @@ public class FeeService {
 		if (masterClass == null) {
 			return Collections.emptyList();
 		}
-		return masterFeeRepository.findMasterFeesByClassIdAndFeeType(masterClass.getMasterClassId(), feeType);
+		return masterFeeRepository.findMasterFeesByClassIdAndFeeType(masterClass.getMasterClassId(), feeType, LoggedInUserUtil.getLoginUserAcadmicYear().name());
 
 	}
    

@@ -9,11 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.school.portal.domain.Subject;
+import com.school.portal.enums.AcademicYear;
 
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 	
-	List<Subject> findBySubjectNameAndIsActive(String subjectName, Boolean isActive); 
+	List<Subject> findBySubjectNameAndIsActiveAndAcademicYear(String subjectName, Boolean isActive,
+			AcademicYear academicYear); 
     
     // Filter subjects with optional parameters
     @Query("SELECT s FROM Subject s " +
@@ -22,31 +24,32 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
            "WHERE (:classUuid IS NULL OR mc.masterClassUuid = :classUuid) " +
            "AND (:sectionUuid IS NULL OR ms.masterSectionUuid = :sectionUuid) " +
            "AND (:subjectId IS NULL OR s.subjectId = :subjectId) " +
-           "AND s.isActive = true " +
+           "AND s.isActive = true AND s.academicYear = :academicYear " +
            "ORDER BY s.subjectName")
     List<Subject> findSubjectsWithFilters(
             @Param("classUuid") String classUuid,
             @Param("sectionUuid") String sectionUuid,
-            @Param("subjectId") Integer subjectId);
+            @Param("subjectId") Integer subjectId,
+            @Param("academicYear") AcademicYear academicYear);
     
     // Find active subjects only
-    List<Subject> findByIsActiveTrue();
+    List<Subject> findByIsActiveTrueAndAcademicYear(AcademicYear academicYear);
     
     // Find subject by ID and active status
-    Optional<Subject> findBySubjectIdAndIsActiveTrue(Integer subjectId);
+    Optional<Subject> findBySubjectIdAndIsActiveTrueAndAcademicYear(Integer subjectId, AcademicYear academicYear);
 
-	Subject findBySubjectIdAndIsActive(Integer subjectId, Boolean  isTrue);
+	Subject findBySubjectIdAndIsActiveAndAcademicYear(Integer subjectId, Boolean  isTrue, AcademicYear academicYear);
 
-	Optional<Subject> findBySubjectNameAndMasterClassIdAndMasterSectionIdAndIsActiveTrue(String subjectName, Long masterClassId,
-			Long masterSectionId);
+	Optional<Subject> findBySubjectNameAndMasterClassIdAndMasterSectionIdAndIsActiveTrueAndAcademicYear(String subjectName, Long masterClassId,
+			Long masterSectionId, AcademicYear academicYear);
 
-	Optional<Subject> findBySubjectNameAndMasterClassIdAndIsActiveTrue(String subjectName, Long masterClassId);
+	Optional<Subject> findBySubjectNameAndMasterClassIdAndIsActiveTrueAndAcademicYear(String subjectName, Long masterClassId, AcademicYear academicYear);
 
-	List<Subject> findBySubjectNameAndIsActiveTrue(String subjectName);
+	List<Subject> findBySubjectNameAndIsActiveTrueAndAcademicYear(String subjectName, AcademicYear academicYear);
 
-	List<Subject>  findByMasterClassIdAndIsActiveTrue(Long mcId);
+	List<Subject>  findByMasterClassIdAndIsActiveTrueAndAcademicYear(Long mcId, AcademicYear academicYear);
 
-	List<Subject> findByMasterClassIdAndMasterSectionIdAndIsActiveTrue(Long mcId, Long msId);
+	List<Subject> findByMasterClassIdAndMasterSectionIdAndIsActiveTrueAndAcademicYear(Long mcId, Long msId, AcademicYear academicYear);
 
 	
     

@@ -20,15 +20,16 @@ public interface MasterFeeRepository extends JpaRepository<MasterFee, Long> {
     @Query("SELECT new com.school.portal.dto.FeeDto(" +
             "mf.masterFeesUuid, mc.masterClassUuid, mc.className, " +
             "mf.feeType, mf.feeName, mf.totalFee, mf.academicYear, mf.createdAt, mf.updatedAt) " +
-            "FROM MasterFee mf JOIN MasterClass mc ON mf.masterClassId = mc.masterClassId")
-     List<FeeDto> findAllMasterFees();
+            "FROM MasterFee mf JOIN MasterClass mc ON mf.masterClassId = mc.masterClassId "
+            + "where mf.academicYear = :academicYear")
+     List<FeeDto> findAllMasterFees(@Param("academicYear") String academicYear);
     
     @Query("SELECT new com.school.portal.dto.FeeDto(" +
             "mf.masterFeesUuid, mc.masterClassUuid, mc.className, " +
             "mf.feeType, mf.feeName, mf.totalFee, mf.academicYear, mf.createdAt, mf.updatedAt) " +
             "FROM MasterFee mf JOIN MasterClass mc ON mf.masterClassId = mc.masterClassId " +
-            "WHERE mf.masterFeesUuid = :masterFeesUuid")
-     FeeDto getMasterFeesByMasteruuid(@Param("masterFeesUuid") String masterFeesUuid);
+            "WHERE mf.masterFeesUuid = :masterFeesUuid AND mf.academicYear = :academicYear")
+     FeeDto getMasterFeesByMasteruuid(@Param("masterFeesUuid") String masterFeesUuid, @Param("academicYear") String academicYear);
 
 
 	MasterFee findByMasterFeesUuid(String masterFeeUuid);
@@ -39,8 +40,8 @@ public interface MasterFeeRepository extends JpaRepository<MasterFee, Long> {
  	       "mf.feeType, mf.feeName, mf.totalFee, mf.academicYear, mf.createdAt, mf.updatedAt) " +
  	       "FROM MasterFee mf " +
  	       "JOIN MasterClass mc ON mf.masterClassId = mc.masterClassId " +
- 	       "WHERE mf.masterClassId = :masterClassId ")
-     List<FeeDto> findMasterFeesByClassId(@Param("masterClassId") Long masterClassId);
+ 	       "WHERE mf.masterClassId = :masterClassId AND mf.academicYear = :academicYear ")
+     List<FeeDto> findMasterFeesByClassId(@Param("masterClassId") Long masterClassId, @Param("academicYear") String academicYear);
 
     
     
@@ -49,8 +50,9 @@ public interface MasterFeeRepository extends JpaRepository<MasterFee, Long> {
     	       "mf.feeType, mf.feeName, mf.totalFee, mf.academicYear, mf.createdAt, mf.updatedAt) " +
     	       "FROM MasterFee mf " +
     	       "JOIN MasterClass mc ON mf.masterClassId = mc.masterClassId " +
-    	       "WHERE mf.masterClassId = :masterClassId AND mf.feeType = :feeType")
-	List<FeeDto> findMasterFeesByClassIdAndFeeType(@Param("masterClassId") Long masterClassId, @Param("feeType") FeeType feeType);
+    	       "WHERE mf.masterClassId = :masterClassId AND mf.feeType = :feeType AND mf.academicYear = :academicYear")
+	List<FeeDto> findMasterFeesByClassIdAndFeeType(@Param("masterClassId") Long masterClassId, @Param("feeType") FeeType feeType,
+			@Param("academicYear") String academicYear);
 
 
 	 

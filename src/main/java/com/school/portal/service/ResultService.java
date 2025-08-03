@@ -19,6 +19,7 @@ import com.school.portal.repo.UserRepo;
 import com.school.portal.requests.ResultRequestDTO;
 import com.school.portal.response.DashboardResultDTO;
 import com.school.portal.response.ResultResponseDTO;
+import com.school.portal.utils.LoggedInUserUtil;
 
 @Service
 @Transactional
@@ -40,7 +41,8 @@ public class ResultService {
             passedStatus = !isFailed; // If isFailed is true, we want isPassed to be false
         }
         
-        return resultsRepository.findResultsWithFilters(userUuid, classUuid, sectionUuid, examType, passedStatus);
+        return resultsRepository.findResultsWithFilters(userUuid, classUuid, sectionUuid, examType, 
+        		passedStatus, LoggedInUserUtil.getLoginUserAcadmicYear());
     }
 
     public void saveOrUpdateResult(ResultRequestDTO requestDTO) {
@@ -51,7 +53,7 @@ public class ResultService {
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
         Results existingResult = resultsRepository.findByUserAndSubjectAndExamType(
-                user.getUserId(), subject.getSubjectId(), requestDTO.getExamType());
+                user.getUserId(), subject.getSubjectId(), requestDTO.getExamType(), LoggedInUserUtil.getLoginUserAcadmicYear());
 
         Results result;
         if (existingResult != null) {
@@ -86,7 +88,7 @@ public class ResultService {
         
         if (gainers == null || gainers) {
             List<DashboardResultDTO> topGainers = resultsRepository.findTopGainers(
-                    classUuid, sectionUuid, examType, subjectId);
+                    classUuid, sectionUuid, examType, subjectId, LoggedInUserUtil.getLoginUserAcadmicYear());
             
             Map<String, List<DashboardResultDTO>> gainersByClassSection = topGainers.stream()
                     .collect(Collectors.groupingBy(
@@ -102,7 +104,7 @@ public class ResultService {
         
         if (loosers == null || loosers) {
             List<DashboardResultDTO> topLoosers = resultsRepository.findTopLoosers(
-                    classUuid, sectionUuid, examType, subjectId);
+                    classUuid, sectionUuid, examType, subjectId, LoggedInUserUtil.getLoginUserAcadmicYear());
             
             Map<String, List<DashboardResultDTO>> loosersByClassSection = topLoosers.stream()
                     .collect(Collectors.groupingBy(

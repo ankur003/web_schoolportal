@@ -3,6 +3,7 @@ package com.school.portal.service;
 import com.school.portal.domain.TeacherTimeTable;
 import com.school.portal.dto.TeacherTimeTableDTO;
 import com.school.portal.repo.TeacherTimeTableRepository;
+import com.school.portal.utils.LoggedInUserUtil;
 import com.school.portal.utils.SchoolPortalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,23 +24,23 @@ public class TeacherTimeTableService {
     }
 
     public List<TeacherTimeTableDTO> getAll() {
-        return timetableRepo.findAllWithDetails();
+        return timetableRepo.findAllWithDetails(LoggedInUserUtil.getLoginUserAcadmicYear());
     }
 
     public Optional<TeacherTimeTableDTO> findByTeacherTimetableUuid(String teacherTimetableUuid) {
-        return timetableRepo.findByTeacherTimeTableUuid(teacherTimetableUuid);
+        return timetableRepo.findByTeacherTimeTableUuid(teacherTimetableUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
     }
 
     public List<TeacherTimeTableDTO> getByTeacher(String teacherUuid) {
-        return timetableRepo.findByTeacherUuid(teacherUuid);
+        return timetableRepo.findByTeacherUuid(teacherUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
     }
 
     public List<TeacherTimeTableDTO> getByClass(String classUuid) {
-        return timetableRepo.findByClassUuid(classUuid);
+        return timetableRepo.findByClassUuid(classUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
     }
 
     public List<TeacherTimeTableDTO> getByClassAndSection(String classUuid, String sectionUuid) {
-        return timetableRepo.findByClassAndOptionalSection(classUuid, sectionUuid);
+        return timetableRepo.findByClassAndOptionalSection(classUuid, sectionUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
     }
 
 
@@ -48,7 +49,7 @@ public class TeacherTimeTableService {
 //    }
 
     public List<TeacherTimeTableDTO> getByDay(String dayOfWeek) {
-        return timetableRepo.findByDayOfWeek(dayOfWeek.toUpperCase());
+        return timetableRepo.findByDayOfWeek(dayOfWeek.toUpperCase(), LoggedInUserUtil.getLoginUserAcadmicYear());
     }
 
     public void deleteEntry(String teacherTimetableUuid) {
@@ -109,7 +110,8 @@ public class TeacherTimeTableService {
                     entry.getTeacherUuid(),
                     entry.getDayOfWeek(),
                     startTimePlusOne,
-                    endTimeMinusOne
+                    endTimeMinusOne,
+                    LoggedInUserUtil.getLoginUserAcadmicYear()
             );
 
             if (!clashes.isEmpty()) {
@@ -128,7 +130,8 @@ public class TeacherTimeTableService {
                             entry.getTeacherUuid(),
                             entry.getDayOfWeek(),
                             startTimePlusOne,
-                            endTimeMinusOne
+                            endTimeMinusOne,
+                            LoggedInUserUtil.getLoginUserAcadmicYear()
                     ).stream()
                     .filter(e -> !e.getId().equals(id))
                     .collect(Collectors.toList());

@@ -1,4 +1,5 @@
 package com.school.portal.config;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -18,29 +19,20 @@ import springfox.documentation.spi.service.contexts.OperationContext;
 @Component
 public class UserAcademicYearHeaderPlugin implements OperationBuilderPlugin {
 
-    @Override
-    public void apply(OperationContext context) {
-        // Apply only to GET methods
-        if ("GET".equalsIgnoreCase(context.httpMethod().name())) {
-            List<String> enumNames = Arrays.stream(AcademicYear.values())
-                    .map(Enum::name)
-                    .collect(Collectors.toList());
+	@Override
+	public void apply(OperationContext context) {
+		List<String> enumNames = Arrays.stream(AcademicYear.values()).map(Enum::name).collect(Collectors.toList());
 
-            context.operationBuilder().parameters(
-                    Collections.singletonList(new ParameterBuilder()
-                            .name("user_academic_year")
-                            .description("Academic year of the user")
-                            .modelRef(new ModelRef("string"))
-                            .parameterType("header")
-                            .required(true)
-                            .allowableValues(new AllowableListValues(enumNames, "string"))
-                            .build())
-            );
-        }
-    }
+		context.operationBuilder()
+				.parameters(Collections.singletonList(
+						new ParameterBuilder().name("user_academic_year").description("Academic year of the user")
+								.modelRef(new ModelRef("string")).parameterType("header").required(true)
+								.defaultValue(AcademicYear.YEAR_2025_2026.name()) 
+								.allowableValues(new AllowableListValues(enumNames, "string")).build()));
+	}
 
-    @Override
-    public boolean supports(DocumentationType documentationType) {
-        return DocumentationType.SWAGGER_2.equals(documentationType);
-    }
+	@Override
+	public boolean supports(DocumentationType documentationType) {
+		return DocumentationType.SWAGGER_2.equals(documentationType);
+	}
 }

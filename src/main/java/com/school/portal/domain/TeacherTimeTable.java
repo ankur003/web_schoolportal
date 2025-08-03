@@ -2,6 +2,9 @@ package com.school.portal.domain;
 
 import lombok.*;
 import javax.persistence.*;
+
+import com.school.portal.enums.AcademicYear;
+
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 
@@ -50,6 +53,9 @@ public class TeacherTimeTable {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+	@Enumerated(EnumType.STRING)
+	private AcademicYear academicYear;
 
     @PrePersist
     protected void onCreate() {

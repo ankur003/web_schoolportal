@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.school.portal.enums.AcademicYear;
+import com.school.portal.service.CustomUserDetails;
 
 public class LoggedInUserUtil {
 	
@@ -19,7 +20,8 @@ public class LoggedInUserUtil {
 	}
 	
 	public static AcademicYear getLoginUserAcadmicYear() {
-		return academicMap.get(SecurityContextHolder.getContext().getAuthentication().getName());
+		String userUuid = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getUserUuid();
+		return academicMap.get(userUuid);
 	}
 
 	public static void setLoginUserAcadmicYear(String userName, AcademicYear academicYear) {

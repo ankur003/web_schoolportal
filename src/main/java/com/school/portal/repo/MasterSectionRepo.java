@@ -6,13 +6,14 @@ import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.school.portal.domain.MasterSection;
+import com.school.portal.enums.AcademicYear;
 
 public interface MasterSectionRepo extends JpaRepository<MasterSection, Long> {
-	MasterSection findBySectionName(String sectionName);
+	MasterSection findBySectionNameAndAcademicYear(String sectionName, AcademicYear academicYear);
 
-	List<MasterSection> findByMasterSectionUuidIn(Set<String> sectionUuids);
+	List<MasterSection> findByMasterSectionUuidInAndAcademicYear(Set<String> sectionUuids, AcademicYear academicYear);
 
-	List<MasterSection> findByIsActive(boolean isActive);
+	List<MasterSection> findByIsActiveAndAcademicYear(boolean isActive, AcademicYear academicYear);
 
 	MasterSection findByMasterSectionUuid(String sectionUuid);
 }

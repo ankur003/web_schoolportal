@@ -76,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private void addLoginUserAcademicYear(HttpServletRequest req, String userAcademicYear, UserDetails userDetails) {
-		if ("GET".equalsIgnoreCase(req.getMethod()) && userDetails instanceof CustomUserDetails) {
+		if (userDetails instanceof CustomUserDetails) {
 			String userUuid = ((CustomUserDetails) userDetails).getUserUuid();
 			LoggedInUserUtil.setLoginUserAcadmicYear(userUuid, AcademicYear.valueOf(userAcademicYear));
 		}

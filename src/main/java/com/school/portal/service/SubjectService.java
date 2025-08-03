@@ -32,6 +32,7 @@ import com.school.portal.repo.MasterClassRepo;
 import com.school.portal.repo.MasterSectionRepo;
 import com.school.portal.repo.SubjectRepository;
 import com.school.portal.requests.ClassSubjectLinkRequestDto;
+import com.school.portal.utils.LoggedInUserUtil;
 
 @Service
 @Transactional
@@ -49,16 +50,16 @@ public class SubjectService {
     public void createOrUpdateSubject(SubjectRequestDto requestDto) {
     	
         if (requestDto.getSubjectId() != null) {
-        	Subject subject = subjectRepository.findBySubjectIdAndIsActive(requestDto.getSubjectId(), true);
+        	Subject subject = subjectRepository.findBySubjectIdAndIsActiveAndAcademicYear(requestDto.getSubjectId(), true, LoggedInUserUtil.getLoginUserAcadmicYear());
         	if (subject != null) {
-            	List<Subject> reqSubjects =  subjectRepository.findBySubjectNameAndIsActive(requestDto.getSubjectName(), true); 
+            	List<Subject> reqSubjects =  subjectRepository.findBySubjectNameAndIsActiveAndAcademicYear(requestDto.getSubjectName(), true, LoggedInUserUtil.getLoginUserAcadmicYear()); 
             	if (CollectionUtils.isNotEmpty(reqSubjects)) {
             		reqSubjects.forEach(sub -> {
                 		sub.setDescription(requestDto.getDescription());
                 		sub.setIsActive(true);
             			subjectRepository.save(sub);
                 	});            	}
-            	List<Subject> subjects =  subjectRepository.findBySubjectNameAndIsActive(subject.getSubjectName(), true); 
+            	List<Subject> subjects =  subjectRepository.findBySubjectNameAndIsActiveAndAcademicYear(subject.getSubjectName(), true, LoggedInUserUtil.getLoginUserAcadmicYear()); 
             	subjects.forEach(sub -> {
             		sub.setSubjectName(requestDto.getSubjectName());
             		sub.setSubjectCode(requestDto.getSubjectName().length() < 3 ? requestDto.getSubjectName() : requestDto.getSubjectName().substring(0, 3).toUpperCase());
@@ -70,7 +71,7 @@ public class SubjectService {
             	});
         	}
         } else {
-        	List<Subject> reqSubjects =  subjectRepository.findBySubjectNameAndIsActive(requestDto.getSubjectName(), true); 
+        	List<Subject> reqSubjects =  subjectRepository.findBySubjectNameAndIsActiveAndAcademicYear(requestDto.getSubjectName(), true, LoggedInUserUtil.getLoginUserAcadmicYear()); 
         	if (CollectionUtils.isNotEmpty(reqSubjects)) {
                 throw new DuplicateResourceException("Subject name already exists: " + requestDto.getSubjectName());
         	}
@@ -131,12 +132,12 @@ public class SubjectService {
     private void createOrUpdateSubject(String subjectName, Long masterClassId, Long masterSectionId) {
         Optional<Subject> existingSubject;
 		if (masterSectionId != null) {
-        	 existingSubject = subjectRepository.findBySubjectNameAndMasterClassIdAndMasterSectionIdAndIsActiveTrue(subjectName, masterClassId, masterSectionId);
+        	 existingSubject = subjectRepository.findBySubjectNameAndMasterClassIdAndMasterSectionIdAndIsActiveTrueAndAcademicYear(subjectName, masterClassId, masterSectionId, LoggedInUserUtil.getLoginUserAcadmicYear());
         	 if (!existingSubject.isPresent()) { 
             	 linkSubject(subjectName, masterClassId, masterSectionId);
         	 }
         } else {
-        	 existingSubject = subjectRepository.findBySubjectNameAndMasterClassIdAndIsActiveTrue(subjectName, masterClassId);
+        	 existingSubject = subjectRepository.findBySubjectNameAndMasterClassIdAndIsActiveTrueAndAcademicYear(subjectName, masterClassId, LoggedInUserUtil.getLoginUserAcadmicYear());
         	 if (!existingSubject.isPresent()) { 
             	 linkSubject(subjectName, masterClassId, masterSectionId);
         	 }
@@ -144,7 +145,7 @@ public class SubjectService {
     }
 
 	private void linkSubject(String subjectName, Long masterClassId, Long masterSectionId) {
-		List<Subject> existingSubjects = subjectRepository.findBySubjectNameAndIsActiveTrue(subjectName);
+		List<Subject> existingSubjects = subjectRepository.findBySubjectNameAndIsActiveTrueAndAcademicYear(subjectName, LoggedInUserUtil.getLoginUserAcadmicYear());
 		for (Subject subject : existingSubjects) {
 			if (masterSectionId != null) {
 				if (subject.getMasterClassId() == null && subject.getMasterSectionId() == null) {
@@ -182,7 +183,8 @@ public class SubjectService {
         List<Subject> subjects = subjectRepository.findSubjectsWithFilters(
                 filterDto.getClassUuid(),
                 filterDto.getSectionUuid(),
-                filterDto.getSubjectId()
+                filterDto.getSubjectId(),
+                LoggedInUserUtil.getLoginUserAcadmicYear()
         );
         
         if (CollectionUtils.isEmpty(subjects)) {
@@ -196,7 +198,7 @@ public class SubjectService {
     
     
     public void deleteSubject(Integer subjectId) {
-        Subject subject = subjectRepository.findBySubjectIdAndIsActiveTrue(subjectId)
+        Subject subject = subjectRepository.findBySubjectIdAndIsActiveTrueAndAcademicYear(subjectId, LoggedInUserUtil.getLoginUserAcadmicYear())
                 .orElseThrow(() -> new ResourceNotFoundException("Subject not found with ID: " + subjectId));
         
         subject.setIsActive(false);
@@ -278,11 +280,11 @@ public class SubjectService {
 		}
 		List<Subject> subjects = null;
 		if (mcId != null && msId != null) {
-			subjects = subjectRepository.findByMasterClassIdAndMasterSectionIdAndIsActiveTrue(mcId, msId);
+			subjects = subjectRepository.findByMasterClassIdAndMasterSectionIdAndIsActiveTrueAndAcademicYear(mcId, msId, LoggedInUserUtil.getLoginUserAcadmicYear());
 			removeLinkage(classSubjectLinkRequestDto, subjects);
 			
 		} else if(mcId != null) {
-			subjects = subjectRepository.findByMasterClassIdAndIsActiveTrue(mcId);
+			subjects = subjectRepository.findByMasterClassIdAndIsActiveTrueAndAcademicYear(mcId, LoggedInUserUtil.getLoginUserAcadmicYear());
 			removeLinkage(classSubjectLinkRequestDto, subjects);
 		}
 		
@@ -310,7 +312,7 @@ public class SubjectService {
 	}
 
 	public List<UniqueSubjectDto> getSubjectsAsList() {
-		List<Subject> subjects = subjectRepository.findByIsActiveTrue();
+		List<Subject> subjects = subjectRepository.findByIsActiveTrueAndAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
 		if (CollectionUtils.isEmpty(subjects)) {
 			return Collections.emptyList();
 		}
@@ -333,7 +335,8 @@ public class SubjectService {
 	   List<Subject> subjects = subjectRepository.findSubjectsWithFilters(
 	        filterDto.getClassUuid(),
 	        filterDto.getSectionUuid(),
-	        filterDto.getSubjectId()
+	        filterDto.getSubjectId(),
+	        LoggedInUserUtil.getLoginUserAcadmicYear()
 	    );
 
 	    if (CollectionUtils.isEmpty(subjects)) {

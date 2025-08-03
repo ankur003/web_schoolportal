@@ -50,7 +50,7 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 
 
 
-	FeePayment findByFeePaymentUuid(String feePaymentUuid);
+	FeePayment findByFeePaymentUuidAndAcademicYear(String feePaymentUuid, AcademicYear academicYear);
 
 	
 	
@@ -86,7 +86,7 @@ public interface FeePaymentRepository extends JpaRepository<FeePayment, Long> {
 
 
 
-	List<FeePayment> findByUser(User user);
+	List<FeePayment> findByUserAndAcademicYear(User user, AcademicYear academicYear);
 
    
 }

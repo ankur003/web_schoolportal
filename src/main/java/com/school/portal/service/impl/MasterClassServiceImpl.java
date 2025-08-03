@@ -45,7 +45,8 @@ public class MasterClassServiceImpl implements MasterClassService {
 
 	@Override
 	public String createMasterClass(CreateMasterClassModel createMasterClassModel) {
-		MasterClass masterClass = masterClassRepo.findByClassName(createMasterClassModel.getClassName());
+		MasterClass masterClass = masterClassRepo.findByClassNameAndAcademicYear(createMasterClassModel.getClassName(),
+				LoggedInUserUtil.getLoginUserAcadmicYear());
 		if (masterClass == null) {
 			masterClass = new MasterClass();
 			masterClass.setClassName(createMasterClassModel.getClassName());
@@ -61,7 +62,7 @@ public class MasterClassServiceImpl implements MasterClassService {
 
 	@Override
 	public String createMasterSection(CreateMasterSectionsModel createMasterSectionsModel) {
-		MasterSection section = masterSectionRepo.findBySectionName(createMasterSectionsModel.getSectionName());		
+		MasterSection section = masterSectionRepo.findBySectionNameAndAcademicYear(createMasterSectionsModel.getSectionName(), LoggedInUserUtil.getLoginUserAcadmicYear());		
 		if (section == null) {
 			section = new MasterSection();
 			section.setSectionName(createMasterSectionsModel.getSectionName());
@@ -79,7 +80,7 @@ public class MasterClassServiceImpl implements MasterClassService {
 	public Boolean linkClassSections(LinkClassSectionModel linkClassSectionModel) {
 	    MasterClass classMaster = masterClassRepo.findByMasterClassUuid(linkClassSectionModel.getClassUuid());
 	    if (classMaster != null) {
-	        List<MasterSection> masterSections = masterSectionRepo.findByMasterSectionUuidIn(linkClassSectionModel.getSectionUuids());
+	        List<MasterSection> masterSections = masterSectionRepo.findByMasterSectionUuidInAndAcademicYear(linkClassSectionModel.getSectionUuids(), LoggedInUserUtil.getLoginUserAcadmicYear());
 	        if (masterSections != null && masterSections.size() == linkClassSectionModel.getSectionUuids().size()) {
 	            Set<MasterSection> ms = classMaster.getMasterSection();
 	            if (ms == null) {
@@ -111,12 +112,12 @@ public class MasterClassServiceImpl implements MasterClassService {
 
 	@Override
 	public List<MasterClass> getMasterClasses() {
-		return masterClassRepo.findByIsActive(true);
+		return masterClassRepo.findByIsActiveAndAcademicYear(true, LoggedInUserUtil.getLoginUserAcadmicYear());
 	}
 
 	@Override
 	public List<MasterSection> getMasterSections() {
-		return masterSectionRepo.findByIsActive(true);
+		return masterSectionRepo.findByIsActiveAndAcademicYear(true, LoggedInUserUtil.getLoginUserAcadmicYear());
 	}
 
 	@Override
@@ -165,10 +166,11 @@ public class MasterClassServiceImpl implements MasterClassService {
 
 	private void assignRollNumberAndEnrollmentNumber(MasterClass masterClass, MasterSection masterSection, User user) {
 		if (masterSection != null  && masterClass != null) {
-			List<UserClassSection> users = userClassSectionRepository.findByMasterClassAndMasterSection(masterClass, masterSection);
+			List<UserClassSection> users = userClassSectionRepository.findByMasterClassAndMasterSectionAndAcademicYear(masterClass, 
+					masterSection, LoggedInUserUtil.getLoginUserAcadmicYear());
 			user.setRollNumber(users.size() + 1L);
 		} else if (masterClass != null) { 
-			List<UserClassSection> users = userClassSectionRepository.findByMasterClass(masterClass);
+			List<UserClassSection> users = userClassSectionRepository.findByMasterClassAndAcademicYear(masterClass, LoggedInUserUtil.getLoginUserAcadmicYear());
 			user.setRollNumber(users.size() + 1L);
 		}
 		if (StringUtils.isBlank(user.getEnrollmentNumber())) {

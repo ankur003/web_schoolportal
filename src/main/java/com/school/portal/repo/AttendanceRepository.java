@@ -1,16 +1,16 @@
 package com.school.portal.repo;
 
-import com.school.portal.domain.Attendance;
-import com.school.portal.domain.User;
-import com.school.portal.enums.AttendanceStatus;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import com.school.portal.domain.Attendance;
+import com.school.portal.domain.User;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long>, JpaSpecificationExecutor<Attendance> {
     boolean existsByUserAndAttendanceDate(User user, LocalDate now);
