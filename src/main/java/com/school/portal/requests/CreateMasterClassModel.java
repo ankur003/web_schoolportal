@@ -1,18 +1,18 @@
 package com.school.portal.requests;
 
-import javax.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+import java.util.Set;
+
+@Getter
+@Setter
 public class CreateMasterClassModel { 
 
 	@NotBlank(message = "className can not be blank")
 	private String className;
 
-	public String getClassName() {
-		return className;
-	}
+	private Set<String> sectionUuids;
 
-	public void setClassName(String className) {
-		this.className = className;
-	}
-	
 }

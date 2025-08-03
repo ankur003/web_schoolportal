@@ -1,15 +1,5 @@
 package com.school.portal.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.school.portal.domain.MasterClass;
 import com.school.portal.domain.MasterSection;
 import com.school.portal.domain.User;
@@ -26,6 +16,17 @@ import com.school.portal.requests.LinkClassSectionModel;
 import com.school.portal.service.MasterClassService;
 import com.school.portal.utils.LoggedInUserUtil;
 import com.school.portal.utils.SchoolPortalUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class MasterClassServiceImpl implements MasterClassService {
@@ -43,6 +44,23 @@ public class MasterClassServiceImpl implements MasterClassService {
 	@Autowired
 	private UserClassSectionRepository userClassSectionRepository;
 
+	@PostConstruct
+	public void createMasterSection() {
+		if (CollectionUtils.isEmpty (masterSectionRepo.findByAcademicYear (AcademicYear.valueOf (SchoolPortalUtils.getCurrentAcademicYear ())))) {
+			for (int i = 0; i < 4; i++) {
+				MasterSection section = new MasterSection ();
+				section.setSectionName ("Section " + (i + 1));
+				section.setMasterSectionUuid (SchoolPortalUtils.getUniqueUuid ());
+				section.setCreatedAt (LocalDateTime.now ());
+				section.setUpdatedAt (LocalDateTime.now ());
+				section.setCreatedBy ("admin@schoolportal.com");
+				section.setAcademicYear (AcademicYear.valueOf (SchoolPortalUtils.getCurrentAcademicYear ()));
+				masterSectionRepo.save (section);
+			}
+		}
+
+}
+
 	@Override
 	public String createMasterClass(CreateMasterClassModel createMasterClassModel) {
 		MasterClass masterClass = masterClassRepo.findByClassNameAndAcademicYear(createMasterClassModel.getClassName(),
@@ -56,6 +74,8 @@ public class MasterClassServiceImpl implements MasterClassService {
 			masterClass.setCreatedBy(LoggedInUserUtil.getLoggedInUserName());
 			masterClass.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
 			masterClass = masterClassRepo.save(masterClass);
+			linkClassSections (LinkClassSectionModel.builder ().classUuid (masterClass.getMasterClassUuid())
+					.sectionUuids (createMasterClassModel.getSectionUuids ()).build ());
 			return masterClass.getMasterClassUuid();
 		}
 		return null;
