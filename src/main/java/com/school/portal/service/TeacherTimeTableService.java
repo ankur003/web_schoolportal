@@ -118,6 +118,7 @@ public class TeacherTimeTableService {
                 throw new RuntimeException("Teacher already has a class during this time.");
             }
             entry.setTeacherTimetableUuid(SchoolPortalUtils.getUniqueUuid());
+            entry.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
             return timetableRepo.save(entry);
         } else {
             // UPDATE logic

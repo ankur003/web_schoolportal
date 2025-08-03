@@ -57,6 +57,7 @@ public class SubjectService {
             		reqSubjects.forEach(sub -> {
                 		sub.setDescription(requestDto.getDescription());
                 		sub.setIsActive(true);
+                		sub.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
             			subjectRepository.save(sub);
                 	});            	}
             	List<Subject> subjects =  subjectRepository.findBySubjectNameAndIsActiveAndAcademicYear(subject.getSubjectName(), true, LoggedInUserUtil.getLoginUserAcadmicYear()); 
@@ -67,6 +68,7 @@ public class SubjectService {
             		sub.setIsActive(true);
             		sub.setPassMarks(requestDto.getPassMarks());
             		sub.setMaxMarks(requestDto.getMaxMarks());
+            		sub.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
         			subjectRepository.save(sub);
             	});
         	}
@@ -80,7 +82,7 @@ public class SubjectService {
              subject.setCreatedAt(LocalDateTime.now());
              subject.setUpdatedAt(LocalDateTime.now());
              subject.setIsActive(true);
-             
+             subject.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
              subjectRepository.save(subject);
         }
     	
@@ -152,6 +154,7 @@ public class SubjectService {
 					subject.setMasterClassId(masterClassId);
 					subject.setMasterSectionId(masterSectionId);
 					subject.setIsActive(true);
+					subject.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
 					subjectRepository.save(subject);
 					return;
 				}
@@ -160,6 +163,7 @@ public class SubjectService {
 					subject.setMasterClassId(masterClassId);
 					subject.setMasterSectionId(masterSectionId);
 					subject.setIsActive(true);
+					subject.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
 					subjectRepository.save(subject);
 					return;
 				}
@@ -175,6 +179,7 @@ public class SubjectService {
 		 subject.setSubjectCode(subjectName);
 		 subject.setIsActive(true);
 		 subject.setSubjectName(subjectName);
+		 subject.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
 		 subjectRepository.save(subject);
 	}
     

@@ -165,6 +165,7 @@ public class FeeService {
 		feePayment.setPaymentMode(updateDto.getPaymentMode());
 		feePayment.setRemarks(updateDto.getRemarks());
 		feePayment.setTransactionId(updateDto.getTransactionId());
+		feePayment.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
 		feePaymentRepository.save(feePayment);
 		
 	}

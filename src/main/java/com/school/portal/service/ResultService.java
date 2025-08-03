@@ -77,7 +77,7 @@ public class ResultService {
         
         // Check if passed
         result.setIsPassed(requestDTO.getMarksObtained() >= subject.getPassMarks());
-
+        result.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
         resultsRepository.save(result);
     }
 
