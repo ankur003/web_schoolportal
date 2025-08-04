@@ -44,22 +44,6 @@ public class MasterClassServiceImpl implements MasterClassService {
 	@Autowired
 	private UserClassSectionRepository userClassSectionRepository;
 
-	@PostConstruct
-	public void createMasterSection() {
-		if (CollectionUtils.isEmpty (masterSectionRepo.findByAcademicYear (AcademicYear.valueOf (SchoolPortalUtils.getCurrentAcademicYear ())))) {
-			for (int i = 0; i < 4; i++) {
-				MasterSection section = new MasterSection ();
-				section.setSectionName ("Section " + (i + 1));
-				section.setMasterSectionUuid (SchoolPortalUtils.getUniqueUuid ());
-				section.setCreatedAt (LocalDateTime.now ());
-				section.setUpdatedAt (LocalDateTime.now ());
-				section.setCreatedBy ("admin@schoolportal.com");
-				section.setAcademicYear (AcademicYear.valueOf (SchoolPortalUtils.getCurrentAcademicYear ()));
-				masterSectionRepo.save (section);
-			}
-		}
-
-}
 
 	@Override
 	public String createMasterClass(CreateMasterClassModel createMasterClassModel) {

@@ -39,17 +39,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String authToken = null;
 
-        if ((Boolean.FALSE.equals (req.getRequestURI ().contains ("login"))) && (
-                StringUtils.isBlank (userAcademicYear) || Arrays.stream (AcademicYear.values ())
-                        .noneMatch (year -> year.name ().equalsIgnoreCase (userAcademicYear)))) {
-
-            res.setStatus (HttpServletResponse.SC_BAD_REQUEST);
-            res.setContentType ("application/json");
-            String error = StringUtils.isBlank (userAcademicYear) ? "Missing required header: user_academic_year"
-                    : "Invalid academic year: " + userAcademicYear;
-            res.getWriter ().write ("{\"error\": \"" + error + "\"}");
-            return;
-        }
+//        if ((Boolean.FALSE.equals (req.getRequestURI ().contains ("login"))) && (
+//                StringUtils.isBlank (userAcademicYear) || Arrays.stream (AcademicYear.values ())
+//                        .noneMatch (year -> year.name ().equalsIgnoreCase (userAcademicYear)))) {
+//
+//            res.setStatus (HttpServletResponse.SC_BAD_REQUEST);
+//            res.setContentType ("application/json");
+//            String error = StringUtils.isBlank (userAcademicYear) ? "Missing required header: user_academic_year"
+//                    : "Invalid academic year: " + userAcademicYear;
+//            res.getWriter ().write ("{\"error\": \"" + error + "\"}");
+//            return;
+//        }
 
         if (header != null && header.startsWith (TOKEN_PREFIX)) {
             authToken = header.replace (TOKEN_PREFIX, "");
@@ -75,6 +75,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     res.setContentType ("application/json");
                     res.getWriter ().write ("{\"error\": \"Save or edit functionalities are not allowed in old academic years.\"}");
                     return; // short-circuit the filter chain
+                } else if (StringUtils.isBlank(userAcademicYear)) {
+                	  res.setStatus (HttpServletResponse.SC_BAD_REQUEST);
+                      res.setContentType ("application/json");
+                      res.getWriter ().write ("{\"error\": \"missing header academic year.\"}");
+                      return; 
                 }
 
                 addLoginUserAcademicYear (userAcademicYear, userDetails);

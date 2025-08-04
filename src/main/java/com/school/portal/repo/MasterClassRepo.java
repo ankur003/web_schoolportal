@@ -14,4 +14,6 @@ public interface MasterClassRepo extends JpaRepository<MasterClass, Long> {
 	MasterClass findByMasterClassUuid(String classUuid);
 
 	List<MasterClass> findByIsActiveAndAcademicYear(boolean isActive, AcademicYear academicYear);
+
+	MasterClass findByIsActiveAndAcademicYearAndClassName(boolean isActive, AcademicYear academicYearEnum, String className);
 }

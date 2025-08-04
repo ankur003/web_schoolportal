@@ -330,7 +330,7 @@ public class SubjectService {
 			    ));
 
 		return uniqueMap.values().stream()
-			    .map(s -> new UniqueSubjectDto(s.getSubjectName(), s.getDescription(), s.getSubjectId()))
+			    .map(s -> new UniqueSubjectDto(s.getSubjectName(), s.getDescription(), s.getSubjectId(), s.getSubjectCode()))
 			    .collect(Collectors.toList());
 	}
 	

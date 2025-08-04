@@ -2,6 +2,7 @@ package com.school.portal.controller;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ import com.school.portal.domain.UserClassSection;
 import com.school.portal.domain.UserEducation;
 import com.school.portal.domain.UserExperience;
 import com.school.portal.domain.UserInfo;
-import com.school.portal.enums.AcademicYear;
+import com.school.portal.dto.UniqueSubjectDto;
 import com.school.portal.enums.ApprovalStatus;
 import com.school.portal.enums.UserType;
 import com.school.portal.repo.UserClassSectionRepository;
@@ -58,6 +59,7 @@ import com.school.portal.response.UserAttendanceModel;
 import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.HolidayService;
 import com.school.portal.service.MasterClassService;
+import com.school.portal.service.SubjectService;
 import com.school.portal.service.UserEducationService;
 import com.school.portal.service.UserExperienceService;
 import com.school.portal.service.UserInfoService;
@@ -89,6 +91,9 @@ public class SuperAdminController extends AbstractController {
 	
 	@Autowired
 	private UserInfoService userInfoService;
+	
+	@Autowired
+	private SubjectService subjctService;
 	
 	@Autowired
 	private UserClassSectionRepository userClassSectionRepository;
@@ -190,6 +195,25 @@ public class SuperAdminController extends AbstractController {
 			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
 		}
 		return ResponseBuilder.buildCreatedRespnse("classUuid", classUuid);
+	}
+	
+	@GetMapping("/master/class-section-subject")
+	//@PreAuthorize("hasRole('SUPER_ADMIN')")
+	public ResponseEntity<Object> getMasterClassSectionSubject() {
+		List<MasterClass> mClasses = masterClassService.getMasterClasses();
+		List<MasterSection> mSections = masterClassService.getMasterSections();
+		
+		List<UniqueSubjectDto> subjects = subjctService.getSubjectsAsList();
+		List<MasterClassModel> masterClassModels =  ModelMapperUtil.mapList(modelMapper, mClasses, MasterClassModel.class);
+		List<MasterSectionModel> masterSectionModels =  ModelMapperUtil.mapList(modelMapper, mSections, MasterSectionModel.class);
+		
+		Map<String, Object> responseMap = new HashMap<>();
+		responseMap.put("masterClasses", masterClassModels);
+		responseMap.put("masterSections", masterSectionModels);
+		responseMap.put("masterSubjects", subjects);
+
+		
+		return ResponseEntity.ok(responseMap);
 	}
 	
 	@GetMapping("/master-class")
