@@ -218,7 +218,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         if (StringUtils.isBlank (createUserModel.getClassUuid ())) {
             return true;
         }
-        MasterClass mastserClass = masterClassRepo.findByMasterClassUuid (createUserModel.getClassUuid ());
+        MasterClass mastserClass = masterClassRepo.findByMasterClassUuidAndAcademicYearAndIsActiveTrue(createUserModel.getClassUuid (), LoggedInUserUtil.getLoginUserAcadmicYear());
         if (mastserClass == null) {
             return false;
         }

@@ -55,7 +55,7 @@ public class FeeService {
 	}
 	
 	public String createMasterFee(MasterFeeRequestDTO dto) {
-        MasterClass masterClass = masterClassRepository.findByMasterClassUuid(dto.getMasterClassUuid());
+        MasterClass masterClass = masterClassRepository.findByMasterClassUuidAndAcademicYearAndIsActiveTrue(dto.getMasterClassUuid(), LoggedInUserUtil.getLoginUserAcadmicYear());
         if (masterClass == null) {
         	return null;
         }
@@ -176,7 +176,7 @@ public class FeeService {
 	}
 
 	public List<FeeDto> getMasterFeesByClassUuid(String classUuid) {
-		MasterClass masterClass = masterClassRepo.findByMasterClassUuid(classUuid);
+		MasterClass masterClass = masterClassRepo.findByMasterClassUuidAndAcademicYearAndIsActiveTrue(classUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
 		if (masterClass == null) {
 			return Collections.emptyList();
 		}
@@ -189,7 +189,7 @@ public class FeeService {
 	}
 
 	public List<FeeDto> getMasterFeesByClassUuidAndFeeType(String classUuid, FeeType feeType) {
-		MasterClass masterClass = masterClassRepo.findByMasterClassUuid(classUuid);
+		MasterClass masterClass = masterClassRepo.findByMasterClassUuidAndAcademicYearAndIsActiveTrue(classUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
 		if (masterClass == null) {
 			return Collections.emptyList();
 		}

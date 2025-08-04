@@ -47,8 +47,7 @@ public class MasterClassServiceImpl implements MasterClassService {
 
 	@Override
 	public String createMasterClass(CreateMasterClassModel createMasterClassModel) {
-		MasterClass masterClass = masterClassRepo.findByClassNameAndAcademicYear(createMasterClassModel.getClassName(),
-				LoggedInUserUtil.getLoginUserAcadmicYear());
+		MasterClass masterClass = masterClassRepo.findByIsActiveAndAcademicYearAndClassName(true, LoggedInUserUtil.getLoginUserAcadmicYear(), createMasterClassModel.getClassName());
 		if (masterClass == null) {
 			masterClass = new MasterClass();
 			masterClass.setClassName(createMasterClassModel.getClassName());
@@ -58,8 +57,12 @@ public class MasterClassServiceImpl implements MasterClassService {
 			masterClass.setCreatedBy(LoggedInUserUtil.getLoggedInUserName());
 			masterClass.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
 			masterClass = masterClassRepo.save(masterClass);
-			linkClassSections (LinkClassSectionModel.builder ().classUuid (masterClass.getMasterClassUuid())
-					.sectionUuids (createMasterClassModel.getSectionUuids ()).build ());
+			
+			if (CollectionUtils.isNotEmpty(createMasterClassModel.getSectionUuids())) {
+				linkClassSections (LinkClassSectionModel.builder ().classUuid (masterClass.getMasterClassUuid())
+						.sectionUuids (createMasterClassModel.getSectionUuids ()).build ());
+			}
+			
 			return masterClass.getMasterClassUuid();
 		}
 		return null;
@@ -67,7 +70,7 @@ public class MasterClassServiceImpl implements MasterClassService {
 
 	@Override
 	public String createMasterSection(CreateMasterSectionsModel createMasterSectionsModel) {
-		MasterSection section = masterSectionRepo.findBySectionNameAndAcademicYear(createMasterSectionsModel.getSectionName(), LoggedInUserUtil.getLoginUserAcadmicYear());		
+		MasterSection section = masterSectionRepo.findByIsActiveAndAcademicYearAndSectionName(true, LoggedInUserUtil.getLoginUserAcadmicYear(), createMasterSectionsModel.getSectionName());		
 		if (section == null) {
 			section = new MasterSection();
 			section.setSectionName(createMasterSectionsModel.getSectionName());
@@ -76,15 +79,16 @@ public class MasterClassServiceImpl implements MasterClassService {
 			section.setUpdatedAt(LocalDateTime.now());
 			section.setCreatedBy(LoggedInUserUtil.getLoggedInUserName());
 			section.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
+			section.setIsActive(true);
 			section = masterSectionRepo.save(section);
 			return section.getMasterSectionUuid();
 		}
-		return null;
+		return  section.getMasterSectionUuid();
 	}
 
 	@Override
 	public Boolean linkClassSections(LinkClassSectionModel linkClassSectionModel) {
-	    MasterClass classMaster = masterClassRepo.findByMasterClassUuid(linkClassSectionModel.getClassUuid());
+	    MasterClass classMaster = masterClassRepo.findByMasterClassUuidAndAcademicYearAndIsActiveTrue(linkClassSectionModel.getClassUuid(), LoggedInUserUtil.getLoginUserAcadmicYear());
 	    if (classMaster != null) {
 	        List<MasterSection> masterSections = masterSectionRepo.findByMasterSectionUuidInAndAcademicYear(linkClassSectionModel.getSectionUuids(), LoggedInUserUtil.getLoginUserAcadmicYear());
 	        if (masterSections != null && masterSections.size() == linkClassSectionModel.getSectionUuids().size()) {
@@ -148,14 +152,14 @@ public class MasterClassServiceImpl implements MasterClassService {
 		}
 		
         if (StringUtils.isNotBlank(assignClassSectionStudentModel.getSectionUuid())) {
-            masterSection = masterSectionRepo.findByMasterSectionUuid(assignClassSectionStudentModel.getSectionUuid());
+            masterSection = masterSectionRepo.findByMasterSectionUuidAndIsActiveAndAcademicYear(assignClassSectionStudentModel.getSectionUuid(), true, LoggedInUserUtil.getLoginUserAcadmicYear());
             if (masterSection != null) {
                 classSection.setMasterSection(masterSection);
                 classSection.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
                 user.setUpdatedAt(LocalDateTime.now());
             }
         }
-        MasterClass masterClass = masterClassRepo.findByMasterClassUuid(assignClassSectionStudentModel.getClassUuid());
+        MasterClass masterClass = masterClassRepo.findByMasterClassUuidAndAcademicYearAndIsActiveTrue(assignClassSectionStudentModel.getClassUuid(), LoggedInUserUtil.getLoginUserAcadmicYear());
 		if (masterClass != null) {
 			classSection.setMasterClass(masterClass);
 			classSection.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());

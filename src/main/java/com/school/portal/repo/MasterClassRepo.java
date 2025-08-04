@@ -11,9 +11,11 @@ public interface MasterClassRepo extends JpaRepository<MasterClass, Long> {
 
 	MasterClass findByClassNameAndAcademicYear(String className, AcademicYear academicYear);
 	
-	MasterClass findByMasterClassUuid(String classUuid);
+	MasterClass findByMasterClassUuidAndAcademicYearAndIsActiveTrue(String classUuid, AcademicYear academicYear);
 
 	List<MasterClass> findByIsActiveAndAcademicYear(boolean isActive, AcademicYear academicYear);
 
 	MasterClass findByIsActiveAndAcademicYearAndClassName(boolean isActive, AcademicYear academicYearEnum, String className);
+
+	MasterClass findByMasterClassUuidAndAcademicYearAndIsActive(String classUuid, AcademicYear loginUserAcadmicYear, Boolean isActive);
 }

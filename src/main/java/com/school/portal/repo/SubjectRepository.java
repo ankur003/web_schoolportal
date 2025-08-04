@@ -51,8 +51,9 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
 	List<Subject> findByMasterClassIdAndMasterSectionIdAndIsActiveTrueAndAcademicYear(Long mcId, Long msId, AcademicYear academicYear);
 
-	Subject findBySubjectNameAndAcademicYearAndIsActive(String subjectName, AcademicYear currentAcademicYear,
+	List<Subject> findBySubjectNameAndAcademicYearAndIsActive(String subjectName, AcademicYear currentAcademicYear,
 			boolean isActive);
+	
 
 	
     

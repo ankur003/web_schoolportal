@@ -26,6 +26,7 @@ import com.school.portal.dto.SubjectFilterDto;
 import com.school.portal.dto.SubjectRequestDto;
 import com.school.portal.dto.SubjectResponseDto;
 import com.school.portal.dto.UniqueSubjectDto;
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.exception.DuplicateResourceException;
 import com.school.portal.exception.ResourceNotFoundException;
 import com.school.portal.repo.MasterClassRepo;
@@ -91,11 +92,6 @@ public class SubjectService {
     
     public void createOrUpdateClassSubjectLinkage(ClassSubjectLinkRequestDto requestDto) {
         Long masterClassId = validateAndGetMasterClassId(requestDto.getMasterClassUuid());
-        
-        Long masterSectionId = null;
-        if (requestDto.getMasterSectionUuid() != null) {
-            masterSectionId = validateAndGetMasterSectionId(requestDto.getMasterSectionUuid());
-        }
         Set<String> validSubjectNames = requestDto.getSubjectNames().stream()
                 .filter(name -> name != null && !name.trim().isEmpty())
                 .map(String::trim)
@@ -104,10 +100,14 @@ public class SubjectService {
         if (validSubjectNames.isEmpty()) {
             throw new IllegalArgumentException("At least one valid subject name is required");
         }
-        
-        // Process each subject
-        for (String subjectName : validSubjectNames) {
-            createOrUpdateSubject(subjectName, masterClassId, masterSectionId);
+        if (CollectionUtils.isNotEmpty(requestDto.getMasterSectionUuid())) {
+        	requestDto.getMasterSectionUuid().forEach(masterSectionUuid -> {
+        		Long masterSectionId = validateAndGetMasterSectionId(masterSectionUuid);
+                // Process each subject
+                for (String subjectName : validSubjectNames) {
+                    createOrUpdateSubject(subjectName, masterClassId, masterSectionId);
+                }
+        	});
         }
     }
     
@@ -116,7 +116,7 @@ public class SubjectService {
             throw new IllegalArgumentException("Master class UUID cannot be null or empty");
         }
         
-        MasterClass masterClass = masterClassRepository.findByMasterClassUuid(masterClassUuid.trim());
+        MasterClass masterClass = masterClassRepository.findByMasterClassUuidAndAcademicYearAndIsActive(masterClassUuid.trim(), LoggedInUserUtil.getLoginUserAcadmicYear(), true);
         if (masterClass == null) {
             throw new EntityNotFoundException("Master class not found with UUID: " + masterClassUuid);
         }
@@ -124,7 +124,8 @@ public class SubjectService {
     }
     
 	private Long validateAndGetMasterSectionId(String masterSectionUuid) {
-		MasterSection masterSection = masterSectionRepository.findByMasterSectionUuid(masterSectionUuid);
+		MasterSection masterSection = masterSectionRepository.findByMasterSectionUuidAndIsActiveAndAcademicYear(masterSectionUuid, true,
+				LoggedInUserUtil.getLoginUserAcadmicYear());
 		if (masterSection == null) {
 			throw new EntityNotFoundException("Master section not found with UUID: " + masterSectionUuid);
 		}
@@ -268,31 +269,36 @@ public class SubjectService {
     }
 
 	public void deLinkClassSubject(ClassSubjectLinkRequestDto classSubjectLinkRequestDto) {
-		Long msId = null;
 		Long mcId = null;
-		if (classSubjectLinkRequestDto.getMasterSectionUuid() != null) {
-			MasterSection ms = masterSectionRepository.findByMasterSectionUuid(classSubjectLinkRequestDto.getMasterSectionUuid());
-			if (ms != null) {
-				msId = ms.getMasterSectionId();
-			}
-		}
-		
 		if (classSubjectLinkRequestDto.getMasterClassUuid() != null) {
-			MasterClass mc = masterClassRepository.findByMasterClassUuid(classSubjectLinkRequestDto.getMasterClassUuid());
+			MasterClass mc = masterClassRepository.findByMasterClassUuidAndAcademicYearAndIsActiveTrue(classSubjectLinkRequestDto.getMasterClassUuid(), LoggedInUserUtil.getLoginUserAcadmicYear());
 			if (mc != null) {
 				mcId = mc.getMasterClassId();
 			}
 		}
-		List<Subject> subjects = null;
-		if (mcId != null && msId != null) {
-			subjects = subjectRepository.findByMasterClassIdAndMasterSectionIdAndIsActiveTrueAndAcademicYear(mcId, msId, LoggedInUserUtil.getLoginUserAcadmicYear());
-			removeLinkage(classSubjectLinkRequestDto, subjects);
-			
-		} else if(mcId != null) {
-			subjects = subjectRepository.findByMasterClassIdAndIsActiveTrueAndAcademicYear(mcId, LoggedInUserUtil.getLoginUserAcadmicYear());
-			removeLinkage(classSubjectLinkRequestDto, subjects);
-		}
 		
+		if (CollectionUtils.isNotEmpty(classSubjectLinkRequestDto.getMasterSectionUuid())) {
+			
+			for (String masterSectionUuid : classSubjectLinkRequestDto.getMasterSectionUuid()) {
+				Long msId = null;
+				MasterSection ms = masterSectionRepository.findByMasterSectionUuidAndIsActiveAndAcademicYear(masterSectionUuid,
+						true, LoggedInUserUtil.getLoginUserAcadmicYear());
+				if (ms != null) {
+					msId = ms.getMasterSectionId();
+				}
+				
+				List<Subject> subjects = null;
+				if (mcId != null && msId != null) {
+					subjects = subjectRepository.findByMasterClassIdAndMasterSectionIdAndIsActiveTrueAndAcademicYear(mcId, msId, LoggedInUserUtil.getLoginUserAcadmicYear());
+					removeLinkage(classSubjectLinkRequestDto, subjects);
+					
+				} else if(mcId != null) {
+					subjects = subjectRepository.findByMasterClassIdAndIsActiveTrueAndAcademicYear(mcId, LoggedInUserUtil.getLoginUserAcadmicYear());
+					removeLinkage(classSubjectLinkRequestDto, subjects);
+				}
+			}
+			
+		}
 	}
 
 	private void removeLinkage(ClassSubjectLinkRequestDto classSubjectLinkRequestDto, List<Subject> subjects) {

@@ -18,7 +18,7 @@ public interface MasterSectionRepo extends JpaRepository<MasterSection, Long> {
 	MasterSection findByIsActiveAndAcademicYearAndSectionName(boolean isActive, AcademicYear academicYear, String sectionName);
 
 
-	MasterSection findByMasterSectionUuid(String sectionUuid);
+	MasterSection findByMasterSectionUuidAndIsActiveAndAcademicYear(String sectionUuid, boolean isActive, AcademicYear academicYear);
 
 	List<MasterSection> findByAcademicYear(AcademicYear academicYear);
 }

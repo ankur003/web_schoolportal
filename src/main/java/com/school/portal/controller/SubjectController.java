@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,6 +31,10 @@ import com.school.portal.dto.SubjectRequestDto;
 import com.school.portal.dto.SubjectResponseDto;
 import com.school.portal.dto.UniqueSubjectDto;
 import com.school.portal.requests.ClassSubjectLinkRequestDto;
+import com.school.portal.requests.CreateMasterClassModel;
+import com.school.portal.requests.CreateMasterSectionsModel;
+import com.school.portal.requests.LinkClassSectionModel;
+import com.school.portal.service.MasterClassService;
 import com.school.portal.service.SubjectService;
 
 @RestController
@@ -37,6 +44,9 @@ public class SubjectController {
     
     @Autowired
     private SubjectService subjectService;
+    
+    @Autowired
+    private MasterClassService classService;
     
     /**
      * Create a new subject
@@ -50,16 +60,59 @@ public class SubjectController {
         return ResponseEntity.ok().build();
     }
     
-    @PutMapping("/link")
-    public ResponseEntity<Object> createOrUpdateClassSubjectLinkage(
-            @Valid @RequestBody ClassSubjectLinkRequestDto classSubjectLinkRequestDto) {
-        
-    	subjectService.createOrUpdateClassSubjectLinkage(classSubjectLinkRequestDto);
-    	
-    	subjectService.deLinkClassSubject(classSubjectLinkRequestDto);
-       
-        return ResponseEntity.ok().build();
-    }
+	@PutMapping("/link")
+	public ResponseEntity<Object> createOrUpdateClassSubjectLinkage(
+			@Valid @RequestBody ClassSubjectLinkRequestDto classSubjectLinkRequestDto) {
+
+		CreateMasterClassModel createMasterClassModel = new CreateMasterClassModel();
+
+		CreateMasterSectionsModel createMasterSectionsModel = new CreateMasterSectionsModel();
+
+		if (StringUtils.isNotBlank(classSubjectLinkRequestDto.getSectionName())
+				&& CollectionUtils.isNotEmpty(classSubjectLinkRequestDto.getMasterSectionUuid())) {
+
+			createMasterSectionsModel.setSectionName(classSubjectLinkRequestDto.getSectionName());
+
+			String sectionUuid = classService.createMasterSection(createMasterSectionsModel);
+			
+			Set<String> msUuids = classSubjectLinkRequestDto.getMasterSectionUuid();
+			msUuids.add(sectionUuid);
+			createMasterClassModel.setSectionUuids(msUuids);
+
+			classSubjectLinkRequestDto.setMasterSectionUuid(msUuids);
+			
+			LinkClassSectionModel linkClassSectionModel = new LinkClassSectionModel();
+			linkClassSectionModel.setClassUuid(classSubjectLinkRequestDto.getMasterClassUuid());
+			linkClassSectionModel.setSectionUuids(msUuids);
+			
+			classService.linkClassSections(linkClassSectionModel);
+
+
+			subjectService.createOrUpdateClassSubjectLinkage(classSubjectLinkRequestDto);
+
+			subjectService.deLinkClassSubject(classSubjectLinkRequestDto);
+
+		} else if (StringUtils.isBlank(classSubjectLinkRequestDto.getSectionName())
+				&& CollectionUtils.isNotEmpty(classSubjectLinkRequestDto.getMasterSectionUuid())) {
+			
+			LinkClassSectionModel linkClassSectionModel = new LinkClassSectionModel();
+			linkClassSectionModel.setClassUuid(classSubjectLinkRequestDto.getMasterClassUuid());
+			
+			Set<String> msUuids = classSubjectLinkRequestDto.getMasterSectionUuid();
+			
+			linkClassSectionModel.setSectionUuids(msUuids);
+			classService.linkClassSections(linkClassSectionModel);
+
+			classSubjectLinkRequestDto.setMasterSectionUuid(msUuids);
+
+			subjectService.createOrUpdateClassSubjectLinkage(classSubjectLinkRequestDto);
+
+			subjectService.deLinkClassSubject(classSubjectLinkRequestDto);
+			
+		}
+
+		return ResponseEntity.ok().build();
+	}
     
     /**
      * Get subjects with optional filters

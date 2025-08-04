@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +116,7 @@ public class SchoolPortalApplication {
 	    AcademicYear academicYearEnum = AcademicYear.valueOf(currentAcademicYear);
 	    
         List<String> classNames = Arrays.asList("PRE-NURSERY", "NURSERY", "L.K.G", "U.K.G", "1st", "2nd",
-        		"3rd", "4th", "5th", "6th", "7th", "8th");
+        		"3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th");
 
         for (String className : classNames) {
         	MasterClass masterClass = masterClassRepo.findByIsActiveAndAcademicYearAndClassName(true, academicYearEnum, className);
@@ -166,11 +167,11 @@ public class SchoolPortalApplication {
 	    List<String> defaultSubjects = Arrays.asList("Math", "Science", "English", "Hindi", "Social Studies");
 
 	    for (String subjectName : defaultSubjects) {
-	        Subject existingSubject = subjetRepo.findBySubjectNameAndAcademicYearAndIsActive(
+	        List<Subject> existingSubject = subjetRepo.findBySubjectNameAndAcademicYearAndIsActive(
 	            subjectName, currentAcademicYear, true
 	        );
 
-	        if (existingSubject == null) {
+	        if (CollectionUtils.isEmpty(existingSubject)) {
 	            Subject subject = new Subject();
 	            subject.setSubjectName(subjectName);
 	            subject.setSubjectCode(subjectName.substring(0, Math.min(3, subjectName.length())).toUpperCase());

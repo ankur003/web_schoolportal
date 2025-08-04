@@ -2,16 +2,17 @@ package com.school.portal.requests;
 
 import java.util.Set;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class ClassSubjectLinkRequestDto {
 	
-    @NotBlank(message = "Master class UUID is required")
+    //@NotBlank(message = "Master class UUID is required")
     private String masterClassUuid;
-
-    private String masterSectionUuid;
+    
+    private Set<String> masterSectionUuid;
+    
+    private String sectionName;
 
     @NotNull(message = "Subject names cannot be null")
     @Size(min = 1, message = "At least one subject name is required")
@@ -31,18 +32,33 @@ public class ClassSubjectLinkRequestDto {
 		this.masterClassUuid = masterClassUuid;
 	}
 
+
 	/**
 	 * @return the masterSectionUuid
 	 */
-	public String getMasterSectionUuid() {
+	public Set<String> getMasterSectionUuid() {
 		return masterSectionUuid;
 	}
 
 	/**
 	 * @param masterSectionUuid the masterSectionUuid to set
 	 */
-	public void setMasterSectionUuid(String masterSectionUuid) {
+	public void setMasterSectionUuid(Set<String> masterSectionUuid) {
 		this.masterSectionUuid = masterSectionUuid;
+	}
+
+	/**
+	 * @return the sectionName
+	 */
+	public String getSectionName() {
+		return sectionName;
+	}
+
+	/**
+	 * @param sectionName the sectionName to set
+	 */
+	public void setSectionName(String sectionName) {
+		this.sectionName = sectionName;
 	}
 
 	/**
@@ -59,4 +75,6 @@ public class ClassSubjectLinkRequestDto {
 		this.subjectNames = subjectNames;
 	}
     
+    
+
 }
