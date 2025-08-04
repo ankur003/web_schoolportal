@@ -75,17 +75,18 @@ const ProtectedRoute = (props) => {
                         <li className={isActive ? "active" : ""} onClick={() => changeLanguage('en')}>En</li>
                         <li className={!isActive ? "active" : ""} onClick={() => changeLanguage('hi')}>Hi</li>
                     </ul> */}
-                    <div className="form-group">
-                        <select
-                            className="form-control"
-                            value={props?.academicYearProps}
-                            onChange={e => { props?.setAcademicYearProps(e.target.value); dispatch({ type: Constants.RESET_STATE }) }}
-                            style={{ marginRight: 16, padding: 4,textAlign: 'center' ,width: '150px'}}
-                        >
-                            {props?.academicYearList.map(year => (
-                                <option key={year.key} value={year.key}>{year.label}</option>
-                            ))}
-                        </select>
+                    <div className="demo-section">
+                        <div className="select-wrapper-neon">
+                            <select className="select-neon"
+                                value={props?.academicYearProps}
+                                onChange={e => { props?.setAcademicYearProps(e.target.value); dispatch({ type: Constants.RESET_STATE }) }}
+                                style={{ padding: 4, textAlign: 'center'}}
+                            >
+                                {props?.academicYearList.map(year => (
+                                    <option key={year.key} value={year.key}>Academic {year.label}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                     <div className="dropdown">
                         <button className="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">

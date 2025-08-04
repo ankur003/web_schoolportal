@@ -6,540 +6,207 @@ import {
     createClassAndSection,
     getSubject,
     getSubjectLinked,
-    createSubjectAndLinked
+    createSubjectAndLinked,
+    getSubjectClassSecList,
+    createClassEntities
 } from '../../Redux/Action/manageClassAction';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import Loader from '../../components/Loader';
 import NoDataFound from '../../components/NoDataFound';
 import { FilePen, Link, Trash } from 'lucide-react';
+import { Plus, X, GraduationCap, Users, BookOpen, Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 function ManageClasses() {
     const { t } = useTranslation();
-    const { classList, secList, linkList, subjectList, subjectListLinked } =
-        useSelector((state) => state.manageClassesReducer);
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-
-    const [active, setActive] = useState("home-tab");
+    const { subjectListLinked, AllClassEntities } = useSelector((state) => state.manageClassesReducer);
+    console.log("subjectListLinked", AllClassEntities);
     const [isModal, SetIsModal] = useState(false);
-    const [selected, setSelected] = useState([]);
-    const [selectedSubject, setSelectedSubject] = useState([]);
-    const [selectedClass, setSelectedClass] = useState(null); // New state for class selection
-    const [classUuid, setClassUuid] = useState("");
-    const [modalKey, setModalKey] = useState(0); // Force re-render key
-    const [isNewLinkage, setIsNewLinkage] = useState(false); // Track if it's new linkage modal
-    const [formState, setFormState] = useState({
-        className: "",
-        sectionName: "",
-        linkSectionName: [],
-        description: "",
-        maxMarks: "",
-        minMarks: "",
-        subjectName: ""
-    });
+    const [selectedClass, setSelectedClass] = useState('');
+    console.log({ selectedClass })
+    const [selectedSections, setSelectedSections] = useState([]);
+    const [selectedSubjects, setSelectedSubjects] = useState([]);
+    const [showSectionInput, setShowSectionInput] = useState(false);
+    const [showSubjectInput, setShowSubjectInput] = useState(false);
+    const [newSection, setNewSection] = useState('');
+    const [newSubject, setNewSubject] = useState('');
+    const [customSections, setCustomSections] = useState([]);
+    const [customSubjects, setCustomSubjects] = useState([]);
 
-    // ✅ Section Options
-    const options = Array.isArray(secList)
-        ? secList.map((section) => ({
-            label: section.sectionName,
-            value: section.masterSectionUuid,
-        }))
-        : [];
+    // --- Event handlers (same as your original, unchanged for brevity) ---
+    const handleClassChange = (className) => setSelectedClass(className);
+    const handleSectionChange = (section) => {
+        setSelectedSections(prev => prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]);
+    };
+    const handleSubjectChange = (subject) => {
+        setSelectedSubjects(prev => prev.includes(subject) ? prev.filter(s => s !== subject) : [...prev, subject]);
+    };
 
-    // ✅ Class Options for New Linkage
-    const classOptions = Array.isArray(classList)
-        ? classList.map((cls) => ({
-            label: cls.className,
-            value: cls.masterClassUuid,
-        }))
-        : [];
+    const removeCustomSection = (sectionToRemove) => {
+        setCustomSections(prev => prev.filter(section => section !== sectionToRemove));
+        setSelectedSections(prev => prev.filter(section => section !== sectionToRemove));
+    };
+    const removeCustomSubject = (subjectToRemove) => {
+        setCustomSubjects(prev => prev.filter(subject => subject !== subjectToRemove));
+        setSelectedSubjects(prev => prev.filter(subject => subject !== subjectToRemove));
+    };
 
-    // ✅ Subject Options with unique values and proper structure
-    const SubjectOption = Array.isArray(subjectList)
-        ? subjectList.map((subject, index) => ({
-            label: subject.subjectName,
-            value: subject.subjectId || `subject-${index}`, // Ensure unique values
-            disabled: false
-        }))
-        : [];
-
-    // Debug data integrity
-    useEffect(() => {
-        // Check for duplicate IDs
-        const ids = SubjectOption.map(s => s.value);
-        const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
-        if (duplicates.length > 0) {
-            console.warn('Duplicate subject IDs found:', duplicates);
-        }
-    }, [subjectList, SubjectOption]);
-
-    useEffect(() => {
-        dispatch(getClasses());
-    }, [dispatch]);
-
-    useEffect(() => {
-        dispatch(getSubject());
-    }, []);
 
     useEffect(() => {
         dispatch(getSubjectLinked());
     }, []);
 
-    const handlerChange = (e) => {
-        setFormState((prevState) => ({
-            ...prevState,
-            [e.target.name]: e.target.value,
-        }));
-    };
+    useEffect(() => {
+        dispatch(getSubjectClassSecList());
+    }, []);
 
-    // Handle class selection for new linkage
-    const handleClassChange = (selectedOption) => {
-        setSelectedClass(selectedOption);
-        setClassUuid(selectedOption?.value || "");
-        setFormState(prev => ({
-            ...prev,
-            className: selectedOption?.label || ""
-        }));
-    };
+    const openCreateClassModal = () => {
+        // navigate("/CreateAndUpdateClass");
+
+        SetIsModal(true);
+    }
 
     // ✅ Close Modal and Reset State
     const closeModal = () => {
         SetIsModal(false);
-        setSelected([]);
-        setSelectedSubject([]);
-        setSelectedClass(null);
-        setIsNewLinkage(false);
-        setModalKey(prev => prev + 1); // Force re-render
-        setFormState({
-            className: "",
-            sectionName: "",
-            linkSectionName: [],
-            description: "",
-            maxMarks: "",
-            minMarks: "",
-            subjectName: ""
-        });
-        setClassUuid("");
     };
 
     const formSubmit = (type) => {
-        let sectionID = selected?.map((item) => item?.value);
-        let subjectDataName = selectedSubject?.map((item) => item?.label);
-        let data = {
-            classUuid: classUuid,
-            sectionUuids: [...sectionID],
-            className: formState?.className,
-            sectionName: formState?.sectionName,
-        };
-        if (type === "createSubject") {
-            let subjectData = {
-                "description": formState?.description,
-                "maxMarks": Number(formState?.maxMarks),
-                "passMarks": Number(formState?.minMarks),
-                "subjectName": formState?.subjectName,
-                "subjectId": null
-            }
-            dispatch(createSubjectAndLinked(subjectData, type, toast))
+        alert('Form submitted! Check console.');
+        let data = {}
+        data = {
+            masterClassUuid: selectedClass,
+            masterSectionUuid: [
+                ...selectedSections
+            ],
+            subjectNames: [
+                ...selectedSubjects
+            ]
         }
-        else if (type === "subjectLinkedClass" || type === "newSubjectLinkage") {
-            let subjectLinkData = {
-                "masterClassUuid": classUuid,
-                "masterSectionUuid": sectionID[0],
-                "subjectNames": [...subjectDataName]
-            }
-            dispatch(createSubjectAndLinked(subjectLinkData, type, toast))
+        if (newSection != "") {
+            data = { ...data, sectionName: newSection, }
         }
-        else {
-            dispatch(createClassAndSection(data, type, toast));
+        else if (newSubject != "") {
+            data = { ...data, subjectName: newSubject, }
         }
-
+        else if (newSection != "" && newSubject != "") {
+            data = { ...data, sectionName: newSection, subjectName: newSubject, }
+        }
+        console.log({ data });
+        dispatch(createClassEntities(data, toast));
         closeModal();
-    };
-
-    // ✅ FIXED Prefill function with better debugging
-    const subjectLinkedModal = (data) => {
-        SetIsModal(true);
-        setIsNewLinkage(false); // This is editing existing linkage
-        setModalKey(prev => prev + 1); // Force fresh render
-        setFormState({ ...formState, className: data?.className });
-        setClassUuid(data?.masterClassUuid);
-
-        // ✅ Prefill Sections
-        if (data?.sectionSubjects?.length > 0) {
-            const linkedSectionNames = data.sectionSubjects.map(section => section.sectionName);
-            const preSelectedSections = options.filter((opt) =>
-                linkedSectionNames.includes(opt.label)
-            );
-            // Small delay to ensure proper state setting
-            setTimeout(() => {
-                setSelected([...preSelectedSections]);
-            }, 100);
-        } else {
-            setSelected([]);
-        }
-
-        // ✅ Prefill Subjects with improved logic
-        if (data?.sectionSubjects?.length > 0) {
-            const allSubjects = [];
-            data.sectionSubjects.forEach(section => {
-                if (section.subjects && section.subjects.length > 0) {
-                    section.subjects.forEach(subject => {
-                        if (subject.subjectName) {
-                            allSubjects.push(subject.subjectName.trim());
-                        }
-                    });
-                }
-            });
-
-            const uniqueSubjectNames = [...new Set(allSubjects)];
-            const preSelectedSubjects = SubjectOption.filter((opt) => {
-                const match = uniqueSubjectNames.includes(opt.label?.trim());
-                return match;
-            });
-
-            // Small delay to ensure proper state setting
-            setTimeout(() => {
-                setSelectedSubject([...preSelectedSubjects]);
-            }, 150);
-        } else {
-            setSelectedSubject([]);
-        }
-    };
-
-    // ✅ New Linkage Modal function
-    const openNewLinkageModal = () => {
-        SetIsModal(true);
-        setIsNewLinkage(true); // This is creating new linkage
-        setModalKey(prev => prev + 1); // Force fresh render
-
-        // Reset all states for fresh start
-        setSelected([]);
-        setSelectedSubject([]);
-        setSelectedClass(null);
-        setClassUuid("");
-        setFormState({
-            className: "",
-            sectionName: "",
-            linkSectionName: [],
-            description: "",
-            maxMarks: "",
-            minMarks: "",
-            subjectName: ""
-        });
-    };
-
-    // Handle subject selection change
-    const handleSubjectChange = (newSelection) => {
-        // Create a completely new array to force re-render
-        const updatedSelection = newSelection ? [...newSelection] : [];
-        setSelectedSubject(updatedSelection);
     };
 
     return (
         <>
             <div className="header">
                 <h1>{t('manageClasses')}</h1>
-                <div className="header-right"></div>
+                <div className="header-right">
+                    <div className="create-button">
+                        <button type="button" className="btn btn-outline-light" onClick={() => openCreateClassModal()}>Create class</button>
+                    </div>
+                </div>
             </div>
 
             <div className="content-body">
-                <ul className="nav nav-tabs custom-nav-tab" id="myTab" role="tablist">
-                    <li className="nav-item" role="presentation">
-                        <button className="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true" onClick={() => setActive("home-tab")}>Classes</button>
-                    </li>
-                    <li className="nav-item" role="presentation">
-                        <button className="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false" onClick={() => setActive("profile-tab")}>Section</button>
-                    </li>
-                    <li className="nav-item" role="presentation">
-                        <button className="nav-link" id="Subject-tab" data-bs-toggle="tab" data-bs-target="#subject" type="button" role="tab" aria-controls="subject" aria-selected="false" onClick={() => setActive("Subject-tab")}>Subjects</button>
-                    </li>
-                    <li className="nav-item" role="presentation">
-                        <button className="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false" onClick={() => setActive("contact-tab")}>Linked Class & Section</button>
-                    </li>
-                    <li className="nav-item" role="presentation">
-                        <button className="nav-link" id="subjectLink-tab" data-bs-toggle="tab" data-bs-target="#subjectLink" type="button" role="tab" aria-controls="subjectLink" aria-selected="false" onClick={() => setActive("subjectLink-tab")}>Linked Class & Subject</button>
-                    </li>
-                    {active === "home-tab" ?
-                        <div className="create-button">
-                            <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Create Class</button>
-                        </div> :
-                        active === "profile-tab" ? <div className="create-button">
-                            <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Create Section</button>
-                        </div>
-                            : active === "Subject-tab" ? <div className="create-button">
-                                <button type="button" className="btn btn-outline-light" onClick={() => SetIsModal(true)}>Create Subject</button>
-                            </div>
-                                : active === "subjectLink-tab" && <div className="create-button">
-                                    <button type="button" className="btn btn-outline-light" onClick={() => openNewLinkageModal()}>New Linked Subject</button>
-                                </div>
-                    }
-                </ul>
-
-                <div className="tab-content" id="myTabContent">
-                    {active === "home-tab" ?
-                        (
-                            <div className="table-content">
-                                {classList?.length > 0 ?
-                                    <table className="table  table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">Class Name</th>
-                                                <th scope="col">Created By</th>
-                                                <th scope="col">Created At</th>
-                                                <th scop="col">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {classList?.map((data, index) =>
-                                                <tr key={index}>
-                                                    <td scope="row">{index + 1}</td>
-                                                    <td>{data?.className}</td>
-                                                    <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
-                                                    <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
-                                                    <td>
-                                                        <button className="btn btn-success mr-r-4">  <FilePen /></button>
-                                                        <button className="btn btn-danger"><Trash /></button>
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                    : <NoDataFound />
-                                }
-                            </div>
-                        )
-                        : active === "profile-tab" ?
-                            (
-                                <div className="table-content">
-                                    {secList?.length > 0 ?
-                                        <table className="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">Section Name</th>
-                                                    <th scope="col">Created By</th>
-                                                    <th scope="col">Created At</th>
-                                                    <th scop="col">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {secList?.map((data, index) =>
-                                                    <tr key={index}>
-                                                        <td scope="row">{index + 1}</td>
-                                                        <td>{data?.sectionName}</td>
-                                                        <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
-                                                        <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
-                                                        <td>
-                                                            <button className="btn btn-success mr-r-4">  <FilePen /></button>
-                                                            <button className="btn btn-danger"><Trash /></button>
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                        : <NoDataFound />
-                                    }
-                                </div>
-                            )
-                            : active === "Subject-tab" ?
-                                (
-                                    <div className="table-content">
-                                        {subjectList?.length > 0 ?
-                                            <table className="table  table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col">#</th>
-                                                        <th scope="col">Subject Name</th>
-                                                        <th scope="col">Description</th>
-                                                        <th scop="col">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {subjectList?.map((data, index) =>
-                                                        <tr key={index}>
-                                                            <td scope="row">{index + 1}</td>
-                                                            <td>{data?.subjectName}</td>
-                                                            <td>{data?.description ? data?.description : "N/A"}</td>
-                                                            <td>
-                                                                <button className="btn btn-success mr-r-4">  <FilePen /></button>
-                                                                <button className="btn btn-danger"><Trash /></button>
-                                                            </td>
-                                                        </tr>
-                                                    )}
-                                                </tbody>
-                                            </table>
-                                            : <NoDataFound />
-                                        }
-                                    </div>
-                                )
-                                : active === "subjectLink-tab" ?
-                                    (
-                                        <div className="table-content">
-                                            {subjectListLinked?.length > 0 ?
-                                                subjectListLinked?.map((data, index) =>
-                                                    <div key={index} className="card mb-3">
-                                                        <div className="card-body p-0">
-                                                            <div className="card">
-                                                                <div className="card-header bg-light d-flex justify-content-between align-items-center">
-                                                                    <span>
-                                                                        <strong className="mr-r-5 f-20 text-capitalize">{data?.className}</strong>
-                                                                    </span>
-                                                                    <button
-                                                                        type="button"
-                                                                        className="btn btn-warning mr-r-4"
-                                                                        onClick={() => {
-                                                                            subjectLinkedModal(data);
-                                                                        }}
-                                                                    >
-                                                                       <Link />
-                                                                    </button>
-                                                                </div>
-
-                                                                {/* If class has direct subjects (no sections) */}
-                                                                {data?.subjects && data?.subjects?.length > 0 && (
-                                                                    <div className="card-body">
-                                                                        <table className="table table-bordered mb-0">
-                                                                            <thead className="table-secondary">
-                                                                                <tr>
-                                                                                    <th>Subject Name</th>
-                                                                                    <th>Subject Code</th>
-                                                                                    <th>Max Marks</th>
-                                                                                    <th>Pass Marks</th>
-                                                                                    <th>Created At</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                {data?.subjects?.map((subject, subjectIdx) =>
-                                                                                    <tr key={subjectIdx}>
-                                                                                        <td>{subject?.subjectName}</td>
-                                                                                        <td>{subject?.subjectCode}</td>
-                                                                                        <td>{subject?.maxMarks}</td>
-                                                                                        <td>{subject?.passMarks}</td>
-                                                                                        <td>{subject?.createdAt}</td>
-                                                                                    </tr>
-                                                                                )}
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                )}
-
-                                                                {/* If class has section-based subjects */}
-                                                                {data?.sectionSubjects && data?.sectionSubjects?.length > 0 &&
-                                                                    data?.sectionSubjects?.map((item, idx) =>
-                                                                        <div key={idx} className="card-body">
-                                                                            <p className="badge bg-warning">Section - {item?.sectionName}</p>
-                                                                            <table className="table table-bordered mb-0">
-                                                                                <thead className="table-secondary">
-                                                                                    <tr>
-                                                                                        <th>Subject Name</th>
-                                                                                        <th>Subject Code</th>
-                                                                                        <th>Max Marks</th>
-                                                                                        <th>Pass Marks</th>
-                                                                                        <th>Created At</th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    {item?.subjects && item?.subjects?.map((subject, subjectIdx) =>
-                                                                                        <tr key={subjectIdx}>
-                                                                                            <td>{subject?.subjectName}</td>
-                                                                                            <td>{subject?.subjectCode}</td>
-                                                                                            <td>{subject?.maxMarks}</td>
-                                                                                            <td>{subject?.passMarks}</td>
-                                                                                            <td>{subject?.createdAt}</td>
-                                                                                        </tr>
-                                                                                    )}
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    )
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ) :
-                                                <NoDataFound />
-                                            }
+                <div className="table-content mb-0">
+                    {subjectListLinked?.length > 0 ?
+                        subjectListLinked?.map((data, index) =>
+                            <div key={index} className={`card ${index === 0 ? 'mb-3' : ''}`}>
+                                <div className="card-body p-0">
+                                    <div className="card">
+                                        <div className="card-header bg-light d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <strong className="mr-r-5 f-20 text-capitalize">Class - {data?.className}</strong>
+                                            </span>
+                                            {/* <button
+                                                type="button"
+                                                className="btn btn-warning mr-r-4"
+                                                onClick={() => {
+                                                    subjectLinkedModal(data);
+                                                }}
+                                            >
+                                                <Link />
+                                            </button> */}
                                         </div>
-                                    )
-                                    :
-                                    active === "contact-tab" &&
-                                    (
-                                        <div className="table-content">
-                                            {linkList?.length > 0 ?
-                                                <table className="table table-bordered">
-                                                    <thead>
+
+                                        {/* If class has direct subjects (no sections) */}
+                                        {data?.subjects && data?.subjects?.length > 0 && (
+                                            <div className="card-body">
+                                                <table className="table table-bordered mb-0">
+                                                    <thead className="table-secondary">
                                                         <tr>
-                                                            <th scope="col">#</th>
-                                                            <th scope="col">Class Name</th>
-                                                            <th scope="col">Section Name</th>
-                                                            <th scope="col">Created By</th>
-                                                            <th scope="col">Created At</th>
-                                                            <th scop="col">Action</th>
+                                                            <th>Subject Name</th>
+                                                            <th>Subject Code</th>
+                                                            <th>Max Marks</th>
+                                                            <th>Pass Marks</th>
+                                                            <th>Created At</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {linkList?.map((data, index) =>
-                                                            <tr key={index}>
-                                                                <td scope="row">{index + 1}</td>
-                                                                <td>{data?.className}</td>
-                                                                <td>{data?.masterSection?.length > 0
-                                                                    ? data?.masterSection?.sort().map((d, idx) => (
-                                                                        <span key={idx}>{d?.sectionName + ","}</span>
-                                                                    ))
-                                                                    : "no section linked"}
-                                                                </td>
-                                                                <td>{data?.createdBy ? data?.createdBy : "N/A"}</td>
-                                                                <td>{data?.createdAt ? data?.createdAt : "N/A"}</td>
-                                                                <td>
-                                                                    <button
-                                                                        type="button"
-                                                                        className="btn btn-warning mr-r-4"
-                                                                        onClick={() => {
-                                                                            SetIsModal(true);
-                                                                            setFormState({ ...formState, className: data?.className });
-                                                                            setClassUuid(data?.masterClassUuid);
-
-                                                                            // ✅ Pre-select linked sections
-                                                                            if (data?.masterSection?.length > 0) {
-                                                                                const linkedSectionIds = data.masterSection.map((s) => s.masterSectionUuid);
-                                                                                setSelected(options.filter((opt) => linkedSectionIds.includes(opt.value)));
-                                                                            } else {
-                                                                                setSelected([]);
-                                                                            }
-                                                                        }}
-                                                                    ><Link /></button>
-                                                                      <button className="btn btn-success mr-r-4">  <FilePen /></button>
-                                                                <button className="btn btn-danger"><Trash /></button>
-                                                                </td>
+                                                        {data?.subjects?.map((subject, subjectIdx) =>
+                                                            <tr key={subjectIdx}>
+                                                                <td>{subject?.subjectName}</td>
+                                                                <td>{subject?.subjectCode}</td>
+                                                                <td>{subject?.maxMarks}</td>
+                                                                <td>{subject?.passMarks}</td>
+                                                                <td>{subject?.createdAt}</td>
                                                             </tr>
                                                         )}
                                                     </tbody>
                                                 </table>
-                                                :
-                                                <NoDataFound />
-                                            }
-                                        </div>
-                                    )
+                                            </div>
+                                        )}
+
+                                        {/* If class has section-based subjects */}
+                                        {data?.sectionSubjects && data?.sectionSubjects?.length > 0 &&
+                                            data?.sectionSubjects?.map((item, idx) =>
+                                                <div key={idx} className="card-body">
+                                                    <p className="badge bg-warning">Section - {item?.sectionName}</p>
+                                                    <table className="table table-bordered mb-0">
+                                                        <thead className="table-secondary">
+                                                            <tr>
+                                                                <th>Subject Name</th>
+                                                                <th>Subject Code</th>
+                                                                <th>Max Marks</th>
+                                                                <th>Pass Marks</th>
+                                                                <th>Created At</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {item?.subjects && item?.subjects?.map((subject, subjectIdx) =>
+                                                                <tr key={subjectIdx}>
+                                                                    <td>{subject?.subjectName}</td>
+                                                                    <td>{subject?.subjectCode}</td>
+                                                                    <td>{subject?.maxMarks}</td>
+                                                                    <td>{subject?.passMarks}</td>
+                                                                    <td>{subject?.createdAt}</td>
+                                                                </tr>
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        ) :
+                        <NoDataFound />
                     }
                 </div>
             </div>
 
             {isModal &&
                 <div className="modal d-block">
-                    <div className="modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-dialog modal-xl modal-dialog-centered" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="exampleModalLabel">
-                                    {active === "home-tab"
-                                        ? "Create Class"
-                                        : active === "profile-tab"
-                                            ? "Create Section"
-                                            : active === "Subject-tab"
-                                                ? "Create Subject"
-                                                : active === "subjectLink-tab"
-                                                    ? isNewLinkage ? "New Subject Linkage" : "Edit Subject Linkage"
-                                                    : "Link Class & Section"}
+                                    Create Class
                                 </h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => closeModal()}>
                                     <span aria-hidden="true">&times;</span>
@@ -547,133 +214,218 @@ function ManageClasses() {
                             </div>
 
                             <div className="modal-body">
-                                {active === "home-tab" ?
-                                    <div className="form-content">
-                                        <div className="form-group">
-                                            <label className="form-group-label">Class Name</label>
-                                            <input type="text" className="form-control" name="className" placeholder="Enter Class Name" onChange={(e) => handlerChange(e)} />
+                                <form className="row g-4 justify-content-center classCreationModal">
+                                    {/* Class Selection */}
+                                    <div className="col-12">
+                                        <div className="mb-4">
+                                            <div>
+                                                <div className="d-flex align-items-center mb-3">
+                                                    <div className="icon-grad-blue rounded-lg d-flex align-items-center justify-content-center me-3" style={{ width: 48, height: 48 }}>
+                                                        <GraduationCap size={24} className="text-white" />
+                                                    </div>
+                                                    <div>
+                                                        <h5 className="card-title mb-1">Select Class</h5>
+                                                        <div className="text-muted small">Choose your academic level (You Can Select Only One class at a time)</div>
+                                                    </div>
+                                                </div>
+                                                <div className="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-2">
+                                                    {AllClassEntities?.masterClasses?.map((data, index) => (
+                                                        <div className="col" key={index}>
+                                                            <label className={`w-100 position-relative`}>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="class"
+                                                                    value={data?.masterClassUuid}
+                                                                    checked={selectedClass === data?.masterClassUuid}
+                                                                    onChange={() => handleClassChange(data?.masterClassUuid)}
+                                                                    className="btn-check"
+                                                                    autoComplete="off"
+                                                                />
+                                                                <span className={`btn checkboxCustom checkbox-blue w-100 py-2 position-relative ${selectedClass === data?.masterClassUuid ? 'activeClass' : ''}`}>
+                                                                    {data?.className}
+                                                                </span>
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    : active === "profile-tab" ?
-                                        <div className="form-content">
-                                            <div className="form-group">
-                                                <label className="form-group-label">Section Name</label>
-                                                <input type="text" className="form-control" name="sectionName" placeholder="Enter Section Name" onChange={(e) => handlerChange(e)} />
+
+                                    {/* Section Selection */}
+                                    <div className="col-12">
+                                        <div className="mb-4">
+                                            <div>
+                                                <div className="d-flex justify-content-between align-items-center mb-3">
+                                                    <div className="d-flex align-items-center">
+                                                        <div className="icon-grad-green rounded-lg d-flex align-items-center justify-content-center me-3" style={{ width: 48, height: 48 }}>
+                                                            <Users size={22} className="text-white" />
+                                                        </div>
+                                                        <div>
+                                                            <h5 className="card-title mb-1">Select Sections</h5>
+                                                            <div className="text-muted small">Choose class sections (You Can Select Multiple Section and Add New section)</div>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-success checkbox-green d-flex align-items-center"
+                                                        onClick={() => setShowSectionInput(v => !v)}
+                                                    >
+                                                        <Plus size={18} className="me-1" /> Add Section
+                                                    </button>
+                                                </div>
+
+                                                {showSectionInput &&
+                                                    <div className="alert alert-success d-flex align-items-center py-3 mb-4">
+                                                        <div className="flex-90">
+                                                            <div className="form-group mb-0 pd-r-10">
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control me-2"
+                                                                    placeholder="Enter new section name"
+                                                                    value={newSection}
+                                                                    onChange={e => setNewSection(e.target.value)}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex-10 pd-l-10">
+                                                            {/* <button type="button" className="btn btn-success me-2" onClick={addSection}>Add</button> */}
+                                                            <button type="button" className="btn btn-secondary w-100" onClick={() => { setShowSectionInput(false); setNewSection(''); }}>Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                <div className="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-2">
+                                                    {AllClassEntities?.masterSections?.map((data, index) => (
+                                                        <div className="col" key={index}>
+                                                            <label className="w-100 d-flex align-items-center position-relative checkboxCustom checkbox-green">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-check-input me-2"
+                                                                    checked={selectedSections.includes(data?.masterSectionUuid)}
+                                                                    onChange={() => handleSectionChange(data?.masterSectionUuid)}
+                                                                />
+                                                                <span className={`flex-grow-1 ${selectedSections.includes(data.masterSectionUuid) ? 'activeSection' : ''}`}>
+                                                                    Section - {data.sectionName}
+                                                                </span>
+                                                                {customSections.includes(data.masterSectionUuid) &&
+                                                                    <button type="button" tabIndex={-1}
+                                                                        onClick={e => { e.preventDefault(); removeCustomSection(data.masterSectionUuid); }}
+                                                                        className="btn-close ms-2 small"
+                                                                        style={{ filter: 'none' }} title="Remove section"
+                                                                    />
+                                                                }
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
-                                        : active === "Subject-tab" ?
-                                            <div className="form-content">
-                                                <div className="form-group">
-                                                    <label className="form-group-label">Subject Name</label>
-                                                    <input type="text" className="form-control" name="subjectName" placeholder="Enter Subject" onChange={(e) => handlerChange(e)} />
+                                    </div>
+
+                                    {/* Subject Selection */}
+                                    <div className="col-12">
+                                        <div className="mb-4">
+                                            <div>
+                                                <div className="d-flex justify-content-between align-items-center mb-3">
+                                                    <div className="d-flex align-items-center">
+                                                        <div className="icon-grad-pink rounded-lg d-flex align-items-center justify-content-center me-3" style={{ width: 48, height: 48 }}>
+                                                            <BookOpen size={22} className="text-white" />
+                                                        </div>
+                                                        <div>
+                                                            <h5 className="card-title mb-1">Select Subjects</h5>
+                                                            <div className="text-muted small">Choose academic subjects (You Can Select Multiple Subject and Add New Subject)</div>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-primary checkbox-pink d-flex align-items-center"
+                                                        onClick={() => setShowSubjectInput(v => !v)}
+                                                    >
+                                                        <Plus size={18} className="me-1" /> Add Subject
+                                                    </button>
                                                 </div>
-                                                <div className="d-flex">
-                                                    <div className="flex-50 pd-r-10">
-                                                        <div className="form-group">
-                                                            <label className="form-group-label">Min Marks</label>
-                                                            <input type="text" className="form-control" name="minMarks" placeholder="Enter Min Marks" onChange={(e) => handlerChange(e)} />
+
+                                                {showSubjectInput &&
+                                                    <div className="alert alert-primary d-flex align-items-center py-3 mb-4">
+                                                        <div className="flex-90  pd-r-10">
+                                                            <div className="form-group mb-0">
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control me-2"
+                                                                    placeholder="Enter new subject name"
+                                                                    value={newSubject}
+                                                                    onChange={e => setNewSubject(e.target.value)}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex-10  pd-l-10">
+                                                            {/* <button type="button" className="btn btn-primary me-2" onClick={addSubject}>Add</button> */}
+                                                            <button type="button" className="btn w-100 btn-secondary" onClick={() => { setShowSubjectInput(false); setNewSubject(''); }}>Cancel</button>
                                                         </div>
                                                     </div>
-                                                    <div className="flex-50 pd-l-10">
-                                                        <div className="form-group">
-                                                            <label className="form-group-label">Max Marks</label>
-                                                            <input type="number" className="form-control" name="maxMarks" placeholder="Enter Max Marks" onChange={(e) => handlerChange(e)} />
+                                                }
+                                                <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
+                                                    {AllClassEntities?.masterSubjects?.map((data, index) => (
+                                                        <div className="col" key={index}>
+                                                            <label className="w-100 d-flex align-items-center position-relative checkboxCustom checkbox-pink ">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-check-input me-2"
+                                                                    checked={selectedSubjects.includes(data?.subjectName)}
+                                                                    onChange={() => handleSubjectChange(data?.subjectName)}
+                                                                />
+                                                                <span className={`flex-grow-1 ${selectedSubjects.includes(data?.subjectName) ? 'activeSubject' : ''}`}>
+                                                                    {data?.subjectName}
+                                                                </span>
+                                                                {customSubjects.includes(data?.subjectName) &&
+                                                                    <button type="button" tabIndex={-1}
+                                                                        onClick={e => { e.preventDefault(); removeCustomSubject(data?.subjectName); }}
+                                                                        className="btn-close ms-2 small"
+                                                                        style={{ filter: 'none' }}
+                                                                        title="Remove subject"
+                                                                    />
+                                                                }
+                                                            </label>
                                                         </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Summary */}
+                                    {/* <div className="col-12">
+                                        <div className="alert alert-light border shadow-sm">
+                                            <div className="row g-3 align-items-center">
+                                                <div className="col-md-4">
+                                                    <div className="fw-semibold mb-1 text-primary">
+                                                        <GraduationCap size={16} className="me-1 text-primary icon-grad" /> Selected Class:
                                                     </div>
-                                                    <div className="flex-100">
-                                                        <div className="form-group">
-                                                            <label className="form-group-label">Description</label>
-                                                            <input type="text" className="form-control" name="description" placeholder="Enter Description" onChange={(e) => handlerChange(e)} />
-                                                        </div>
+                                                    <div className={`badge ${selectedClass ? 'bg-primary text-light' : 'bg-secondary-subtle text-secondary'}`}>
+                                                        {selectedClass || 'None selected'}
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-4">
+                                                    <div className="fw-semibold mb-1 text-success">
+                                                        <Users size={16} className="me-1 text-success" /> Selected Sections: ({selectedSections.length})
+                                                    </div>
+                                                    <div className={`badge ${selectedSections.length > 0 ? 'bg-success text-light' : 'bg-secondary-subtle text-secondary'}`}>
+                                                        {selectedSections.length > 0 ? selectedSections.join(', ') : 'None selected'}
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-4">
+                                                    <div className="fw-semibold mb-1 text-primary">
+                                                        <BookOpen size={16} className="me-1 text-primary" /> Selected Subjects: ({selectedSubjects.length})
+                                                    </div>
+                                                    <div className={`badge ${selectedSubjects.length > 0 ? 'bg-primary text-light' : 'bg-secondary-subtle text-secondary'}`}>
+                                                        {selectedSubjects.length > 0 ? selectedSubjects.join(', ') : 'None selected'}
                                                     </div>
                                                 </div>
                                             </div>
-                                            : active === "subjectLink-tab" ?
-                                                <div className="form-content" key={modalKey}>
-                                                    {/* Class Selection - Only show for new linkage */}
-                                                    {isNewLinkage && (
-                                                        <div className="form-group">
-                                                            <label className="form-group-label">Class Name</label>
-                                                            <select
-                                                                className="form-control"
-                                                                value={selectedClass?.value || ""}
-                                                                onChange={(e) => {
-                                                                    const selected = classOptions.find(opt => opt.value === e.target.value);
-                                                                    handleClassChange(selected);
-                                                                }}
-                                                            >
-                                                                <option value="">Select Class</option>
-                                                                {classOptions.map(option => (
-                                                                    <option key={option.value} value={option.value}>
-                                                                        {option.label}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Class Name - Read only for existing linkage */}
-                                                    {!isNewLinkage && (
-                                                        <div className="form-group">
-                                                           <label className="form-group-label">Class Name</label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                value={formState?.className}
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    )}
-
-                                                    <div className="form-group">
-                                                        <label className="form-group-label">Section Name</label>
-                                                        <MultiSelect
-                                                            key={`section-${modalKey}-${classUuid}`}
-                                                            options={options}
-                                                            value={selected}
-                                                            onChange={setSelected}
-                                                            labelledBy="Select Sections"
-                                                            hasSelectAll={false}
-                                                        />
-                                                    </div>
-                                                    <div className="form-group">
-                                                        <label className="form-group-label">Subject Name</label>
-                                                        <MultiSelect
-                                                            key={`subject-${modalKey}-${classUuid}`}
-                                                            options={SubjectOption}
-                                                            value={selectedSubject}
-                                                            onChange={handleSubjectChange}
-                                                            labelledBy="Select Subjects"
-                                                            hasSelectAll={false}
-                                                            disableSearch={false}
-                                                            closeOnChangedValue={false}
-                                                            overrideStrings={{
-                                                                selectSomeItems: "Select Subjects...",
-                                                                allItemsAreSelected: "All subjects selected",
-                                                                selectAll: "Select All",
-                                                                search: "Search subjects"
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                :
-                                                <div className="form-content">
-                                                    <div className="form-group">
-                                                        <label className="form-group-label">Class Name</label>
-                                                        <input type="text" className="form-control" name="className" value={formState?.className} placeholder="Enter Class Name" onChange={(e) => handlerChange(e)} />
-                                                    </div>
-                                                    <div className="form-group">
-                                                        <label className="form-group-label">Section Name</label>
-                                                        <MultiSelect
-                                                            options={options}
-                                                            value={selected}
-                                                            onChange={setSelected}
-                                                            labelledBy="Select"
-                                                            hasSelectAll={false}
-                                                        />
-                                                    </div>
-                                                </div>
-                                }
+                                        </div>
+                                    </div> */}
+                                </form>
                             </div>
 
                             <div className="modal-footer">
@@ -681,14 +433,7 @@ function ManageClasses() {
                                 <button
                                     type="button"
                                     className="btn btn-primary"
-                                    onClick={() => formSubmit(
-                                        active === "home-tab" ? "CreateClass"
-                                            : active === "profile-tab" ? "CreateSection"
-                                                : active === "Subject-tab" ? "createSubject"
-                                                    : active === "subjectLink-tab"
-                                                        ? isNewLinkage ? "newSubjectLinkage" : "subjectLinkedClass"
-                                                        : "LinkClassSection"
-                                    )}
+                                    onClick={() => formSubmit()}
                                 >
                                     Save changes
                                 </button>

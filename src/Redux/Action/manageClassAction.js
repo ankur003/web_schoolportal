@@ -129,3 +129,37 @@ export const createSubjectAndLinked = (data, type, toast) => (dispatch) => {
             });
     };
 }
+
+
+
+// new api 
+
+export const getSubjectClassSecList = () => (dispatch) => {
+    axios.get(`${basePathUrl}/sa/master/class-section-subject`)
+        .then(response => {
+            dispatch({
+                type: Constants.GET_ALL_CLASS_ENTITIES,
+                payload: response.data
+            })
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+export const createClassEntities = (data,toast) => (dispatch) => {
+    axios.put(`${basePathUrl}/subjects/link`, data)
+        .then(response => {
+            console.log({ response });
+            if (response.status == 201) {
+                toast.success("Created Successfully!")
+            }
+            if (response.status == 304) {
+                toast.info("Nothing changed!")
+            }
+            dispatch(getSubjectLinked());
+        })
+        .catch(error => {
+            console.log(error);
+        });
+};

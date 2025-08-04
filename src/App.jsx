@@ -21,6 +21,7 @@ import EntityPage from './container/ManageEntities/EntityPage';
 import StudentPage from './container/ManageEntities/StudentPage';
 import TeacherPage from './container/ManageEntities/TeacherPage';
 import AttendancePage from './container/ManageSchedule/AttendancePage';
+import CreateAndUpdateClass from './container/ManageClassSecSubject/CreateAndUpdateClass';
 import { use } from 'react';
 import axios from 'axios';
 
@@ -98,6 +99,7 @@ const App = () => {
             <Route element={<TimeTable />} path="/TimeTable" />
             <Route element={<ParentsPage />} path="/ParentsPage" />
             <Route element={<AttendancePage />} path="/AttendancePage" />
+            <Route element={<CreateAndUpdateClass />} path="/CreateAndUpdateClass" />
           </Route>
         </Routes>
       </Router>

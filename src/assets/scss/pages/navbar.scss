@@ -18,7 +18,75 @@
                 }
             }
         }
+        .demo-section {
+            width: 245px;
+        }
+
+        .select-wrapper-neon {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .select-neon {
+             width: 100%;
+            appearance: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 14px;
+            padding: 1rem 3rem 1rem 1.25rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow:
+                0 6px 20px rgba(102, 126, 234, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            min-width: 200px;
+            outline: none;
+        }
+
+        .select-neon:hover {
+            box-shadow:
+                0 12px 35px rgba(102, 126, 234, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .select-neon:focus {
+            box-shadow:
+                0 0 0 4px rgba(102, 126, 234, 0.3),
+                0 12px 35px rgba(102, 126, 234, 0.6);
+            transform: translateY(-3px) scale(1.01);
+        }
+
+        .select-neon option {
+            background: #4c51bf;
+            color: white;
+        }
+
+        .select-wrapper-neon::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.9);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .select-wrapper-neon:hover::after {
+            color: white;
+            transform: translateY(-50%) rotate(180deg);
+        }
     }
+
+
+
 
     .main-body {
         padding: 57px 0px 12px 12px;

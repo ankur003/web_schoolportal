@@ -6,7 +6,8 @@ const initialState = {
     linkList: [],
     subjectList: [],
     subjectListLinked: [],
-    loader: false
+    loader: false,
+    AllClassEntities: {}
 }
 
 export default function manageClassesReducer(state = initialState, action) {
@@ -39,6 +40,12 @@ export default function manageClassesReducer(state = initialState, action) {
             return {
                 ...state,
                 subjectListLinked: action.payload,
+                loader: true
+            }
+        case Constants.GET_ALL_CLASS_ENTITIES:
+            return {
+                ...state,
+                AllClassEntities: action.payload,
                 loader: true
             }
         default:
