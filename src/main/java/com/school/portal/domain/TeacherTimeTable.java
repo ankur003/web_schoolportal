@@ -54,8 +54,9 @@ public class TeacherTimeTable {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
-	@Enumerated(EnumType.STRING)
-	private AcademicYear academicYear;
+    @Column(name = "academic_year", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AcademicYear academicYear;
 
     @PrePersist
     protected void onCreate() {

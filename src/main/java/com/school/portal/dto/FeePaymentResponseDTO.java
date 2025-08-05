@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.FeeName;
 import com.school.portal.enums.FeeType;
 import com.school.portal.enums.Month;
@@ -22,7 +23,7 @@ public class FeePaymentResponseDTO {
 	private String remarks;
 
 	private String masterFeesUuid;
-	private String academicYear;
+	private AcademicYear academicYear;
 	private Double totalFee;
 	private String feeType;
 	private String feeName;
@@ -45,7 +46,7 @@ public class FeePaymentResponseDTO {
     public FeePaymentResponseDTO(long rollNumber, String fullName, String userUuid,
                                  String feePaymentUuid, Double amountPaid, Double discountAmount,
                                  LocalDate paymentDate, String paymentMode, String transactionId, String remarks,
-                                 String masterFeesUuid, String academicYear, Double totalFee,
+                                 String masterFeesUuid, AcademicYear academicYear, Double totalFee,
                                  FeeType feeType, FeeName feeName, String className, String classSection, Month month, String year,
                                  String masterClassUuid, String masterSectionUuid) {
         this.rollNumber = rollNumber;
@@ -230,14 +231,14 @@ public class FeePaymentResponseDTO {
 	/**
 	 * @return the academicYear
 	 */
-	public String getAcademicYear() {
+	public AcademicYear getAcademicYear() {
 		return academicYear;
 	}
 
 	/**
 	 * @param academicYear the academicYear to set
 	 */
-	public void setAcademicYear(String academicYear) {
+	public void setAcademicYear(AcademicYear academicYear) {
 		this.academicYear = academicYear;
 	}
 

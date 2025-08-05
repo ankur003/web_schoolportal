@@ -81,6 +81,7 @@ public class FeePayment {
     @NotNull
     private String year;
     
+    @Column(name = "academic_year", nullable = false)
     @Enumerated(EnumType.STRING)
     private AcademicYear academicYear;
 

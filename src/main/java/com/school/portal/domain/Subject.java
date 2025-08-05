@@ -52,8 +52,9 @@ public class Subject {
     @Column(name = "is_active")
     private Boolean isActive = true;
     
-	@Enumerated(EnumType.STRING)
-	private AcademicYear academicYear;
+    @Column(name = "academic_year", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AcademicYear academicYear;
     
     @PrePersist
     protected void onCreate() {

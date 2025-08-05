@@ -14,6 +14,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.FeeName;
 import com.school.portal.enums.FeeType;
 
@@ -58,8 +59,9 @@ public class MasterFee implements Serializable {
     @Column(name = "total_fee", nullable = false)
     private Double totalFee;
 
-    @Column(name = "academic_year")
-    private String academicYear;
+    @Column(name = "academic_year", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AcademicYear academicYear;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

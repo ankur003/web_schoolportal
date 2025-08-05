@@ -2,6 +2,7 @@ package com.school.portal.dto;
 
 import javax.validation.constraints.NotBlank;
 
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.FeeName;
 import com.school.portal.enums.FeeType;
 
@@ -19,7 +20,7 @@ public class MasterFeeRequestDTO {
 	@NotBlank
     private Double totalFee;
 	
-    private String academicYear;
+    private AcademicYear academicYear;
 	/**
 	 * @return the masterClassUuid
 	 */
@@ -71,13 +72,13 @@ public class MasterFeeRequestDTO {
 	/**
 	 * @return the academicYear
 	 */
-	public String getAcademicYear() {
+	public AcademicYear getAcademicYear() {
 		return academicYear;
 	}
 	/**
 	 * @param academicYear the academicYear to set
 	 */
-	public void setAcademicYear(String academicYear) {
+	public void setAcademicYear(AcademicYear academicYear) {
 		this.academicYear = academicYear;
 	}
 

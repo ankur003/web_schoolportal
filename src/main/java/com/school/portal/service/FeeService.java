@@ -60,7 +60,7 @@ public class FeeService {
         	return null;
         }
         MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassIdAndAcademicYear(dto.getFeeType(), 
-        		dto.getFeeName(), masterClass.getMasterClassId(), LoggedInUserUtil.getLoginUserAcadmicYear().name());
+        		dto.getFeeName(), masterClass.getMasterClassId(), LoggedInUserUtil.getLoginUserAcadmicYear());
         if (masterFee != null) {
         	return null;
         }
@@ -70,7 +70,7 @@ public class FeeService {
         masterFee.setFeeType(dto.getFeeType());
         masterFee.setFeeName(dto.getFeeName());
         masterFee.setTotalFee(dto.getTotalFee());
-        masterFee.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear().name());
+        masterFee.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
 
         return masterFeeRepository.save(masterFee).getMasterFeesUuid();
     }
@@ -91,11 +91,11 @@ public class FeeService {
 	}
 
 	public List<FeeDto> getAllMasterFees() {
-		return masterFeeRepository.findAllMasterFees(LoggedInUserUtil.getLoginUserAcadmicYear().name());
+		return masterFeeRepository.findAllMasterFees(LoggedInUserUtil.getLoginUserAcadmicYear());
 	}
 
 	public FeeDto getMasterFeesByMasteruuid(String masterFeeUuid) {
-		return masterFeeRepository.getMasterFeesByMasteruuid(masterFeeUuid, LoggedInUserUtil.getLoginUserAcadmicYear().name());
+		return masterFeeRepository.getMasterFeesByMasteruuid(masterFeeUuid, LoggedInUserUtil.getLoginUserAcadmicYear());
 	}
 	
 	public String createPayment(FeePaymentRequestDto dto) {
@@ -108,7 +108,7 @@ public class FeeService {
         UserClassSection userClassSection =  userClassSectionRepository.findByUserAndAcademicYear(user, LoggedInUserUtil.getLoginUserAcadmicYear());
 
         MasterFee masterFee = masterFeeRepository.findByFeeTypeAndFeeNameAndMasterClassIdAndAcademicYear(dto.getFeeType(), dto.getFeeName(),
-        		userClassSection.getMasterClass().getMasterClassId(), LoggedInUserUtil.getLoginUserAcadmicYear().name());
+        		userClassSection.getMasterClass().getMasterClassId(), LoggedInUserUtil.getLoginUserAcadmicYear());
         
         if (masterFee == null) {
         	return null;
@@ -180,7 +180,7 @@ public class FeeService {
 		if (masterClass == null) {
 			return Collections.emptyList();
 		}
-		return masterFeeRepository.findMasterFeesByClassId(masterClass.getMasterClassId(), LoggedInUserUtil.getLoginUserAcadmicYear().name());
+		return masterFeeRepository.findMasterFeesByClassId(masterClass.getMasterClassId(), LoggedInUserUtil.getLoginUserAcadmicYear());
 	}
 
 	public List<FeePaymentResponseDTO> getAllPayments() {
@@ -193,7 +193,7 @@ public class FeeService {
 		if (masterClass == null) {
 			return Collections.emptyList();
 		}
-		return masterFeeRepository.findMasterFeesByClassIdAndFeeType(masterClass.getMasterClassId(), feeType, LoggedInUserUtil.getLoginUserAcadmicYear().name());
+		return masterFeeRepository.findMasterFeesByClassIdAndFeeType(masterClass.getMasterClassId(), feeType, LoggedInUserUtil.getLoginUserAcadmicYear());
 
 	}
    

@@ -2,6 +2,7 @@ package com.school.portal.dto;
 
 import java.time.LocalDateTime;
 
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.FeeName;
 import com.school.portal.enums.FeeType;
 
@@ -13,13 +14,13 @@ public class FeeDto {
     private FeeType feeType;
     private FeeName feeName;
     private Double totalFee;
-    private String academicYear;
+    private AcademicYear academicYear;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public FeeDto(String masterFeesUuid, String masterClassUuid, String className,
                   FeeType feeType, FeeName feeName, Double totalFee,
-                  String academicYear, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                  AcademicYear academicYear, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.masterFeesUuid = masterFeesUuid;
         this.masterClassUuid = masterClassUuid;
         this.className = className;
@@ -118,14 +119,14 @@ public class FeeDto {
 	/**
 	 * @return the academicYear
 	 */
-	public String getAcademicYear() {
+	public AcademicYear getAcademicYear() {
 		return academicYear;
 	}
 
 	/**
 	 * @param academicYear the academicYear to set
 	 */
-	public void setAcademicYear(String academicYear) {
+	public void setAcademicYear(AcademicYear academicYear) {
 		this.academicYear = academicYear;
 	}
 

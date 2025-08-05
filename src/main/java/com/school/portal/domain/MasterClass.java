@@ -38,8 +38,9 @@ public class MasterClass implements Serializable {
 	@Column(nullable = false, unique = true)
 	private String className;
 	
-	@Enumerated(EnumType.STRING)
-	private AcademicYear academicYear;
+    @Column(name = "academic_year", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AcademicYear academicYear;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(name = "CLASS_SECTIONS", joinColumns = { @JoinColumn(name = "MASTER_CLASS_ID") }, inverseJoinColumns = {

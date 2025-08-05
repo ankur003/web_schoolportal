@@ -1,10 +1,16 @@
 package com.school.portal.dto;
 
-import com.school.portal.enums.FeeType;
-import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.Map;
+
+import com.school.portal.enums.AcademicYear;
+import com.school.portal.enums.FeeType;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -19,6 +25,6 @@ public class MasterFeeResponseDTO {
     private String masterFeesUuid;
     private FeeType feeType;
     private Double totalFee;
-    private String academicYear;
+    private AcademicYear academicYear;
     private LocalDateTime createdAt;
 }

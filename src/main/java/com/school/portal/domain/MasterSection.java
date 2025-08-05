@@ -27,8 +27,9 @@ public class MasterSection implements Serializable {
 	@Column(nullable = false, unique = true)
 	private String sectionName;
 	
-	@Enumerated(EnumType.STRING)
-	private AcademicYear academicYear;
+    @Column(name = "academic_year", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AcademicYear academicYear;
 	
 	private Boolean isActive = true;
 	
