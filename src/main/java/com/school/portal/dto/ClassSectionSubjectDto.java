@@ -2,6 +2,8 @@ package com.school.portal.dto;
 
 import java.util.List;
 
+import com.school.portal.enums.AcademicYear;
+
 public class ClassSectionSubjectDto {
 	
     private String masterClassUuid;
@@ -9,6 +11,9 @@ public class ClassSectionSubjectDto {
     
     private List<SubjectDto> subjects;
     private List<SectionSubjectDto> sectionSubjects;
+    
+    private AcademicYear academicYear;
+    
 	/**
 	 * @return the masterClassUuid
 	 */
@@ -56,6 +61,18 @@ public class ClassSectionSubjectDto {
 	 */
 	public void setSectionSubjects(List<SectionSubjectDto> sectionSubjects) {
 		this.sectionSubjects = sectionSubjects;
+	}
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
 	}
     
     

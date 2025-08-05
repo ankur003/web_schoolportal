@@ -3,6 +3,7 @@ package com.school.portal.response;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.school.portal.enums.AcademicYear;
 
 public class MasterClassModel {
 	
@@ -20,6 +21,8 @@ public class MasterClassModel {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime updatedAt;
 
+	private AcademicYear academicYear;
+	
 	public String getMasterClassUuid() {
 		return masterClassUuid;
 	}
@@ -67,5 +70,21 @@ public class MasterClassModel {
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
+
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
+	}
+	
+	
 	
 }

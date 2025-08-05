@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.school.portal.enums.AcademicYear;
 
 public class LinkedMasterClassModel {
 	
@@ -22,6 +23,8 @@ public class LinkedMasterClassModel {
 	private String createdBy;
 	
 	private Set<MasterSectionModel> masterSection;
+	
+	private AcademicYear academicYear;
 
 	public String getMasterClassUuid() {
 		return masterClassUuid;
@@ -78,6 +81,21 @@ public class LinkedMasterClassModel {
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
+
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
+	}
+	
 	
 	
 }

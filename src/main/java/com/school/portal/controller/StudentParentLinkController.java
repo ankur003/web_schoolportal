@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.school.portal.AbstractController;
 import com.school.portal.domain.User;
 import com.school.portal.domain.UserClassSection;
-import com.school.portal.enums.AcademicYear;
 import com.school.portal.repo.UserClassSectionRepository;
 import com.school.portal.response.UserResponseModel;
 import com.school.portal.service.StudentParentLinkService;
@@ -106,6 +105,7 @@ public class StudentParentLinkController extends AbstractController {
 	                    model.setMasterClassUuid(ucs.getMasterClass().getMasterClassUuid());
 	                    model.setSectionName(ucs.getMasterSection() != null ? ucs.getMasterSection().getSectionName() : null);
 	                    model.setMasterSectionUuid(ucs.getMasterSection() != null ? ucs.getMasterSection().getMasterSectionUuid() : null);
+	                    model.setAcademicYear(ucs.getAcademicYear());
 	                })
 	    );
 	}

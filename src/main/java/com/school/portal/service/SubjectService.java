@@ -239,6 +239,8 @@ public class SubjectService {
         responseDto.setSectionName(sectionName);
         responseDto.setMasterSectionUuid(sectionUuid);
         
+        responseDto.setAcademicYear(subject.getAcademicYear());
+        
         return responseDto;
     }
     
@@ -336,7 +338,8 @@ public class SubjectService {
 			    ));
 
 		return uniqueMap.values().stream()
-			    .map(s -> new UniqueSubjectDto(s.getSubjectName(), s.getDescription(), s.getSubjectId(), s.getSubjectCode()))
+			    .map(s -> new UniqueSubjectDto(s.getSubjectName(), s.getDescription(), 
+			    		s.getSubjectId(), s.getSubjectCode(), s.getAcademicYear()))
 			    .collect(Collectors.toList());
 	}
 	

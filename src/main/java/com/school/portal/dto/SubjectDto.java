@@ -2,6 +2,8 @@ package com.school.portal.dto;
 
 import java.time.LocalDateTime;
 
+import com.school.portal.enums.AcademicYear;
+
 public class SubjectDto {
 	
 	private Integer subjectId;
@@ -14,6 +16,8 @@ public class SubjectDto {
    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
     private Boolean isActive;
+    
+    private AcademicYear academicYear;
 	/**
 	 * @return the subjectId
 	 */
@@ -110,5 +114,19 @@ public class SubjectDto {
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
+	}
+	
+	
     
 }

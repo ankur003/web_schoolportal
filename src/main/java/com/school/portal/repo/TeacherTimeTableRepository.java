@@ -32,7 +32,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
           "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
           "t.startTime, t.endTime, t.roomNo, " +
-          "u.fullName, mc.className, ms.sectionName) " +
+          "u.fullName, mc.className, ms.sectionName, t.academicYear) " +
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
@@ -43,7 +43,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
           "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
           "t.startTime, t.endTime, t.roomNo, " +
-          "u.fullName, mc.className, ms.sectionName) " +
+          "u.fullName, mc.className, ms.sectionName, t.academicYear) " +
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
@@ -55,7 +55,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
           "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
           "t.startTime, t.endTime, t.roomNo, " +
-          "u.fullName, mc.className, ms.sectionName) " +
+          "u.fullName, mc.className, ms.sectionName, t.academicYear) " +
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
@@ -67,7 +67,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
             "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
             "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
             "t.startTime, t.endTime, t.roomNo, " +
-            "u.fullName, mc.className, ms.sectionName) " +
+            "u.fullName, mc.className, ms.sectionName, t.academicYear) " +
             "FROM TeacherTimeTable t " +
             "JOIN User u ON t.teacherUuid = u.userUuid " +
             "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
@@ -83,7 +83,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
           "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
           "t.startTime, t.endTime, t.roomNo, " +
-          "u.fullName, mc.className, ms.sectionName) " +
+          "u.fullName, mc.className, ms.sectionName, t.academicYear) " +
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +
@@ -96,7 +96,7 @@ public interface TeacherTimeTableRepository extends JpaRepository<TeacherTimeTab
           "t.id, t.teacherUuid, t.teacherTimetableUuid, " +
           "t.masterClassUuid, t.masterSectionUuid, t.subjectName, t.dayOfWeek, " +
           "t.startTime, t.endTime, t.roomNo, " +
-          "u.fullName, mc.className, ms.sectionName) " +
+          "u.fullName, mc.className, ms.sectionName, t.academicYear) " +
           "FROM TeacherTimeTable t " +
           "JOIN User u ON t.teacherUuid = u.userUuid " +
           "JOIN MasterClass mc ON t.masterClassUuid = mc.masterClassUuid " +

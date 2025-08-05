@@ -18,7 +18,7 @@ public interface ResultsRepository extends JpaRepository<Results, Long> {
     @Query("SELECT new com.school.portal.response.ResultResponseDTO(" +
            "u.fullName, u.rollNumber, mc.className, mc.masterClassUuid, " +
            "ms.sectionName, ms.masterSectionUuid, s.subjectName, s.subjectId, " +
-           "r.marksObtained, s.maxMarks, r.percentage, r.grade, u.userUuid, r.examType) " +
+           "r.marksObtained, s.maxMarks, r.percentage, r.grade, u.userUuid, r.examType, r.academicYear) " +
            "FROM Results r " +
            "JOIN r.user u " +
            "JOIN r.subject s " +
@@ -53,7 +53,7 @@ public interface ResultsRepository extends JpaRepository<Results, Long> {
     @Query("SELECT new com.school.portal.response.DashboardResultDTO(" +
            "u.fullName, u.rollNumber, mc.className, mc.masterClassUuid, " +
            "ms.sectionName, ms.masterSectionUuid, s.subjectName, " +
-           "r.marksObtained, s.maxMarks, r.percentage, r.grade, 'GAINER' , u.userUuid, r.examType)" +
+           "r.marksObtained, s.maxMarks, r.percentage, r.grade, 'GAINER' , u.userUuid, r.examType, r.academicYear)" +
            "FROM Results r " +
            "JOIN r.user u " +
            "JOIN r.subject s " +
@@ -76,7 +76,7 @@ public interface ResultsRepository extends JpaRepository<Results, Long> {
     @Query("SELECT new com.school.portal.response.DashboardResultDTO(" +
            "u.fullName, u.rollNumber, mc.className, mc.masterClassUuid, " +
            "ms.sectionName, ms.masterSectionUuid, s.subjectName, " +
-           "r.marksObtained, s.maxMarks, r.percentage, r.grade, 'LOOSER', u.userUuid, r.examType) " +
+           "r.marksObtained, s.maxMarks, r.percentage, r.grade, 'LOOSER', u.userUuid, r.examType, r.academicYear) " +
            "FROM Results r " +
            "JOIN r.user u " +
            "JOIN r.subject s " +

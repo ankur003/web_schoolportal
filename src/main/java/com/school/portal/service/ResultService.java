@@ -49,7 +49,8 @@ public class ResultService {
         User user = userRepository.findByUserUuidAndIsActive(requestDTO.getUserUuid(), true);
 
 
-        Subject subject = subjectRepository.findById(requestDTO.getSubjectId())
+        Subject subject = subjectRepository.findBySubjectIdAndIsActiveTrueAndAcademicYear(requestDTO.getSubjectId(),
+        		LoggedInUserUtil.getLoginUserAcadmicYear())
                 .orElseThrow(() -> new RuntimeException("Subject not found"));
 
         Results existingResult = resultsRepository.findByUserAndSubjectAndExamType(

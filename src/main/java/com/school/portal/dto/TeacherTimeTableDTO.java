@@ -1,6 +1,8 @@
 package com.school.portal.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.school.portal.enums.AcademicYear;
+
 import lombok.*;
 
 import java.time.LocalTime;
@@ -30,6 +32,7 @@ public class TeacherTimeTableDTO {
     private String teacherName;
     private String className;
     private String sectionName;
+    private AcademicYear academicYear;
 
 //    public TeacherTimeTableDTO(Long id, String teacherUuid, String teacherTimetableUuid,
 //                               String masterClassUuid, String masterSectionUuid, String subjectName,

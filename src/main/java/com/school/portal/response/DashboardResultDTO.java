@@ -1,5 +1,6 @@
 package com.school.portal.response;
 
+import com.school.portal.enums.AcademicYear;
 import com.school.portal.enums.ExamType;
 
 public class DashboardResultDTO {
@@ -17,12 +18,14 @@ public class DashboardResultDTO {
     private String type; // GAINER or LOOSER
     private String userUuid;
     private String examType;
+    private AcademicYear academicYear;
     
 
     public DashboardResultDTO(String userFullName, long rollNumber, String className,
                             String masterClassUuid, String sectionName, String masterSectionUuid,
                             String subjectName, Integer obtainedMarks, Integer totalMarks,
-                            Double percentage, String grade, String type, String userUuid, ExamType examType) {
+                            Double percentage, String grade, String type, String userUuid, ExamType examType,
+                            AcademicYear academicYear) {
         this.userFullName = userFullName;
         this.rollNumber = rollNumber;
         this.className = className;
@@ -37,6 +40,7 @@ public class DashboardResultDTO {
         this.type = type;
         this.userUuid= userUuid;
         this.examType = examType == null ? null : examType.name();
+        this.academicYear = academicYear;
     }
 
 	/**
@@ -234,7 +238,20 @@ public class DashboardResultDTO {
 	public void setExamType(String examType) {
 		this.examType = examType;
 	}
-	
 
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
+	}
+	
 }
 

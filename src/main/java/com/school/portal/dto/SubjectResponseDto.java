@@ -3,6 +3,7 @@ package com.school.portal.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.school.portal.enums.AcademicYear;
 
 public class SubjectResponseDto {
     
@@ -20,6 +21,7 @@ public class SubjectResponseDto {
    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
     private Boolean isActive;
+    private AcademicYear academicYear;
     
     // Constructors
     public SubjectResponseDto() {}
@@ -83,6 +85,22 @@ public class SubjectResponseDto {
     
     public Boolean getIsActive() { return isActive; }
     public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+	/**
+	 * @return the academicYear
+	 */
+	public AcademicYear getAcademicYear() {
+		return academicYear;
+	}
+
+	/**
+	 * @param academicYear the academicYear to set
+	 */
+	public void setAcademicYear(AcademicYear academicYear) {
+		this.academicYear = academicYear;
+	}
+    
+    
 }
 
 // Filter DTO for search parameters

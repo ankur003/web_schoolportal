@@ -53,10 +53,7 @@ public interface SubjectRepository extends JpaRepository<Subject, Integer> {
 
 	List<Subject> findBySubjectNameAndAcademicYearAndIsActive(String subjectName, AcademicYear currentAcademicYear,
 			boolean isActive);
-	
 
-	
-    
 }
     
     

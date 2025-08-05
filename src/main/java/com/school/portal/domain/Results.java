@@ -57,6 +57,7 @@ public class Results {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
+    @Column(name = "academic_year", nullable = false)
     @Enumerated(EnumType.STRING)
     private AcademicYear academicYear; 
 

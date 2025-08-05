@@ -175,6 +175,7 @@ public class SubjectController {
             ClassSectionSubjectDto classDto = new ClassSectionSubjectDto();
             classDto.setMasterClassUuid(classUuid);
             classDto.setClassName(classSubjects.get(0).getClassName());
+            classDto.setAcademicYear(classSubjects.get(0).getAcademicYear());
 
             // Subjects without section (i.e., masterSectionUuid is null)
             List<SubjectDto> generalSubjects = classSubjects.stream()
@@ -197,6 +198,7 @@ public class SubjectController {
                 SectionSubjectDto sectionDto = new SectionSubjectDto();
                 sectionDto.setMasterSectionUuid(sectionUuid);
                 sectionDto.setSectionName(sectionSubjects.get(0).getSectionName());
+                sectionDto.setAcademicYear(sectionSubjects.get(0).getAcademicYear());
 
                 List<SubjectDto> subjectDtoList = sectionSubjects.stream()
                         .map(this::mapToSubjectDto)
@@ -225,6 +227,7 @@ public class SubjectController {
         dto.setCreatedAt(s.getCreatedAt());
         dto.setUpdatedAt(s.getUpdatedAt());
         dto.setIsActive(s.getIsActive());
+        dto.setAcademicYear(s.getAcademicYear());
         return dto;
     }
 
