@@ -109,7 +109,14 @@ public class SubjectController {
 
 			subjectService.deLinkClassSubject(classSubjectLinkRequestDto);
 			
+		} else if (StringUtils.isBlank(classSubjectLinkRequestDto.getSectionName())
+				&& CollectionUtils.isEmpty(classSubjectLinkRequestDto.getMasterSectionUuid())) { 
+			
+			subjectService.createOrUpdateClassSubjectLinkage(classSubjectLinkRequestDto);
+
+			subjectService.deLinkClassSubject(classSubjectLinkRequestDto);
 		}
+		
 
 		return ResponseEntity.ok().build();
 	}

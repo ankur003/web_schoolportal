@@ -300,6 +300,11 @@ public class SubjectService {
 				}
 			}
 			
+		} else {
+			if(mcId != null) {
+				List<Subject> subjects = subjectRepository.findByMasterClassIdAndIsActiveTrueAndAcademicYear(mcId, LoggedInUserUtil.getLoginUserAcadmicYear());
+				removeLinkage(classSubjectLinkRequestDto, subjects);
+			}
 		}
 	}
 
