@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -22,54 +24,78 @@ import static com.school.portal.constants.JwtConstants.SIGNING_KEY;
 @Component
 public class TokenProvider implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5081743938548074606L;
+    private static final long serialVersionUID = -5081743938548074606L;
+    private static final String SCHOOL_CODE_KEY = "schoolCode";
 
-	public String getUsernameFromToken(String token) {
-		return getClaimFromToken(token, Claims::getSubject);
-	}
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
 
-	public Date getExpirationDateFromToken(String token) {
-		return getClaimFromToken(token, Claims::getExpiration);
-	}
+    public String getSchoolCodeFromToken(String token) {
+        return getClaimFromToken(token, claims -> claims.get(SCHOOL_CODE_KEY, String.class));
+    }
 
-	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-		final Claims claims = getAllClaimsFromToken(token);
-		return claimsResolver.apply(claims);
-	}
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
+    }
 
-	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parser().setSigningKey(SIGNING_KEY).parseClaimsJws(token).getBody();
-	}
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
 
-	private Boolean isTokenExpired(String token) {
-		final Date expiration = getExpirationDateFromToken(token);
-		return expiration.before(new Date());
-	}
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser().setSigningKey(SIGNING_KEY).parseClaimsJws(token).getBody();
+    }
 
-	public String generateToken(Authentication authentication) {
-		final String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.collect(Collectors.joining(","));
-		return Jwts.builder().setSubject(authentication.getName()).claim(AUTHORITIES_KEY, authorities)
-				.signWith(SignatureAlgorithm.HS256, SIGNING_KEY).setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS * 1000)).compact();
-	}
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
 
-	public Boolean validateToken(String token, UserDetails userDetails) {
-		final String username = getUsernameFromToken(token);
-		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-	}
+    public String generateToken(Authentication authentication) {
+        final String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+        
+        // Get school code from request header
+        String schoolCode = getSchoolCodeFromRequest();
+        
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities)
+                .claim(SCHOOL_CODE_KEY, schoolCode)
+                .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS * 1000))
+                .compact();
+    }
 
-	UsernamePasswordAuthenticationToken getAuthentication(final String token, final UserDetails userDetails) {
+    private String getSchoolCodeFromRequest() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            String schoolCode = attributes.getRequest().getHeader("schoolCode");
+            if (schoolCode != null) {
+                return schoolCode;
+            }
+        }
+        return "CODE_101"; // Default fallback
+    }
 
-		final JwtParser jwtParser = Jwts.parser().setSigningKey(SIGNING_KEY);
-		final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
-		final Claims claims = claimsJws.getBody();
-		final Collection<? extends GrantedAuthority> authorities = Arrays
-				.stream(claims.get(AUTHORITIES_KEY).toString().split(",")).map(SimpleGrantedAuthority::new)
-				.collect(Collectors.toList());
-		return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
-	}
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    UsernamePasswordAuthenticationToken getAuthentication(final String token, final UserDetails userDetails) {
+        final JwtParser jwtParser = Jwts.parser().setSigningKey(SIGNING_KEY);
+        final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
+        final Claims claims = claimsJws.getBody();
+        final Collection<? extends GrantedAuthority> authorities = Arrays
+                .stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+        return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
+    }
 }

@@ -2,10 +2,12 @@ package com.school.portal.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -17,46 +19,48 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.school.portal.enums.AcademicYear;
-
 @Configuration
 @EnableTransactionManagement
 public class DynamicDataSourceConfig {
-
-    @Bean
-    @Primary
-    public DataSource primaryDataSource() {
-    	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false");
-        dataSourceBuilder.username("root");
-        dataSourceBuilder.password("test");
-        return dataSourceBuilder.build();
-    }
-    @Bean
-    public DataSource secondaryDataSource() {
-    	DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
-        dataSourceBuilder.url("jdbc:mysql://localhost:3306/schoolportal?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false");
-        dataSourceBuilder.username("root");
-        dataSourceBuilder.password("test");
-        //d
-        return dataSourceBuilder.build();
-
-    }
+	
+	 @Autowired
+	 private SchoolProperties schoolProperties;
+	
+	@Bean
+	@Primary
+	public DataSource primaryDataSource() {
+		Set<String> vv = schoolProperties.getCodes().keySet();
+		String firstSchoolCode = vv.iterator().next();
+		return createDataSource(firstSchoolCode);
+	}
 
     @Bean
     public AbstractRoutingDataSource dynamicDataSource() {
         DynamicRoutingDataSource dataSource = new DynamicRoutingDataSource();
-
         Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put(AcademicYear.YEAR_2022_2023, primaryDataSource());
-        targetDataSources.put(AcademicYear.YEAR_2021_2022, secondaryDataSource());
-
+        
+        // Create data sources for all configured school codes
+        for (String schoolCode : schoolProperties.getCodes().keySet()) {
+            targetDataSources.put(schoolCode, createDataSource(schoolCode));
+        }
+        
         dataSource.setTargetDataSources(targetDataSources);
         dataSource.setDefaultTargetDataSource(primaryDataSource());
-
         return dataSource;
+    }
+
+    private DataSource createDataSource(String schoolCode) {
+        SchoolProperties.SchoolDetail schoolDetail = schoolProperties.getSchoolDetail(schoolCode);
+        if (schoolDetail == null) {
+            throw new IllegalArgumentException("School code not configured: " + schoolCode);
+        }
+        
+        DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
+        dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
+        dataSourceBuilder.url(schoolDetail.getDatabaseUrl());
+        dataSourceBuilder.username(schoolDetail.getUsername());
+        dataSourceBuilder.password(schoolDetail.getPassword());
+        return dataSourceBuilder.build();
     }
 
     @Bean
@@ -73,8 +77,8 @@ public class DynamicDataSourceConfig {
     public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
-    
-    private Map<String, ?> hibernateProperties() {
+
+    private Map<String, Object> hibernateProperties() {
         Map<String, Object> hibernateProperties = new HashMap<>();
         hibernateProperties.put("hibernate.physical_naming_strategy", DataSourcePhysicalNamingStrategy.class.getName());
         return hibernateProperties;

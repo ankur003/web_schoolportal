@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +25,7 @@ import com.school.portal.enums.ResponseCode;
 import com.school.portal.service.AuthenticationService;
 import com.school.portal.service.UserService;
 import com.school.portal.utils.ResponseBuilder;
+import com.school.portal.utils.TenantContext;
 
 import io.swagger.annotations.Api;
 
@@ -37,20 +40,36 @@ public class LoginController extends AbstractController {
 
 	@Autowired
 	UserService userService;
-	
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
 	@PostMapping(value = "")
-	public ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser) {
-		User user = userService.checkCredentials (loginUser);
-		if (user == null) {
-			LOGGER.warn("[LOGIN] user not found or user is inActive or passoword does not match");
-			return ResponseBuilder.response(HttpStatus.UNAUTHORIZED, true, "Login failed", ErrorCode.ERROR, ResponseCode.ACKNOWLEDGE, 
-					ResponseBuilder.buildLoginFailedResponse());
+	public ResponseEntity<Object> login(@Valid @RequestBody LoginUser loginUser,
+			@RequestHeader(value = "schoolCode", required = true) String schoolCode) {
+		if (StringUtils.isBlank(schoolCode)) {
+			return ResponseBuilder.response(HttpStatus.BAD_REQUEST, true, "School code is required", ErrorCode.ERROR,
+					ResponseCode.ACKNOWLEDGE, null);
 		}
-		String jwtToken = authenticationService.login(loginUser);
-		Map<String, Object> map = ResponseBuilder.buildLoginResponse(jwtToken, user);
-		return ResponseBuilder.response(HttpStatus.OK, false, "Login Success", ErrorCode.OK, ResponseCode.ACKNOWLEDGE, map);
+		TenantContext.setCurrentSchoolCode(schoolCode);
+
+		try {
+			User user = userService.checkCredentials(loginUser);
+			if (user == null) {
+				LOGGER.warn("[LOGIN] user not found or user is inActive or password does not match");
+				return ResponseBuilder.response(HttpStatus.UNAUTHORIZED, true, "Login failed", ErrorCode.ERROR,
+						ResponseCode.ACKNOWLEDGE, ResponseBuilder.buildLoginFailedResponse());
+			}
+
+			String jwtToken = authenticationService.login(loginUser);
+			Map<String, Object> map = ResponseBuilder.buildLoginResponse(jwtToken, user);
+			map.put("schoolCode", schoolCode); // Include school code in response
+
+			return ResponseBuilder.response(HttpStatus.OK, false, "Login Success", ErrorCode.OK,
+					ResponseCode.ACKNOWLEDGE, map);
+		} finally {
+			// Clean up tenant context
+			TenantContext.clear();
+		}
 	}
-	
+
 }
