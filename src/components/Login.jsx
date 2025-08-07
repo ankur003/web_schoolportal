@@ -13,7 +13,6 @@ function Login(props) {
 	let navigate = useNavigate();
 	const [userName, setUserName] = useState("");
 	const [password, setPassword] = useState("");
-	const [schoolCode, setSchoolCode] = useState("");
 	const [loader, setLoader] = useState(false);
 	const [isError, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
@@ -23,9 +22,14 @@ function Login(props) {
 	const isAuthenticated = sessionStorage.getItem("token");
 
 	const loginHandler = () => {
-		let data = { username: userName, password: password, schoolCode: schoolCode };
+		let data = { username: userName, password: password };
 		setLoader(true);
-		const config = { 'content-type': 'application/json' };
+		const config = {
+			'content-type': 'application/json',
+			headers: {
+				"schoolCode": "CODE_101"
+			}
+		};
 		axios.post(`${basePathUrl}/login`, data, config).then(response => {
 			let { message, responseObject, status } = response.data;
 			console.log("loginDetails", { response })
@@ -92,14 +96,6 @@ function Login(props) {
 							<label className="form-icon"><i className="fa fa-lock"></i></label>
 							<input type={!isShowPassword ? "password" : "text"} className="form-control" value={password || ""} placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
 							<span className="show-password-icon" onClick={() => setIsShowPassword(!isShowPassword)}>{isShowPassword ? <i className="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}</span>
-						</div>
-						<div className="form-group">
-							<label className="form-icon"><i className="fa fa-code" aria-hidden="true"></i></label>
-							<select className='form-control' onChange={(e) => setSchoolCode(e.target.value)}>
-								<option value="">Select Code</option>
-								<option value="CODE_101">CODE-101</option>
-								<option value="CODE_102">CODE-102</option>
-							</select>
 						</div>
 						<a href="#" onClick={() => navigate('/ForgetPassword')}>Forget Password ?</a>
 						{loader ? <button className="btn btn-primary" type="button" disabled>
