@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import { MultiSelect } from "react-multi-select-component";
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -22,11 +22,11 @@ function ManageClasses() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { subjectListLinked, AllClassEntities } = useSelector((state) => state.manageClassesReducer);
-    console.log("subjectListLinked", AllClassEntities);
+    const { subjectListLinked, linkList, AllClassEntities } = useSelector((state) => state.manageClassesReducer);
+    const [isPending, startTransition] = useTransition();
+    const [currentClass, setCurrentClass] = useState(1);
     const [isModal, SetIsModal] = useState(false);
     const [selectedClass, setSelectedClass] = useState('');
-    console.log({ selectedClass })
     const [selectedSections, setSelectedSections] = useState([]);
     const [selectedSubjects, setSelectedSubjects] = useState([]);
     const [showSectionInput, setShowSectionInput] = useState(false);
@@ -35,6 +35,7 @@ function ManageClasses() {
     const [newSubject, setNewSubject] = useState('');
     const [customSections, setCustomSections] = useState([]);
     const [customSubjects, setCustomSubjects] = useState([]);
+    const [masterClassId, setMasterClassId] = useState("");
 
     // --- Event handlers (same as your original, unchanged for brevity) ---
     const handleClassChange = (className) => setSelectedClass(className);
@@ -63,9 +64,14 @@ function ManageClasses() {
         dispatch(getSubjectClassSecList());
     }, []);
 
+    useEffect(() => {
+        startTransition(() => {
+            dispatch(getClasses());
+        });
+    }, [dispatch]);
+
     const openCreateClassModal = () => {
         // navigate("/CreateAndUpdateClass");
-
         SetIsModal(true);
     }
 
@@ -98,6 +104,115 @@ function ManageClasses() {
         closeModal();
     };
 
+    const filterByMasterClassUuid = (param) => {
+        const filtered = subjectListLinked?.find(
+            item => item.masterClassUuid === param
+        );
+        setFilteredClassData(filtered || null);
+    }
+
+    useEffect(() => {
+        // Filter subjectListLinked by masterClassUuid
+        filterByMasterClassUuid(masterClassId || linkList[0]?.masterClassUuid);
+    }, []);
+
+
+    const [filteredClassData, setFilteredClassData] = useState(null);
+    const handleClassChangeTab = (param, index) => {
+        setMasterClassId(param?.masterClassUuid);
+        setCurrentClass(index);
+        filterByMasterClassUuid(param?.masterClassUuid);
+    };
+    // Card view for subjects and sectionSubjects
+    const renderSubjectCards = () => {
+        if (!filteredClassData) return null;
+
+        // If sectionSubjects has values, show those
+        if (filteredClassData?.sectionSubjects && filteredClassData?.sectionSubjects?.length > 0) {
+            return (
+                <div className="row g-3 mt-3">
+                    {[...filteredClassData.sectionSubjects].reverse().map((section, idx) => (
+                        <div className="col-md-6 col-lg-4" key={idx}>
+                            <div className="card shadow-sm border-0 rounded-4 h-100">
+                                <div className="card-header d-flex align-items-center">
+                                    <Users size={20} className="me-2" />
+                                    <h5 className="mb-0 fw-semibold">Section: {section.sectionName || 'N/A'}</h5>
+                                </div>
+                                <div className="card-body bg-light rounded-bottom-4">
+                                    {section.subjects && section.subjects.length > 0 ? (
+                                        <div className='table-content mt-0 mb-0'>
+                                            <table className="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Subjects</th>
+                                                        <th>Code</th>
+                                                        <th>Max</th>
+                                                        <th>Pass</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {section.subjects.map((subject, sIdx) => (
+                                                        <tr key={sIdx}>
+                                                            <td>
+                                                                <span className="fw-semibold">
+                                                                    <BookOpen size={16} className="me-1 text-primary" />
+                                                                    {subject.subjectName}
+                                                                </span>
+                                                            </td>
+                                                            <td>{subject.subjectCode}</td>
+                                                            <td>{subject.maxMarks}</td>
+                                                            <td>{subject.passMarks}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ) : (
+                                        <div className="text-muted py-3 text-center">No subjects found for this section.</div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        // If subjects has values, show those
+        if (filteredClassData?.subjects && filteredClassData?.subjects?.length > 0) {
+            return (
+                <div className="table-responsive mt-3" style={{ borderRadius: '16px' }}>
+                    <div className='table-content mt-0 mb-0'>
+                        <table className="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Subject Name</th>
+                                    <th>Code</th>
+                                    <th>Max Marks</th>
+                                    <th>Pass Marks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredClassData.subjects.map((subject, idx) => (
+                                    <tr key={idx}>
+                                        <td>
+                                            <span className="fw-semibold">
+                                                <BookOpen size={16} className="me-1 text-primary" />
+                                                {subject.subjectName}
+                                            </span>
+                                        </td>
+                                        <td>{subject.subjectCode}</td>
+                                        <td>{subject.maxMarks}</td>
+                                        <td>{subject.passMarks}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        }
+    };
     return (
         <>
             <div className="header">
@@ -110,92 +225,24 @@ function ManageClasses() {
             </div>
 
             <div className="content-body">
-                <div className="table-content mb-0">
-                    {subjectListLinked?.length > 0 ?
-                        subjectListLinked?.map((data, index) =>
-                            <div key={index} className={`card ${index === 0 ? 'mb-3' : ''}`}>
-                                <div className="card-body p-0">
-                                    <div className="card">
-                                        <div className="card-header bg-light d-flex justify-content-between align-items-center">
-                                            <span>
-                                                <strong className="mr-r-5 f-20 text-capitalize">Class - {data?.className}</strong>
-                                            </span>
-                                            {/* <button
-                                                type="button"
-                                                className="btn btn-warning mr-r-4"
-                                                onClick={() => {
-                                                    subjectLinkedModal(data);
-                                                }}
-                                            >
-                                                <Link />
-                                            </button> */}
-                                        </div>
+                {isPending ? <Loader /> : linkList.length > 0 ?
+                    <div className="timeTablecontainer fee-module">
+                        <div className="class-selector">
+                            {linkList.map((data, idx) => (
+                                <button
+                                    key={idx + 1}
+                                    className={`class-btn${currentClass === idx + 1 ? " active" : ""}`}
+                                    onClick={() => handleClassChangeTab(data, idx + 1)}
+                                >
+                                    {data?.className}
+                                </button>
+                            ))}
+                        </div>
 
-                                        {/* If class has direct subjects (no sections) */}
-                                        {data?.subjects && data?.subjects?.length > 0 && (
-                                            <div className="card-body">
-                                                <table className="table table-bordered mb-0">
-                                                    <thead className="table-secondary">
-                                                        <tr>
-                                                            <th>Subject Name</th>
-                                                            <th>Subject Code</th>
-                                                            <th>Max Marks</th>
-                                                            <th>Pass Marks</th>
-                                                            <th>Created At</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {data?.subjects?.map((subject, subjectIdx) =>
-                                                            <tr key={subjectIdx}>
-                                                                <td>{subject?.subjectName}</td>
-                                                                <td>{subject?.subjectCode}</td>
-                                                                <td>{subject?.maxMarks}</td>
-                                                                <td>{subject?.passMarks}</td>
-                                                                <td>{subject?.createdAt}</td>
-                                                            </tr>
-                                                        )}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        )}
-
-                                        {/* If class has section-based subjects */}
-                                        {data?.sectionSubjects && data?.sectionSubjects?.length > 0 &&
-                                            data?.sectionSubjects?.map((item, idx) =>
-                                                <div key={idx} className="card-body">
-                                                    <p className="badge bg-warning">Section - {item?.sectionName}</p>
-                                                    <table className="table table-bordered mb-0">
-                                                        <thead className="table-secondary">
-                                                            <tr>
-                                                                <th>Subject Name</th>
-                                                                <th>Subject Code</th>
-                                                                <th>Max Marks</th>
-                                                                <th>Pass Marks</th>
-                                                                <th>Created At</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {item?.subjects && item?.subjects?.map((subject, subjectIdx) =>
-                                                                <tr key={subjectIdx}>
-                                                                    <td>{subject?.subjectName}</td>
-                                                                    <td>{subject?.subjectCode}</td>
-                                                                    <td>{subject?.maxMarks}</td>
-                                                                    <td>{subject?.passMarks}</td>
-                                                                    <td>{subject?.createdAt}</td>
-                                                                </tr>
-                                                            )}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            )
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        ) :
-                        <NoDataFound />
-                    }
-                </div>
+                        {filteredClassData != null ? renderSubjectCards() : <NoDataFound />}
+                    </div>
+                    :
+                    <NoDataFound />}
             </div>
 
             {isModal &&
