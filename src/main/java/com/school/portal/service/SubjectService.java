@@ -153,6 +153,20 @@ public class SubjectService {
 
 	private void linkSubject(String subjectName, Long masterClassId, Long masterSectionId) {
 		List<Subject> existingSubjects = subjectRepository.findBySubjectNameAndIsActiveTrueAndAcademicYear(subjectName, LoggedInUserUtil.getLoginUserAcadmicYear());
+		if (CollectionUtils.isEmpty(existingSubjects)) {
+			 Subject subject = new Subject();
+			 subject.setMasterClassId(masterClassId);
+			 subject.setMasterSectionId(masterSectionId);
+			 subject.setSubjectCode(subjectName.substring(0, Math.min(3, subjectName.length())).toUpperCase());
+			 subject.setIsActive(true);
+			 subject.setSubjectName(subjectName);
+			 subject.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
+			 subjectRepository.save(subject);
+			
+			return;
+		}
+		
+		
 		for (Subject subject : existingSubjects) {
 			if (masterSectionId != null) {
 				if (subject.getMasterClassId() == null && subject.getMasterSectionId() == null) {
@@ -181,7 +195,7 @@ public class SubjectService {
 		 subject.setDescription(sub.getDescription());
 		 subject.setMaxMarks(sub.getMaxMarks());
 		 subject.setPassMarks(sub.getPassMarks());
-		 subject.setSubjectCode(subjectName);
+		 subject.setSubjectCode(subjectName.substring(0, Math.min(3, subjectName.length())).toUpperCase());
 		 subject.setIsActive(true);
 		 subject.setSubjectName(subjectName);
 		 subject.setAcademicYear(LoggedInUserUtil.getLoginUserAcadmicYear());
