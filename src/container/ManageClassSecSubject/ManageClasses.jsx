@@ -75,7 +75,6 @@ function ManageClasses() {
     };
 
     const formSubmit = (type) => {
-        alert('Form submitted! Check console.');
         let data = {}
         data = {
             masterClassUuid: selectedClass,
@@ -86,16 +85,15 @@ function ManageClasses() {
                 ...selectedSubjects
             ]
         }
-        if (newSection != "") {
-            data = { ...data, sectionName: newSection, }
+        if (newSection !== "" && newSubject !== "") {
+            data = { ...data, sectionName: newSection, subjectNames: [...selectedSubjects, newSubject] }
         }
-        else if (newSubject != "") {
-            data = { ...data, subjectName: newSubject, }
+        else if (newSection !== "") {
+            data = { ...data, sectionName: newSection }
         }
-        else if (newSection != "" && newSubject != "") {
-            data = { ...data, sectionName: newSection, subjectName: newSubject, }
+        else if (newSubject !== "") {
+            data = { ...data, subjectNames: [...selectedSubjects, newSubject] }
         }
-        console.log({ data });
         dispatch(createClassEntities(data, toast));
         closeModal();
     };
