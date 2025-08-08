@@ -108,6 +108,10 @@ public class SubjectService {
                     createOrUpdateSubject(subjectName, masterClassId, masterSectionId);
                 }
         	});
+        } else {
+        	for (String subjectName : validSubjectNames) {
+                createOrUpdateSubject(subjectName, masterClassId, null);
+            }	
         }
     }
     
