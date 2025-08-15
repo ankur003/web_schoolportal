@@ -21,7 +21,7 @@ export default function StudentPage() {
     const { classSectionList, userDetails } = useSelector(state => state.entityReducer);
     const userID = useSelector((state) => state.loginReducer?.loginUserId);
     console.log({ userDetails, userRole, studentList, userID })
-
+    const basePathUrl = process.env.REACT_APP_BASE_PATH;
 
 
     const [dataList, setDataList] = useState([]);
@@ -361,7 +361,7 @@ const AttendanceButtons = ({ userId }) => {
             const date = getTodayDate();
             const category = getCategoryByStatus(status);
 
-            const url = `http://localhost:8080/api/v1/u/attendance?userId=${userId}&status=${status}&date=${date}&catagory=${category}`;
+            const url = `${basePathUrl}/u/attendance?userId=${userId}&status=${status}&date=${date}&catagory=${category}`;
             const response = await axios.post(url);
 
             console.log("Attendance marked successfully:", response.data);
