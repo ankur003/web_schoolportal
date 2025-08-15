@@ -41,7 +41,7 @@ const H1 = styled.h1`
 
 const ProtectedRoute = (props) => {
     let navigate = useNavigate();
-    let dispatch = useDispatch();
+   
     const [isActive, setIsActive] = useState(true)
     const isAuthenticated = sessionStorage.getItem("token");
     const { role } = useSelector((state) => state.loginReducer);
@@ -79,8 +79,8 @@ const ProtectedRoute = (props) => {
                         <div className="select-wrapper-neon">
                             <select className="select-neon"
                                 value={props?.academicYearProps}
-                                onChange={e => { props?.setAcademicYearProps(e.target.value); dispatch({ type: Constants.RESET_STATE }) }}
-                                style={{ padding: 4, textAlign: 'center'}}
+                                onChange={e => props?.setAcademicYearProps(e.target.value)}
+                                style={{ padding: 4, textAlign: 'center' }}
                             >
                                 {props?.academicYearList.map(year => (
                                     <option key={year.key} value={year.key}>Academic {year.label}</option>

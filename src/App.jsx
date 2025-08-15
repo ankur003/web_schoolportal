@@ -22,11 +22,13 @@ import StudentPage from './container/ManageEntities/StudentPage';
 import TeacherPage from './container/ManageEntities/TeacherPage';
 import AttendancePage from './container/ManageSchedule/AttendancePage';
 import CreateAndUpdateClass from './container/ManageClassSecSubject/CreateAndUpdateClass';
-import { use } from 'react';
 import axios from 'axios';
+import { setAcademicYears } from './academicYearStore';
+import { useDispatch } from 'react-redux';
+import * as Constants from './Redux/Constants';
 
 const App = () => {
-
+ let dispatch = useDispatch();
   // Assume you have a way to get the user's role, e.g., from localStorage or context
   // Example: const userRole = localStorage.getItem('role');
   // For demonstration, let's use a placeholder function:
@@ -70,9 +72,19 @@ const App = () => {
 
   // Set up axios interceptor for academic year header
   useEffect(() => {
+    const defaultYear = academicYears[0].key;
+    setAcademicYears(defaultYear);
+    setAcademicYear(defaultYear);
     // Add user_academic_year header to all axios requests
-    axios.defaults.headers.common['user_academic_year'] = academicYear;
-  }, [academicYear]);
+    // axios.defaults.headers.common['user_academic_year'] = academicYear;
+    // console.log("Axios default header set for user_academic_year:", academicYear);
+  }, []);
+
+  const onChangeHandler = (year) => {
+    setAcademicYears(year);
+    setAcademicYear(year);
+    dispatch({ type: Constants.RESET_STATE })
+  }
 
   return (
     <>
@@ -84,7 +96,7 @@ const App = () => {
             path="/redirect"
             element={<RoleBasedRedirect />}
           />
-          <Route element={<ProtectedRoute setAcademicYearProps={setAcademicYear} academicYearProps={academicYear} academicYearList={academicYears} />}>
+          <Route element={<ProtectedRoute setAcademicYearProps={onChangeHandler} academicYearProps={academicYear} academicYearList={academicYears} />}>
             <Route element={<Dashboard />} path="/Dashboard" />
             <Route element={<ManageClasses />} path="/ManageClasses" />
             <Route element={<EntityPage />} path="/EntityPage" />

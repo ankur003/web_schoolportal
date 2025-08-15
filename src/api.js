@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getCurrentAcademicYear } from './academicYearStore';
 
 axios.interceptors.request.use(
   (config) => {
@@ -9,7 +10,10 @@ axios.interceptors.request.use(
     config.headers["Cache-control"] = "no-cache";
     config.headers['Access-Control-Allow-Origin'] = "*"; 
     config.headers['mode'] = 'no-cors';
-    //  config.headers['user_academic_year'] = 'YEAR_2025_2026';
+    const year = getCurrentAcademicYear();
+    if(year) {
+      config.headers['user_academic_year'] = year;
+    }
     return config;
   },
   (error) => {
